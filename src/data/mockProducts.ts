@@ -1,0 +1,51 @@
+import type {Product} from '../types/index'
+export const mockProducts: Product[] = [
+  {
+        id: 'p1',
+        name: 'iPhone 14',
+        description: 'Latest generation smartphone with A15 chip.',
+        price: 850,
+        imageUrl: 'https://placehold.co/400x400?text=iPhone+14',
+        categoryId: 'phones',
+    },
+    {
+        id: 'p2',
+        name: 'MacBook Air M2',
+        description: 'Lightweight laptop with all-day battery life.',
+        price: 1100,
+        imageUrl: 'https://placehold.co/400x400?text=MacBook+Air',
+        categoryId: 'laptops',
+    },
+    {
+        id: 'p3',
+        name: 'Air Force 1',
+        description: 'Classic white leather sneakers.',
+        price: 110,
+        imageUrl: 'https://placehold.co/400x400?text=Air+Force+1',
+        categoryId: 'sneakers',
+    },
+    {
+        id: 'p4',
+        name: 'Denim Jacket',
+        description: 'Classic mid-wash denim jacket.',
+        price: 65,
+        imageUrl: 'https://placehold.co/400x400?text=Denim+Jacket',
+        categoryId: 'clothing',
+    },
+    {
+        id: 'p5',
+        name: 'Aviator Sunglasses',
+        description: 'UV-protective metal-frame aviators.',
+        price: 45,
+        imageUrl: 'https://placehold.co/400x400?text=Aviators',
+        categoryId: 'sunglasses',
+    },
+    {
+        id: 'p6',
+        name: "Bleu Intense EDP",
+        description: 'Woody aromatic fragrance for men.',
+        price: 95,
+        imageUrl: 'https://placehold.co/400x400?text=Perfume',
+        categoryId: 'men-fragrance',
+    },
+]
