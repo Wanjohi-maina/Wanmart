@@ -34,15 +34,18 @@ export function CartIcon(props: NavIconProps) {
       {...props}
     >
       <path
-        d="M3 3h2.25l2.2 11.02A2.5 2.5 0 0 0 9.9 16h6.84a2.5 2.5 0 0 0 2.4-1.8L21 7H6.05"
+        d="M6.75 8.25h10.5l.75 11.25H6L6.75 8.25Z"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="2"
       />
       <path
-        d="M10 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-        fill="currentColor"
+        d="M9 8.25V6a3 3 0 0 1 6 0v2.25"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
       />
     </svg>
   )

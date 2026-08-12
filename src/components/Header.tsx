@@ -4,10 +4,12 @@ import logo from '../assets/logo.png'
 import {HexagonIcon, SearchIcon, CartIcon, MenuIcon, CloseIcon } from './Icons'
 import NavDropdown from './NavDropdown'
 import SearchOverlay from './SearchOverlay'
+import { useCart } from '../context/CartContext'
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
     const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
+    const{totalItems} = useCart()
 
     function toggleMenu() {
         setIsMenuOpen((prevOpen)=>!prevOpen)
@@ -32,8 +34,15 @@ export default function Header() {
                     <button type="button" aria-label='Open search bar' onClick={toggleSearch}>
                         <SearchIcon className='w-5 h-5' />
                     </button>
+                    <Link to="/cart" className="relative" aria-label='View cart'>
+                       <CartIcon className='w-5 h-5'/>
+                       {totalItems > 0 && (
+                        <span className="absolute -top-2 -right-2 flex items-center justify-center bg-gray-900 text-white text-xs rounded-full h-4 w-4">
+                            {totalItems} 
+                        </span>
+                       )}
+                    </Link>
                     
-                    <CartIcon className='w-5 h-5'/>
                     <button
                         type="button"
                         onClick={toggleMenu}

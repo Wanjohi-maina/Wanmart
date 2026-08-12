@@ -12,3 +12,7 @@ export type Category = {
     slug: string
     parentId: string | null
 }
+export type CartItem = {
+    product: Product
+    quantity: number
+}

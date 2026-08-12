@@ -1,9 +1,11 @@
 import { useParams, Link } from 'react-router-dom'
 import { useProduct } from '../hooks/useProducts'
+import { useCart } from '../context/CartContext'
 
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>()
     const { data: product } = useProduct(id)
+    const {addToCart} = useCart()
 
     if (!product) {
         return (
@@ -38,7 +40,8 @@ export default function ProductDetail() {
 
                 <button
                     type="button"
-                    className="mt-6 w-full bg-orange-500 text-white rounded-md py-2.5 hover:bg-orange-600 transition-colors"
+                    onClick={() => addToCart(product)}
+                    className="mt-6 w-full bg-gray-900 text-white rounded-md py-2.5 hover:bg-gray-800 transition-colors"
                 >
                     Add to Cart
                 </button>
