@@ -1,11 +1,14 @@
 import { useParams, Link } from 'react-router-dom'
 import { useProduct } from '../hooks/useProducts'
 import { useCart } from '../context/CartContext'
+import {useState} from 'react'
 
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>()
     const { data: product } = useProduct(id)
     const {addToCart} = useCart()
+
+    const [selectedQuantity, setSelectedQuantity] = useState(1)
 
     if (!product) {
         return (
@@ -13,6 +16,20 @@ export default function ProductDetail() {
                 Product not found.
             </div>
         )
+    }
+    
+    function handleDecrease () {
+        setSelectedQuantity((qty) => Math.max(1, qty -1))
+    }
+
+    function handleIncrease () {
+        setSelectedQuantity((qty) => qty + 1)
+    }
+
+    function handleAddToCart () {
+        if(!product) return
+        addToCart(product, selectedQuantity)
+        setSelectedQuantity(1)
     }
 
     return (
@@ -38,9 +55,29 @@ export default function ProductDetail() {
                 </p>
                 <p className="text-gray-600 mt-4">{product.description}</p>
 
+                <div className="mt-6 flex items-center gap-2 border border-gray-300 rounded-md w-fit">
+                    <button
+                      type='button'
+                      onClick={handleDecrease}
+                      aria-label='Decrease quantity'
+                      className='w-10 py-2 text-lg text-gray-700 hover:text-gray-900'
+                    >
+                        -
+                    </button>
+                    <span className='w-8 text-center text-base font-medium text-gray-900'>{selectedQuantity}</span>
+                    <button
+                     type='button'
+                     onClick={handleIncrease}
+                     aria-label='Increase quantity'
+                     className='w-10 py-2 text-lg text-gray-700 hover:text-gray-900'
+                    >
+                        +
+                    </button>
+                </div>
+
                 <button
                     type="button"
-                    onClick={() => addToCart(product)}
+                    onClick={handleAddToCart}
                     className="mt-6 w-full bg-gray-900 text-white rounded-md py-2.5 hover:bg-gray-800 transition-colors"
                 >
                     Add to Cart

@@ -3,9 +3,11 @@ import {
   useContext,
   useState,
   useEffect,
+  useRef,
   type ReactNode,
 } from "react";
 import type { CartItem, Product } from "../types";
+import Toast from "../components/ui/Toast";
 
 type CartContextValue = {
   items: CartItem[];
@@ -27,9 +29,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return storedCart ? JSON.parse(storedCart) : [];
   }); // Look in localStorage and restore the cart
 
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null); // Create a ref to hold the timeout ID for the toast message. This allows us to clear the timeout if a new toast message is triggered before the previous one disappears.
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); // Whenever the items state changes, save the updated cart data to localStorage in JSON format string.
   }, [items]);
+
+  function showToast (message:string){
+       if(toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current); // If there is an existing timeout for the toast message, clear it to prevent multiple messages from overlapping.
+      }
+      setToastMessage(message); // Set the toast message state to the provided message, which will trigger the display of the toast notification.
+      toastTimeoutRef.current = setTimeout(() => {
+        setToastMessage(null) // Clear the toast message after 2 seconds by setting the toastMessage state back to null, which will hide the toast notification.
+      },2000) 
+  } 
 
   function addToCart(product: Product, quantity: number = 1) {
     setItems((prevItems) => {
@@ -45,6 +60,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prevItems, { product, quantity }]; // If the product does not exist in the cart, add it as a new item with the specified quantity.
     });
+    showToast(`${product.name} added to cart`); // Show a toast notification indicating that the product has been added to the cart.
   }
 
   function removeFromCart(productId: string) {
@@ -89,6 +105,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
+      <Toast message={toastMessage} /> {/* Render the Toast component and pass the toastMessage state as a prop. This will display the toast notification when toastMessage is not null. */}
     </CartContext.Provider>
   );
 }
