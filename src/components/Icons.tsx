@@ -1,6 +1,6 @@
-import type { SVGProps } from 'react'
+import type { SVGProps } from "react";
 
-type NavIconProps = SVGProps<SVGSVGElement>
+type NavIconProps = SVGProps<SVGSVGElement>;
 
 export function SearchIcon(props: NavIconProps) {
   return (
@@ -20,7 +20,7 @@ export function SearchIcon(props: NavIconProps) {
         strokeWidth="2"
       />
     </svg>
-  )
+  );
 }
 
 export function CartIcon(props: NavIconProps) {
@@ -48,7 +48,7 @@ export function CartIcon(props: NavIconProps) {
         strokeWidth="2"
       />
     </svg>
-  )
+  );
 }
 
 export function MenuIcon(props: NavIconProps) {
@@ -69,11 +69,11 @@ export function MenuIcon(props: NavIconProps) {
         strokeWidth="2"
       />
     </svg>
-  )
+  );
 }
 export function CloseIcon(props: NavIconProps) {
-    return (
-        <svg
+  return (
+    <svg
       aria-hidden="true"
       fill="none"
       focusable="false"
@@ -88,8 +88,8 @@ export function CloseIcon(props: NavIconProps) {
         strokeLinejoin="round"
         strokeWidth="2"
       />
-            </svg>
-    )
+    </svg>
+  );
 }
 
 export function HexagonIcon(props: NavIconProps) {
@@ -104,7 +104,7 @@ export function HexagonIcon(props: NavIconProps) {
     >
       <path d="M12 2.5 20.23 7.25v9.5L12 21.5l-8.23-4.75v-9.5L12 2.5Z" />
     </svg>
-  )
+  );
 }
 
-export const HamburgerMenuIcon = MenuIcon
+export const HamburgerMenuIcon = MenuIcon;
