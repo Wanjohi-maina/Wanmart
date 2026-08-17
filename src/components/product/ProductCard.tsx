@@ -13,7 +13,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const quantity = cartItem?.quantity ?? 0; // If the value on the left is null/undefined, use value on the right (0)
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+    <div className="h-full flex flex-col border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
       <Link to={`/product/${product.id}`}>
         <div className="aspect-square bg-gray-100 overflow-hidden mb-2">
           <img
@@ -23,8 +23,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           />
         </div>
       </Link>
-      <div className="p-3">
-        <Link to={`/product/${product.id}`}>
+      <div className="p-3 flex flex-1 flex-col gap-2">
+        <Link to={`/product/${product.id}`} className="block">
           <p className="text-sm font-medium text-gray-900">{product.name}</p>
           <p className="text-sm text-gray-500">${product.price.toFixed(2)}</p>
         </Link>
@@ -32,12 +32,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           <button
             type="button"
             onClick={() => addToCart(product)}
-            className="mt-2 w-full text-sm bg-gray-900 text-white rounded-md py-1.5 hover:bg-gray-800 transition-colors"
+            className="mt-auto w-full text-sm bg-gray-900 text-white rounded-md py-1.5 hover:bg-gray-800 transition-colors"
           >
             Add to Cart
           </button>
         ) : (
-          <div className="mt-2 w-full flex items-center justify-between border border-gray-300 rounded-md py-1">
+          <div className="mt-auto w-full flex items-center justify-between border border-gray-300 rounded-md py-1">
             <button
               type="button"
               onClick={() => updateQuantity(product.id, quantity - 1)}
