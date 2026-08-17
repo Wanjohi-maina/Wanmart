@@ -83,7 +83,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p3",
-    name: "Samsunng Galaxy S26",
+    name: "Samsung Galaxy S26",
     description:
       "The Samsung Galaxy S26 combines a sleek, durable design with a 6.3-inch Dynamic AMOLED 2X display and 120Hz adaptive refresh rate. Its 50MP camera system delivers detailed photos with up to 3× optical zoom, while the customized processor provides fast, smooth performance. With 12GB RAM, up to 512GB storage, and Galaxy AI features, it’s built for everyday performance and productivity.",
     highlights: [
