@@ -161,16 +161,22 @@ export const mockProducts: Product[] = [
   // Laptops
   {
     id: "p5",
-    name: 'MacBook Air 13" M2',
-    description: "Fanless, all-day battery laptop with the Apple M2 chip.",
+    name: 'MacBook Air 13" M5',
+    description: `The MacBook Air 13" with M5 combines powerful performance with an ultra-portable, fanless design. Its 13.6-inch Liquid Retina display, up to 18-hour battery life, and M5 chip make it ideal for work, study, and creative tasks. It also includes Wi-Fi 7, a 12MP Center Stage camera, and Apple Intelligence.`,
     highlights: [
-      "Apple M2 chip with 8-core CPU",
-      "Fanless, silent design",
+      "13.6-inch Liquid Retina display",
+      "Apple M5 chip",
+      "Up to 10-core GPU",
+      "16GB unified memory",
+      "512GB–4TB SSD storage",
       "Up to 18 hours battery life",
-      '13.6" Liquid Retina display',
+      "12MP Center Stage camera",
+      "Wi-Fi 7 + Bluetooth 6",
+      "Two Thunderbolt 4 ports",
+      "macOS Tahoe + Apple Intelligence",
     ],
-    price: 1099,
-    imageUrl: "https://placehold.co/400x400?text=MacBook+Air+Silver",
+    price: 1299,
+    imageUrl: "/products/macbook/Silver-MacBookAir.webp",
     categoryId: "laptops",
     stock: 5,
     rating: 4.8,
@@ -179,30 +185,74 @@ export const mockProducts: Product[] = [
     brand: "Apple",
     warrantyMonths: 12,
     condition: "new",
-    colors: ["Silver", "Midnight", "Starlight"],
+    colors: ["Silver", "Midnight", "Starlight", "Sky Blue"],
     storageOptions: [
-      { label: "256GB SSD", priceModifier: 0 },
-      { label: "512GB SSD", priceModifier: 200 },
-      { label: "1TB SSD", priceModifier: 400 },
+      { label: "512GB SSD", priceModifier: 0 },
+      { label: "1TB SSD", priceModifier: 300 },
+      { label: "2TB SSD", priceModifier: 800 },
     ],
     colorImages: {
-      Silver: "https://placehold.co/400x400?text=MacBook+Air+Silver",
-      Midnight: "https://placehold.co/400x400?text=MacBook+Air+Midnight",
-      Starlight: "https://placehold.co/400x400?text=MacBook+Air+Starlight",
+      Silver: "/products/macbook/Silver-MacBookAir.webp",
+      Midnight: "/products/macbook/Midnight-MacBookAir.webp",
+      Starlight: "/products/macbook/Starlight-MacBookAir.webp",
+      SkyBlue: "/products/macbook/SkyBlue-MacBookAir.webp",
     },
   },
   {
     id: "p6",
-    name: "XPS 13",
-    description: "Compact Windows ultrabook with an InfinityEdge display.",
+    name: 'MacBook Pro 14" M5',
+    description: `The MacBook Pro 14" with M5 delivers powerful performance in a compact professional laptop. Its 14.2-inch Liquid Retina XDR display with ProMotion up to 120Hz provides an exceptional viewing experience, while the M5 chip handles demanding workloads with ease. With up to 24 hours of video streaming, extensive connectivity, and Apple Intelligence, it's built for developers, creators, and professionals.`,
     highlights: [
-      "13th Gen Intel Core processor",
-      'InfinityEdge 13.4" display',
-      "CNC-machined aluminum chassis",
-      "Thunderbolt 4 ports",
+      "14.2-inch Liquid Retina XDR display",
+      "ProMotion up to 120Hz",
+      "Apple M5 chip — 10-core CPU & GPU",
+      "16GB, 24GB, or 32GB unified memory",
+      "1TB–4TB SSD storage",
+      "Up to 24 hours video streaming",
+      "12MP Center Stage camera",
+      "Three Thunderbolt 4 ports",
+      "MagSafe 3 + HDMI + SDXC",
+      "Apple Intelligence with macOS"
     ],
-    price: 949,
-    imageUrl: "https://placehold.co/400x400?text=XPS+13+Platinum",
+    price: 1999,
+    imageUrl: "/products/macbook/SpaceBlack-MacBookPro.webp",
+    categoryId: "laptops",
+    stock: 5,
+    rating: 4.8,
+    reviewCount: 2107,
+    kind: "electronics",
+    brand: "Apple",
+    warrantyMonths: 12,
+    condition: "new",
+    colors: ["Space Black", "Silver"],
+    storageOptions: [
+      { label: "1TB SSD", priceModifier: 0 },
+      { label: "2TB SSD", priceModifier: 500 },
+      { label: "4TB SSD", priceModifier: 1500 },
+    ],
+    colorImages: {
+      Silver: "/products/macbook/Silver-MacBookPro.webp",
+      SpaceBlack: "/products/macbook/SpaceBlack-MacBookPro.webp",
+    },
+  },
+  {
+    id: "p7",
+    name: "Dell XPS 14",
+    description: "The Dell XPS 14 is a premium, lightweight laptop built for productivity, development, and creative work. It features a sharp 14-inch display with up to 120Hz refresh rate, modern Intel Core Ultra processors, fast LPDDR5X memory, and PCIe NVMe SSD storage.",
+    highlights: [
+      "14-inch 2K display up to 120Hz",
+      "Intel Core Ultra processor",
+      "Intel Arc Graphics",
+      "Up to 64GB LPDDR5X RAM",
+      "512GB–4TB SSD storage",
+      "Up to 500-nit display brightness",
+      "8MP 4K HDR webcam",
+      "3× Thunderbolt 4 ports",
+      "Dolby Atmos quad-speaker system",
+      "Premium aluminum design",
+    ],
+    price: 1550,
+    imageUrl: "/products/XPS-Dell.webp",
     categoryId: "laptops",
     stock: 6,
     rating: 4.4,
@@ -211,20 +261,56 @@ export const mockProducts: Product[] = [
     brand: "Dell",
     warrantyMonths: 24,
     condition: "new",
-    colors: ["Platinum Silver", "Graphite"],
+    colors: ["Graphite"],
     storageOptions: [
-      { label: "256GB SSD", priceModifier: 0 },
-      { label: "512GB SSD", priceModifier: 150 },
+      { label: "512GB SSD", priceModifier: 0 },
+      { label: "1TB SSD", priceModifier: 750 },
+      { label: "2TB SSD", priceModifier: 1250}
     ],
     colorImages: {
-      "Platinum Silver": "https://placehold.co/400x400?text=XPS+13+Platinum",
-      Graphite: "https://placehold.co/400x400?text=XPS+13+Graphite",
+      Graphite: "/products/XPS-Dell.webp",
+    },
+  },
+  {
+    id: "p8",
+    name: "ASUS ROG Zephyrus G14 (2026)",
+    description: "The ROG Zephyrus G14 combines powerful gaming performance with an ultra-portable 14-inch design. It features an AMD Ryzen AI 9 processor, RTX 5060 graphics, and a stunning 3K 120Hz OLED display. With up to 32GB RAM and 2TB SSD storage, it's built for gaming, development, and creative work.",
+    highlights: [
+      "14-inch 3K OLED 120Hz display",
+      "AMD Ryzen AI 9 465 processor",
+      "NVIDIA RTX 5060 8GB GDDR7",
+      "Up to 32GB LPDDR5X RAM",
+      "Up to 2TB PCIe 4.0 SSD",
+      "1.5kg ultra-portable design",
+      "1.59cm slim chassis",
+      "G-Sync + NVIDIA Advanced Optimus",
+      "50 TOPS AI processing",
+      "Dolby Atmos 4-speaker system",
+    ],
+    price: 2199,
+    imageUrl: "/products/asus/White-ASUS.webp",
+    categoryId: "laptops",
+    stock: 6,
+    rating: 4.4,
+    reviewCount: 583,
+    kind: "electronics",
+    brand: "ASUS",
+    warrantyMonths: 24,
+    condition: "new",
+    colors: ["Eclipse Gray", "Platinum White"],
+    storageOptions: [
+      { label: "1TB SSD", priceModifier: 0 },
+      { label: "2TB SSD", priceModifier: 300}
+    ],
+    colorImages: {
+      EclipseGray: "/products/asus/Gray-ASUS.webp",
+      PlatinumWhite:"/products/asus/White-ASUS.webp"
     },
   },
 
   // Clothing
   {
-    id: "p7",
+    id: "p9",
     name: "Essentials Crewneck Tee",
     description: "Everyday soft cotton tee, regular fit.",
     highlights: [
@@ -244,7 +330,7 @@ export const mockProducts: Product[] = [
     color: "Black",
   },
   {
-    id: "p8",
+    id: "p10",
     name: "Classic Denim Jacket",
     description: "Mid-wash denim jacket with a relaxed fit.",
     highlights: [
@@ -266,7 +352,7 @@ export const mockProducts: Product[] = [
 
   // Sneakers
   {
-    id: "p9",
+    id: "p11",
     name: "Air Force 1",
     description: "Classic white leather low-top sneaker.",
     highlights: [
@@ -286,7 +372,7 @@ export const mockProducts: Product[] = [
     color: "White",
   },
   {
-    id: "p10",
+    id: "p12",
     name: "Stan Smith",
     description: "Minimalist tennis-inspired sneaker with a green heel tab.",
     highlights: [
@@ -308,7 +394,7 @@ export const mockProducts: Product[] = [
 
   // Watches
   {
-    id: "p11",
+    id: "p13",
     name: "Fossil Grant",
     description: "Minimalist dress watch with a genuine leather strap.",
     highlights: [
@@ -328,7 +414,7 @@ export const mockProducts: Product[] = [
     waterResistant: true,
   },
   {
-    id: "p12",
+    id: "p14",
     name: "Seiko 5 Automatic",
     description:
       "Stainless steel automatic watch with an exhibition case back.",
@@ -351,7 +437,7 @@ export const mockProducts: Product[] = [
 
   // Sunglasses
   {
-    id: "p13",
+    id: "p15",
     name: "Ray-Ban Aviator Classic",
     description: "UV-protective metal-frame aviators.",
     highlights: [
@@ -370,7 +456,7 @@ export const mockProducts: Product[] = [
     color: "Gold",
   },
   {
-    id: "p14",
+    id: "p16",
     name: "Ray-Ban Wayfarer",
     description: "Classic acetate frame sunglasses.",
     highlights: [
@@ -391,7 +477,7 @@ export const mockProducts: Product[] = [
 
   // Men's Fragrance
   {
-    id: "p15",
+    id: "p17",
     name: "Bleu de Chanel EDP",
     description: "Woody aromatic fragrance for men.",
     highlights: [
@@ -414,7 +500,7 @@ export const mockProducts: Product[] = [
 
   // Women's Fragrance
   {
-    id: "p16",
+    id: "p18",
     name: "Miss Dior EDT",
     description: "Light floral fragrance for women.",
     highlights: [
