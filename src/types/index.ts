@@ -82,4 +82,5 @@ export type CartItem = {
     unitPrice: number
     selectedColor?: string
     selectedStorage?: string
+    selectedSize?:string
 }

@@ -9,12 +9,27 @@ type ProductCardProps = {
 export default function ProductCard({ product }: ProductCardProps) {
   const { items, addToCart, updateQuantity } = useCart();
 
-  const cartItem = items.find((item) => item.product.id === product.id); //Find the product in the cart (Is the current product already in the cart?)
-  const quantity = cartItem?.quantity ?? 0; // If the value on the left is null/undefined, use value on the right (0)
+  // Check whether the product category requires variant selection
+  const needsVariant =
+    product.kind === "electronics" ||
+    product.kind === "clothing" ||
+    product.kind === "sneakers";
+
+  // Find the same product in the cart only if it has no selected variants
+  const cartItem = items.find(
+    (item) =>
+      item.product.id === product.id &&
+      !item.selectedColor &&
+      !item.selectedStorage &&
+      !item.selectedSize,
+  );
+
+  // Get the cart quantity, or use 0 if the product isn't in the cart
+  const quantity = cartItem?.quantity ?? 0; 
 
   return (
     <div className="h-full flex flex-col border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-      <Link to={`/product/${product.id}`}>
+      <Link to={`/product/${product.id}`} className="block">
         <div className="aspect-square bg-gray-100 overflow-hidden mb-2">
           <img
             src={product.imageUrl}
@@ -28,10 +43,17 @@ export default function ProductCard({ product }: ProductCardProps) {
           <p className="text-sm font-medium text-gray-900">{product.name}</p>
           <p className="text-sm text-gray-500">${product.price.toFixed(2)}</p>
         </Link>
-        {quantity === 0 ? (
+        {needsVariant ? (
+          <Link
+            to={`/product/${product.id}`}
+            className="mt-auto block w-full text-center text-sm text-white bg-gray-900 rounded-md py-1.5 hover:bg-gray-800 transition-colors"
+          >
+            View options
+          </Link>
+        ) : quantity === 0 ? (
           <button
             type="button"
-            onClick={() => addToCart(product)}
+            onClick={() => addToCart(product, 1, product.price)}
             className="mt-auto w-full text-sm bg-gray-900 text-white rounded-md py-1.5 hover:bg-gray-800 transition-colors"
           >
             Add to Cart
