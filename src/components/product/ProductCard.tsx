@@ -25,7 +25,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   );
 
   // Get the cart quantity, or use 0 if the product isn't in the cart
-  const quantity = cartItem?.quantity ?? 0; 
+  const quantity = cartItem?.quantity ?? 0;
 
   return (
     <div className="h-full flex flex-col border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
