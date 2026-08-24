@@ -46,7 +46,7 @@ export default function Cart() {
               : item.product.imageUrl;
 
           // Calculate the total price for this cart item based on its quantity.
-          const lineTotal = item.unitPrice * item.quantity
+          const lineTotal = item.unitPrice * item.quantity;
           return (
             <li
               key={`${item.product.id}-${index}`}
@@ -60,22 +60,28 @@ export default function Cart() {
                 />
               </Link>
               <div className="flex-1">
-                <Link to={`/product/${item.product.id}`} className="text-sm font-medium text-gray-900 hover:underline">
+                <Link
+                  to={`/product/${item.product.id}`}
+                  className="text-sm font-medium text-gray-900 hover:underline"
+                >
                   {item.product.name}
                 </Link>
-                
+
                 {/* Display the selected variants if any exist */}
                 {variantLabel && (
                   <p className="text-xs text-gray-400">{variantLabel}</p>
                 )}
 
                 <p className="text-sm text-gray-500">
-                   ${item.quantity > 1 ? lineTotal.toFixed(2) : item.unitPrice.toFixed(2)}
-                    {item.quantity > 1 && (
-                        <span className="text-gray-400 font-normal">
-                            {` · $${item.unitPrice.toFixed(2)} each`}
-                        </span>
-                    )}
+                  $
+                  {item.quantity > 1
+                    ? lineTotal.toFixed(2)
+                    : item.unitPrice.toFixed(2)}
+                  {item.quantity > 1 && (
+                    <span className="text-gray-400 font-normal">
+                      {` · $${item.unitPrice.toFixed(2)} each`}
+                    </span>
+                  )}
                 </p>
               </div>
               {/* Allow the user to change the item quantity */}
