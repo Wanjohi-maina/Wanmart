@@ -35,11 +35,11 @@ export const mockProducts: Product[] = [
       { label: "512GB", priceModifier: 200 },
     ],
     colorImages: {
-      Black: "/products/iphone/Black-iPhone17.webp",
-      White: "/products/iphone/White-iPhone17.webp",
-      Sage: "/products/iphone/Sage-iPhone17.webp",
-      MistBlue: "/products/iphone/MistBlue-iPhone17.webp",
-      Lavender: "/products/iphone/Lavender-iPhone17.webp",
+      "Black": "/products/iphone/Black-iPhone17.webp",
+      "White": "/products/iphone/White-iPhone17.webp",
+      "Sage": "/products/iphone/Sage-iPhone17.webp",
+      "Lavender": "/products/iphone/Lavender-iPhone17.webp",
+      "Mist Blue": "/products/iphone/MistBlue-iPhone17.webp",
     },
   },
   {
@@ -76,9 +76,9 @@ export const mockProducts: Product[] = [
       { label: "1TB", priceModifier: 400 },
     ],
     colorImages: {
-      Silver: "/products/iphone/Silver-iPhone17Pro.webp",
-      CosmicOrange: "/products/iphone/CosmicOrange-iPhone17Pro.webp",
-      DeepBlue: "/products/iphone/DeepBlue-iPhone17Pro.webp",
+      "Silver": "/products/iphone/Silver-iPhone17Pro.webp",
+      "Cosmic Orange": "/products/iphone/CosmicOrange-iPhone17Pro.webp",
+      "Deep Blue": "/products/iphone/DeepBlue-iPhone17Pro.webp",
     },
   },
   {
@@ -114,7 +114,7 @@ export const mockProducts: Product[] = [
       { label: "512GB", priceModifier: 200 },
     ],
     colorImages: {
-      CobaltViolet: "/products/samsung/SamsungS26.webp",
+      "Cobalt Violet": "/products/samsung/SamsungS26.webp",
     },
   },
   {
@@ -151,10 +151,10 @@ export const mockProducts: Product[] = [
       { label: "1TB", priceModifier: 500 },
     ],
     colorImages: {
-      CobaltViolet: "/products/samsung/CobaltViolet-SamsungS26Ultra.webp",
-      Black: "/products/samsung/Black-SamsungS26Ultra.webp",
-      White: "/products/samsung/White-SamsungS26Ultra.webp",
-      SkyBlue: "/products/samsung/SkyBlue-SamsungS26Ultra.webp",
+      "Cobalt Violet": "/products/samsung/CobaltViolet-SamsungS26Ultra.webp",
+      "Black": "/products/samsung/Black-SamsungS26Ultra.webp",
+      "White": "/products/samsung/White-SamsungS26Ultra.webp",
+      "Sky Blue": "/products/samsung/SkyBlue-SamsungS26Ultra.webp",
     },
   },
 
@@ -192,10 +192,10 @@ export const mockProducts: Product[] = [
       { label: "2TB SSD", priceModifier: 800 },
     ],
     colorImages: {
-      Silver: "/products/macbook/Silver-MacBookAir.webp",
-      Midnight: "/products/macbook/Midnight-MacBookAir.webp",
-      Starlight: "/products/macbook/Starlight-MacBookAir.webp",
-      SkyBlue: "/products/macbook/SkyBlue-MacBookAir.webp",
+      "Silver": "/products/macbook/Silver-MacBookAir.webp",
+      "Midnight": "/products/macbook/Midnight-MacBookAir.webp",
+      "Starlight": "/products/macbook/Starlight-MacBookAir.webp",
+      "Sky Blue": "/products/macbook/SkyBlue-MacBookAir.webp",
     },
   },
   {
@@ -231,8 +231,8 @@ export const mockProducts: Product[] = [
       { label: "4TB SSD", priceModifier: 1500 },
     ],
     colorImages: {
-      Silver: "/products/macbook/Silver-MacBookPro.webp",
-      SpaceBlack: "/products/macbook/SpaceBlack-MacBookPro.webp",
+      "Silver": "/products/macbook/Silver-MacBookPro.webp",
+      "Space Black": "/products/macbook/SpaceBlack-MacBookPro.webp",
     },
   },
   {
@@ -268,7 +268,7 @@ export const mockProducts: Product[] = [
       { label: "2TB SSD", priceModifier: 1250}
     ],
     colorImages: {
-      Graphite: "/products/XPS-Dell.webp",
+      "Graphite": "/products/XPS-Dell.webp",
     },
   },
   {
@@ -303,8 +303,8 @@ export const mockProducts: Product[] = [
       { label: "2TB SSD", priceModifier: 300}
     ],
     colorImages: {
-      EclipseGray: "/products/asus/Gray-ASUS.webp",
-      PlatinumWhite:"/products/asus/White-ASUS.webp"
+      "Eclipse Gray": "/products/asus/Gray-ASUS.webp",
+      "Platinum White":"/products/asus/White-ASUS.webp"
     },
   },
 
