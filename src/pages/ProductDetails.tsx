@@ -67,6 +67,11 @@ export default function ProductDetail() {
     (needsElectronicsVariant && (!selectedColor || !selectedStorage)) ||
     (needsSize && !selectedSize);
 
+  // The price is final when the product doesn't require an electronics variant or when the customer has selected a storage option.
+  const priceIsFinal = !needsElectronicsVariant || Boolean(selectedStorage);
+  // Calculate the total price based on the selected quantity.
+  const totalPrice = displayPrice * selectedQuantity;
+
   function handleDecrease() {
     setSelectedQuantity((qty) => Math.max(1, qty - 1));
   }
@@ -115,10 +120,18 @@ export default function ProductDetail() {
         </div>
 
         <p className="text-xl text-gray-800 mt-2">
-          ${displayPrice.toFixed(2)}
+          $
+          {priceIsFinal && selectedQuantity > 1
+            ? totalPrice.toFixed(2)
+            : displayPrice.toFixed(2)}
+          {priceIsFinal && selectedQuantity > 1 && (
+            <span className="text-base text-gray-400 font-normal">
+              {` · $${displayPrice.toFixed(2)} each`}
+            </span>
+          )}
           {needsElectronicsVariant && !selectedStorage && (
             <span className="text-sm text-gray-400 font-normal">
-              (starting price)
+              {" (starting price)"}
             </span>
           )}
         </p>
@@ -242,7 +255,7 @@ export default function ProductDetail() {
           disabled={variantIncomplete}
           className="mt-6 w-full bg-gray-900 text-white rounded-md py-2.5 hover:bg-gray-800 transition-colors disabled:cursor-not-allowed disabled:bg-gray-300"
         >
-          {variantIncomplete ? 'Select options': 'Add to Cart'}
+          {variantIncomplete ? "Select options" : "Add to Cart"}
         </button>
       </div>
     </div>
