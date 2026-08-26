@@ -5,7 +5,7 @@ import {
   HexagonIcon,
   SearchIcon,
   CartIcon,
-  MenuIcon,
+  HamburgerMenuIcon,
   CloseIcon,
 } from "./Icons";
 import NavDropdown from "./NavDropdown";
@@ -55,7 +55,7 @@ export default function Header() {
             aria-label="Toggle menu"
             className="relative z-30"
           >
-            <MenuIcon
+            <HamburgerMenuIcon
               className={`w-5 h-5 ${isMenuOpen ? "hidden" : "block"}`}
             />
             <CloseIcon

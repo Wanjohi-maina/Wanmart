@@ -10,11 +10,17 @@ export type StorageOption = {
   priceModifier: number;
 };
 
+export type ProductSpecification = {
+  label: string
+  value: string
+}
+
 type BaseProduct = {
   id: string;
   name: string;
   description: string;
   highlights: string[];
+  specifications: ProductSpecification[]
   price: number;
   imageUrl: string;
   categoryId: string;

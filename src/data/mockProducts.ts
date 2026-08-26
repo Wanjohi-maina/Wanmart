@@ -19,6 +19,18 @@ export const mockProducts: Product[] = [
       "8GB RAM",
       "iOS 26 with Apple Intelligence",
     ],
+    specifications: [
+      { label: "Display", value: "6.3-inch Super Retina XDR, ProMotion 120Hz" },
+      { label: "Chip", value: "A19" },
+      { label: "RAM", value: "8GB" },
+      { label: "Rear camera", value: "48MP Dual Fusion" },
+      { label: "Front camera", value: "18MP Center Stage" },
+      { label: "Battery", value: "Up to 30 hours video playback" },
+      { label: "Weight", value: "179g" },
+      { label: "Build", value: "Ceramic Shield 2 front" },
+      { label: "Connectivity", value: "5G, Wi-Fi 7, Bluetooth 6" },
+      { label: "OS", value: "iOS 26" },
+    ],
     price: 799,
     imageUrl: "/products/iphone/Black-iPhone17.webp",
     categoryId: "phones",
@@ -35,10 +47,10 @@ export const mockProducts: Product[] = [
       { label: "512GB", priceModifier: 200 },
     ],
     colorImages: {
-      "Black": "/products/iphone/Black-iPhone17.webp",
-      "White": "/products/iphone/White-iPhone17.webp",
-      "Sage": "/products/iphone/Sage-iPhone17.webp",
-      "Lavender": "/products/iphone/Lavender-iPhone17.webp",
+      Black: "/products/iphone/Black-iPhone17.webp",
+      White: "/products/iphone/White-iPhone17.webp",
+      Sage: "/products/iphone/Sage-iPhone17.webp",
+      Lavender: "/products/iphone/Lavender-iPhone17.webp",
       "Mist Blue": "/products/iphone/MistBlue-iPhone17.webp",
     },
   },
@@ -59,6 +71,20 @@ export const mockProducts: Product[] = [
       "Ceramic Shield 2 front",
       "iOS 26 + Apple Intelligence",
     ],
+    specifications: [
+      { label: "Display", value: "6.3-inch Super Retina XDR, ProMotion 120Hz" },
+      { label: "Chip", value: "A19 Pro" },
+      {
+        label: "Rear camera",
+        value: "48MP Pro Fusion, up to 8× optical-quality zoom",
+      },
+      { label: "Front camera", value: "18MP Center Stage" },
+      { label: "Battery", value: "Up to 33 hours video playback" },
+      { label: "Weight", value: "206g" },
+      { label: "Build", value: "Aluminum unibody, Ceramic Shield 2 front" },
+      { label: "Connectivity", value: "5G, Wi-Fi 7, Bluetooth 6" },
+      { label: "OS", value: "iOS 26" },
+    ],
     price: 1099,
     imageUrl: "/products/iphone/Silver-iPhone17Pro.webp",
     categoryId: "phones",
@@ -76,7 +102,7 @@ export const mockProducts: Product[] = [
       { label: "1TB", priceModifier: 400 },
     ],
     colorImages: {
-      "Silver": "/products/iphone/Silver-iPhone17Pro.webp",
+      Silver: "/products/iphone/Silver-iPhone17Pro.webp",
       "Cosmic Orange": "/products/iphone/CosmicOrange-iPhone17Pro.webp",
       "Deep Blue": "/products/iphone/DeepBlue-iPhone17Pro.webp",
     },
@@ -97,6 +123,16 @@ export const mockProducts: Product[] = [
       "4,300mAh battery",
       "Up to 55% charge in 30 minutes",
       "Galaxy AI with Android 16 & One UI 8.5",
+    ],
+    specifications: [
+      { label: "Display", value: "6.3-inch Dynamic AMOLED 2X, 120Hz adaptive" },
+      { label: "Chip", value: "Snapdragon 8 Elite Gen 5 for Galaxy" },
+      { label: "RAM", value: "12GB" },
+      { label: "Rear camera", value: "50MP main, 3× optical zoom" },
+      { label: "Battery", value: "4,300mAh, up to 55% charge in 30 min" },
+      { label: "Weight", value: "168g" },
+      { label: "OS", value: "Android 16, One UI 8.5" },
+      { label: "AI features", value: "Galaxy AI" },
     ],
     price: 899,
     imageUrl: "/products/samsung/SamsungS26.webp",
@@ -134,6 +170,22 @@ export const mockProducts: Product[] = [
       "5,000mAh battery — up to 31 hours video playback",
       "S Pen + Galaxy AI",
     ],
+    specifications: [
+      {
+        label: "Display",
+        value: "6.9-inch QHD+ Dynamic AMOLED 2X, 120Hz, Privacy Display",
+      },
+      { label: "Chip", value: "Snapdragon 8 Elite Gen 5 for Galaxy" },
+      { label: "RAM", value: "12GB / 16GB" },
+      {
+        label: "Rear camera",
+        value: "200MP main + 50MP ultra-wide, 5× optical / 100× digital zoom",
+      },
+      { label: "Battery", value: "5,000mAh, up to 31 hours video playback" },
+      { label: "Weight", value: "218g" },
+      { label: "Stylus", value: "S Pen included" },
+      { label: "OS", value: "Android 16, One UI 8.5, Galaxy AI" },
+    ],
     price: 1299,
     imageUrl: "/products/samsung/CobaltViolet-SamsungS26Ultra.webp",
     categoryId: "phones",
@@ -152,8 +204,8 @@ export const mockProducts: Product[] = [
     ],
     colorImages: {
       "Cobalt Violet": "/products/samsung/CobaltViolet-SamsungS26Ultra.webp",
-      "Black": "/products/samsung/Black-SamsungS26Ultra.webp",
-      "White": "/products/samsung/White-SamsungS26Ultra.webp",
+      Black: "/products/samsung/Black-SamsungS26Ultra.webp",
+      White: "/products/samsung/White-SamsungS26Ultra.webp",
       "Sky Blue": "/products/samsung/SkyBlue-SamsungS26Ultra.webp",
     },
   },
@@ -175,6 +227,17 @@ export const mockProducts: Product[] = [
       "Two Thunderbolt 4 ports",
       "macOS Tahoe + Apple Intelligence",
     ],
+    specifications: [
+      { label: "Display", value: "13.6-inch Liquid Retina" },
+      { label: "Chip", value: "Apple M5, up to 10-core GPU" },
+      { label: "Memory", value: "16GB unified memory" },
+      { label: "Battery", value: "Up to 18 hours" },
+      { label: "Camera", value: "12MP Center Stage" },
+      { label: "Ports", value: "2× Thunderbolt 4" },
+      { label: "Connectivity", value: "Wi-Fi 7, Bluetooth 6" },
+      { label: "Weight", value: "1.24kg" },
+      { label: "OS", value: "macOS Tahoe" },
+    ],
     price: 1299,
     imageUrl: "/products/macbook/Silver-MacBookAir.webp",
     categoryId: "laptops",
@@ -192,9 +255,9 @@ export const mockProducts: Product[] = [
       { label: "2TB SSD", priceModifier: 800 },
     ],
     colorImages: {
-      "Silver": "/products/macbook/Silver-MacBookAir.webp",
-      "Midnight": "/products/macbook/Midnight-MacBookAir.webp",
-      "Starlight": "/products/macbook/Starlight-MacBookAir.webp",
+      Silver: "/products/macbook/Silver-MacBookAir.webp",
+      Midnight: "/products/macbook/Midnight-MacBookAir.webp",
+      Starlight: "/products/macbook/Starlight-MacBookAir.webp",
       "Sky Blue": "/products/macbook/SkyBlue-MacBookAir.webp",
     },
   },
@@ -212,7 +275,20 @@ export const mockProducts: Product[] = [
       "12MP Center Stage camera",
       "Three Thunderbolt 4 ports",
       "MagSafe 3 + HDMI + SDXC",
-      "Apple Intelligence with macOS"
+      "Apple Intelligence with macOS",
+    ],
+    specifications: [
+      {
+        label: "Display",
+        value: "14.2-inch Liquid Retina XDR, ProMotion 120Hz",
+      },
+      { label: "Chip", value: "Apple M5, 10-core CPU & GPU" },
+      { label: "Memory", value: "16GB / 24GB / 32GB unified memory" },
+      { label: "Battery", value: "Up to 24 hours video streaming" },
+      { label: "Camera", value: "12MP Center Stage" },
+      { label: "Ports", value: "3× Thunderbolt 4, MagSafe 3, HDMI, SDXC" },
+      { label: "Weight", value: "1.61kg" },
+      { label: "OS", value: "macOS Tahoe" },
     ],
     price: 1999,
     imageUrl: "/products/macbook/SpaceBlack-MacBookPro.webp",
@@ -231,14 +307,15 @@ export const mockProducts: Product[] = [
       { label: "4TB SSD", priceModifier: 1500 },
     ],
     colorImages: {
-      "Silver": "/products/macbook/Silver-MacBookPro.webp",
+      Silver: "/products/macbook/Silver-MacBookPro.webp",
       "Space Black": "/products/macbook/SpaceBlack-MacBookPro.webp",
     },
   },
   {
     id: "p7",
     name: "Dell XPS 14",
-    description: "The Dell XPS 14 is a premium, lightweight laptop built for productivity, development, and creative work. It features a sharp 14-inch display with up to 120Hz refresh rate, modern Intel Core Ultra processors, fast LPDDR5X memory, and PCIe NVMe SSD storage.",
+    description:
+      "The Dell XPS 14 is a premium, lightweight laptop built for productivity, development, and creative work. It features a sharp 14-inch display with up to 120Hz refresh rate, modern Intel Core Ultra processors, fast LPDDR5X memory, and PCIe NVMe SSD storage.",
     highlights: [
       "14-inch 2K display up to 120Hz",
       "Intel Core Ultra processor",
@@ -250,6 +327,20 @@ export const mockProducts: Product[] = [
       "3× Thunderbolt 4 ports",
       "Dolby Atmos quad-speaker system",
       "Premium aluminum design",
+    ],
+    specifications: [
+      {
+        label: "Display",
+        value: "14-inch 2K, up to 120Hz, 500-nit brightness",
+      },
+      { label: "Processor", value: "Intel Core Ultra" },
+      { label: "Graphics", value: "Intel Arc Graphics" },
+      { label: "Memory", value: "Up to 64GB LPDDR5X" },
+      { label: "Camera", value: "8MP 4K HDR webcam" },
+      { label: "Ports", value: "3× Thunderbolt 4" },
+      { label: "Weight", value: "1.55kg" },
+      { label: "Audio", value: "Dolby Atmos quad-speaker" },
+      { label: "Build", value: "Premium aluminum chassis" },
     ],
     price: 1550,
     imageUrl: "/products/XPS-Dell.webp",
@@ -265,16 +356,17 @@ export const mockProducts: Product[] = [
     storageOptions: [
       { label: "512GB SSD", priceModifier: 0 },
       { label: "1TB SSD", priceModifier: 750 },
-      { label: "2TB SSD", priceModifier: 1250}
+      { label: "2TB SSD", priceModifier: 1250 },
     ],
     colorImages: {
-      "Graphite": "/products/XPS-Dell.webp",
+      Graphite: "/products/XPS-Dell.webp",
     },
   },
   {
     id: "p8",
     name: "ASUS ROG Zephyrus G14 (2026)",
-    description: "The ROG Zephyrus G14 combines powerful gaming performance with an ultra-portable 14-inch design. It features an AMD Ryzen AI 9 processor, RTX 5060 graphics, and a stunning 3K 120Hz OLED display. With up to 32GB RAM and 2TB SSD storage, it's built for gaming, development, and creative work.",
+    description:
+      "The ROG Zephyrus G14 combines powerful gaming performance with an ultra-portable 14-inch design. It features an AMD Ryzen AI 9 processor, RTX 5060 graphics, and a stunning 3K 120Hz OLED display. With up to 32GB RAM and 2TB SSD storage, it's built for gaming, development, and creative work.",
     highlights: [
       "14-inch 3K OLED 120Hz display",
       "AMD Ryzen AI 9 465 processor",
@@ -286,6 +378,17 @@ export const mockProducts: Product[] = [
       "G-Sync + NVIDIA Advanced Optimus",
       "50 TOPS AI processing",
       "Dolby Atmos 4-speaker system",
+    ],
+    specifications: [
+      { label: "Display", value: "14-inch 3K OLED, 120Hz" },
+      { label: "Processor", value: "AMD Ryzen AI 9 465" },
+      { label: "Graphics", value: "NVIDIA RTX 5060 8GB GDDR7" },
+      { label: "Memory", value: "Up to 32GB LPDDR5X" },
+      { label: "Weight", value: "1.5kg" },
+      { label: "Chassis thickness", value: "1.59cm" },
+      { label: "Display sync", value: "G-Sync, NVIDIA Advanced Optimus" },
+      { label: "AI processing", value: "50 TOPS" },
+      { label: "Audio", value: "Dolby Atmos 4-speaker system" },
     ],
     price: 2199,
     imageUrl: "/products/asus/White-ASUS.webp",
@@ -300,11 +403,11 @@ export const mockProducts: Product[] = [
     colors: ["Eclipse Gray", "Platinum White"],
     storageOptions: [
       { label: "1TB SSD", priceModifier: 0 },
-      { label: "2TB SSD", priceModifier: 300}
+      { label: "2TB SSD", priceModifier: 300 },
     ],
     colorImages: {
       "Eclipse Gray": "/products/asus/Gray-ASUS.webp",
-      "Platinum White":"/products/asus/White-ASUS.webp"
+      "Platinum White": "/products/asus/White-ASUS.webp",
     },
   },
 
@@ -312,12 +415,19 @@ export const mockProducts: Product[] = [
   {
     id: "p9",
     name: "Essentials Crewneck Tee",
-    description: "A versatile everyday T-shirt made with a soft, comfortable fabric and a classic crewneck design. Its clean, minimal style makes it easy to pair with jeans, shorts, or layered outfits.",
+    description:
+      "A versatile everyday T-shirt made with a soft, comfortable fabric and a classic crewneck design. Its clean, minimal style makes it easy to pair with jeans, shorts, or layered outfits.",
     highlights: [
       "100% combed cotton",
       "Pre-shrunk fabric",
       "Reinforced collar seam",
-      "Regular fit"
+      "Regular fit",
+    ],
+    specifications: [
+      { label: "Material", value: "100% combed cotton" },
+      { label: "Fit", value: "Regular" },
+      { label: "Neckline", value: "Crewneck" },
+      { label: "Care", value: "Machine wash cold, tumble dry low" },
     ],
     price: 18,
     imageUrl: "/products/fashion/T-shirt.webp",
@@ -333,12 +443,19 @@ export const mockProducts: Product[] = [
   {
     id: "p10",
     name: "Classic Denim Jacket",
-    description: "A timeless denim jacket featuring a versatile design that's perfect for casual, everyday wear. Its durable denim construction and classic styling make it an easy layering piece for any season.",
+    description:
+      "A timeless denim jacket featuring a versatile design that's perfect for casual, everyday wear. Its durable denim construction and classic styling make it an easy layering piece for any season.",
     highlights: [
-       "Classic denim construction",
-       "Button-front closure",
-       "Comfortable regular fit",
-       "Versatile everyday style",
+      "Classic denim construction",
+      "Button-front closure",
+      "Comfortable regular fit",
+      "Versatile everyday style",
+    ],
+    specifications: [
+      { label: "Material", value: "100% cotton denim" },
+      { label: "Fit", value: "Regular" },
+      { label: "Closure", value: "Button-front" },
+      { label: "Care", value: "Machine wash cold, hang dry" },
     ],
     price: 65,
     imageUrl: "/products/fashion/denim.webp",
@@ -356,12 +473,19 @@ export const mockProducts: Product[] = [
   {
     id: "p11",
     name: "Nike Air Force 1",
-    description: "The Air Force 1 is a timeless sneaker with a clean, versatile design that works effortlessly with casual and everyday outfits. Its cushioned construction provides comfortable wear, while the classic silhouette keeps the look effortlessly stylish",
+    description:
+      "The Air Force 1 is a timeless sneaker with a clean, versatile design that works effortlessly with casual and everyday outfits. Its cushioned construction provides comfortable wear, while the classic silhouette keeps the look effortlessly stylish",
     highlights: [
       "Classic low-top silhouette",
       "Cushioned everyday comfort",
       "Durable rubber outsole",
       "Versatile casual design",
+    ],
+    specifications: [
+      { label: "Upper material", value: "Leather" },
+      { label: "Sole", value: "Rubber, Air-Sole cushioning" },
+      { label: "Closure", value: "Lace-up" },
+      { label: "Silhouette", value: "Low-top" },
     ],
     price: 110,
     imageUrl: "/products/fashion/Air-Force1.webp",
@@ -377,12 +501,19 @@ export const mockProducts: Product[] = [
   {
     id: "p12",
     name: "Vans Hylane",
-    description: "The Vans Hylane combines a retro-inspired skate aesthetic with a modern, comfortable design. Its low-top silhouette and signature Vans styling make it an easy choice for casual everyday outfits",
+    description:
+      "The Vans Hylane combines a retro-inspired skate aesthetic with a modern, comfortable design. Its low-top silhouette and signature Vans styling make it an easy choice for casual everyday outfits",
     highlights: [
       "Retro-inspired design",
       "Low-top silhouette",
       "Comfortable everyday wear",
       "Durable rubber outsole",
+    ],
+    specifications: [
+      { label: "Upper material", value: "Canvas and suede" },
+      { label: "Sole", value: "Rubber, waffle outsole" },
+      { label: "Closure", value: "Lace-up" },
+      { label: "Silhouette", value: "Low-top" },
     ],
     price: 85,
     imageUrl: "/products/fashion/Vans-Hylane.webp",
@@ -400,12 +531,21 @@ export const mockProducts: Product[] = [
   {
     id: "p13",
     name: "Fossil Grant",
-    description: "The Fossil Grant Chronograph combines classic styling with practical functionality. Its timeless design and refined details make it a versatile choice for both everyday wear and more formal occasions.",
+    description:
+      "The Fossil Grant Chronograph combines classic styling with practical functionality. Its timeless design and refined details make it a versatile choice for both everyday wear and more formal occasions.",
     highlights: [
       "Genuine leather strap",
       "Stainless steel case",
       "Japanese quartz movement",
       "Classic chronograph design",
+    ],
+    specifications: [
+      { label: "Case material", value: "Stainless steel" },
+      { label: "Strap", value: "Genuine leather" },
+      { label: "Movement", value: "Japanese quartz, chronograph" },
+      { label: "Case diameter", value: "44mm" },
+      { label: "Weight", value: "78g" },
+      { label: "Water resistance", value: "50m" },
     ],
     price: 140,
     imageUrl: "/products/accessories/Fossil.webp",
@@ -429,6 +569,14 @@ export const mockProducts: Product[] = [
       "Stainless steel case and bracelet",
       "Durable everyday design",
     ],
+    specifications: [
+      { label: "Case material", value: "Stainless steel" },
+      { label: "Strap", value: "Stainless steel bracelet" },
+      { label: "Movement", value: "Automatic (self-winding)" },
+      { label: "Case diameter", value: "42.5mm" },
+      { label: "Weight", value: "130g" },
+      { label: "Water resistance", value: "100m" },
+    ],
     price: 450,
     imageUrl: "/products/accessories/Seiko.webp",
     categoryId: "watches",
@@ -445,12 +593,20 @@ export const mockProducts: Product[] = [
   {
     id: "p15",
     name: "Ray-Ban Aviator Classic",
-    description: "The Ray-Ban Aviator Classic is an iconic pair of sunglasses featuring the timeless aviator silhouette. Its lightweight metal frame and signature lenses provide a stylish, versatile look for everyday wear",
+    description:
+      "The Ray-Ban Aviator Classic is an iconic pair of sunglasses featuring the timeless aviator silhouette. Its lightweight metal frame and signature lenses provide a stylish, versatile look for everyday wear",
     highlights: [
       "100% UV protection",
       "Crystal lenses",
       "Iconic aviator design",
       "Lightweight metal frame",
+    ],
+    specifications: [
+      { label: "Frame material", value: "Metal" },
+      { label: "Lens material", value: "Crystal glass" },
+      { label: "UV protection", value: "100% UVA/UVB" },
+      { label: "Weight", value: "31g" },
+      { label: "Shape", value: "Aviator" },
     ],
     price: 190,
     imageUrl: "/products/accessories/Aviator-Classics.webp",
@@ -465,12 +621,20 @@ export const mockProducts: Product[] = [
   {
     id: "p16",
     name: "Ray-Ban Wayfarer",
-    description: "The Ray-Ban Wayfarer features an iconic rectangular frame with a timeless design. Its versatile style makes it an easy choice for everyday wear, combining classic aesthetics with comfortable, durable construction",
+    description:
+      "The Ray-Ban Wayfarer features an iconic rectangular frame with a timeless design. Its versatile style makes it an easy choice for everyday wear, combining classic aesthetics with comfortable, durable construction",
     highlights: [
       "Iconic Wayfarer design",
       "Durable acetate frame",
       "Classic Ray-Ban lenses",
       "Versatile everyday style",
+    ],
+    specifications: [
+      { label: "Frame material", value: "Acetate" },
+      { label: "Lens material", value: "Crystal glass" },
+      { label: "UV protection", value: "100% UVA/UVB" },
+      { label: "Weight", value: "45g" },
+      { label: "Shape", value: "Rectangular" },
     ],
     price: 171,
     imageUrl: "/products/accessories/Wayfarer.webp",
@@ -487,12 +651,19 @@ export const mockProducts: Product[] = [
   {
     id: "p17",
     name: "Bleu de Chanel EDP",
-    description: "Bleu de Chanel EDP is a sophisticated men’s fragrance with a fresh, woody character. Its aromatic citrus opening develops into warm, woody notes, creating a versatile scent suitable for both everyday wear and evening occasions.",
+    description:
+      "Bleu de Chanel EDP is a sophisticated men’s fragrance with a fresh, woody character. Its aromatic citrus opening develops into warm, woody notes, creating a versatile scent suitable for both everyday wear and evening occasions.",
     highlights: [
       "Fresh citrus opening",
       "Aromatic and woody character",
       "Warm, refined finish",
       "Versatile day-to-night fragrance",
+    ],
+    specifications: [
+      { label: "Concentration", value: "Eau de Parfum" },
+      { label: "Volume", value: "100ml" },
+      { label: "Top notes", value: "Citrus, mint, pink pepper" },
+      { label: "Base notes", value: "Sandalwood, cedar, sandalwood" },
     ],
     price: 128,
     imageUrl: "/products/perfumes/EDP.webp",
@@ -506,15 +677,22 @@ export const mockProducts: Product[] = [
     concentration: "EDP",
     gender: "men's",
   },
-   {
+  {
     id: "p18",
     name: "Dior Sauvage",
-    description: "Dior Sauvage is a fresh, bold men’s fragrance with a distinctive citrus and woody character. Its versatile scent works well for everyday wear while adding a refined touch for evening occasions.",
+    description:
+      "Dior Sauvage is a fresh, bold men’s fragrance with a distinctive citrus and woody character. Its versatile scent works well for everyday wear while adding a refined touch for evening occasions.",
     highlights: [
       "Fresh citrus opening",
       "Aromatic spicy character",
       "Woody, masculine finish",
       "Versatile day-to-night fragrance",
+    ],
+    specifications: [
+      { label: "Concentration", value: "Eau de Toilette" },
+      { label: "Volume", value: "100ml" },
+      { label: "Top notes", value: "Bergamot, pepper" },
+      { label: "Base notes", value: "Ambroxan, cedar" },
     ],
     price: 115,
     imageUrl: "/products/perfumes/Dior.webp",
@@ -533,12 +711,19 @@ export const mockProducts: Product[] = [
   {
     id: "p19",
     name: "Chanel Coco Mademoiselle EDP",
-    description: "Chanel Coco Mademoiselle is an elegant women’s fragrance with a fresh citrus opening and a sophisticated floral-woody character. Its refined, modern scent makes it a versatile choice for both everyday wear and special occasions",
+    description:
+      "Chanel Coco Mademoiselle is an elegant women’s fragrance with a fresh citrus opening and a sophisticated floral-woody character. Its refined, modern scent makes it a versatile choice for both everyday wear and special occasions",
     highlights: [
-    "Fresh citrus opening",
-    "Elegant floral notes",
-    "Warm woody base",
-    "Sophisticated day-to-night fragrance",
+      "Fresh citrus opening",
+      "Elegant floral notes",
+      "Warm woody base",
+      "Sophisticated day-to-night fragrance",
+    ],
+    specifications: [
+      { label: "Concentration", value: "Eau de Parfum" },
+      { label: "Volume", value: "100ml" },
+      { label: "Top notes", value: "Orange, bergamot" },
+      { label: "Base notes", value: "Patchouli, vanilla, vetiver" },
     ],
     price: 185,
     imageUrl: "/products/perfumes/Chanel.webp",
@@ -552,15 +737,22 @@ export const mockProducts: Product[] = [
     concentration: "EDP",
     gender: "women's",
   },
-   {
+  {
     id: "p20",
     name: "Carolina Herrera Good Girl",
-    description: "Carolina Herrera Good Girl is a sophisticated women’s fragrance that blends sweet, floral notes with a warm, sensual base. Its distinctive character makes it a stylish choice for evenings, special occasions, and confident everyday wear.",
+    description:
+      "Carolina Herrera Good Girl is a sophisticated women’s fragrance that blends sweet, floral notes with a warm, sensual base. Its distinctive character makes it a stylish choice for evenings, special occasions, and confident everyday wear.",
     highlights: [
       "Sweet floral character",
       "Warm, sensual base",
       "Elegant, distinctive scent",
       "Ideal for evening wear",
+    ],
+    specifications: [
+      { label: "Concentration", value: "Eau de Parfum" },
+      { label: "Volume", value: "80ml" },
+      { label: "Top notes", value: "Almond, coffee" },
+      { label: "Base notes", value: "Tonka bean, cacao" },
     ],
     price: 90,
     imageUrl: "/products/perfumes/Good-Girl.webp",
