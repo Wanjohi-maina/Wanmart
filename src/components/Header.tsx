@@ -11,6 +11,7 @@ import {
 import NavDropdown from "./NavDropdown";
 import SearchOverlay from "./SearchOverlay";
 import { useCart } from "../context/CartContext";
+import DesktopNav from "./DesktopNav";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -26,13 +27,16 @@ export default function Header() {
   }
 
   return (
-    <>
-      <header className="flex items-center border-b border-gray-200 p-4">
-        <Link to="/" className="inline-flex shrink-0 items-center">
+    <div className="fixed top-0 left-0 right-0 z-40 border-b border-gray-200 bg-white">
+      <header className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-[1fr_auto_1fr] items-center gap-6 p-4">
+        <Link to="/" className="inline-flex shrink-0 items-center justify-self-start">
           <HexagonIcon className="h-6 w-6 text-orange-500" />
           <img src={logo} alt="wanmart" className="block h-5 w-auto " />
         </Link>
-        <nav className="flex ml-auto items-center gap-4">
+
+        <DesktopNav/>
+
+        <nav className="flex items-center gap-4 justify-self-end">
           <button
             type="button"
             aria-label="Open search bar"
@@ -53,7 +57,7 @@ export default function Header() {
             type="button"
             onClick={toggleMenu}
             aria-label="Toggle menu"
-            className="relative z-30"
+            className="relative z-30 md:hidden"
           >
             <HamburgerMenuIcon
               className={`w-5 h-5 ${isMenuOpen ? "hidden" : "block"}`}
@@ -70,6 +74,6 @@ export default function Header() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
       />
-    </>
+    </div>
   );
 }
