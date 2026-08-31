@@ -12,6 +12,7 @@ import NavDropdown from "./NavDropdown";
 import SearchOverlay from "./SearchOverlay";
 import { useCart } from "../context/CartContext";
 import DesktopNav from "./DesktopNav";
+import SearchBar from "./SearchBar"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -37,10 +38,12 @@ export default function Header() {
         <DesktopNav/>
 
         <nav className="flex items-center gap-4 justify-self-end">
+          <SearchBar />
           <button
             type="button"
             aria-label="Open search bar"
             onClick={toggleSearch}
+            className="md:hidden"
           >
             <SearchIcon className="w-5 h-5" />
           </button>
