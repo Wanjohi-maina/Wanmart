@@ -24,7 +24,7 @@ export default function Cart() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
         <p className="text-gray-400 mb-4">Your cart is empty.</p>
-        <Link to="/" className="text-gray-900 hover:underline">
+        <Link to="/" className="text-orange-600 hover:underline">
           Continue shopping
         </Link>
       </div>
@@ -152,7 +152,7 @@ export default function Cart() {
                       variant,
                     )
                   } // Update the quantity of the product in the cart when the input value changes
-                  className="w-16 border border-gray-400 rounded-md px-2 py-1 text-sm"
+                  className="w-16 border border-orange-300 hover:border-orange-400 rounded-md px-2 py-1 text-sm"
                 />
                 {/* Remove this specific product variant from the cart */}
                 <button
@@ -165,7 +165,7 @@ export default function Cart() {
                       variant,
                     })
                   } // Set the pending action to remove this item, which will trigger the confirmation dialog
-                  className="text-sm underline text-gray-600 hover:text-gray-900"
+                  className="text-sm underline text-gray-600 hover:text-orange-600"
                 >
                   Remove
                 </button>
@@ -190,7 +190,7 @@ export default function Cart() {
         <div className="mt-4 flex justify-center sm:justify-end">
           <Link
             to="/checkout"
-            className="w-full rounded-lg bg-orange-500 px-6 py-3 text-center text-white transition-colors hover:bg-orange-600 sm:w-auto"
+            className="w-full rounded-lg bg-orange-600 px-6 py-3 text-center text-white transition-colors hover:bg-orange-700 sm:w-auto"
           >
             Checkout
           </Link>

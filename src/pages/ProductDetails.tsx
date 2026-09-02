@@ -177,8 +177,8 @@ export default function ProductDetail() {
                       onClick={() => setSelectedColor(color)} // Update the selected color when clicked
                       className={`px-3 py-1.5 text-sm rounded-lg border ${
                         selectedColor === color
-                          ? "border-gray-900 bg-gray-900 text-white"
-                          : "border-gray-300 text-gray-700 hover:border-gray-400"
+                          ? "border-orange-600 bg-orange-600 text-white"
+                          : "border-orange-300 text-gray-700 hover:border-orange-400"
                       }`}
                     >
                       {color}
@@ -202,8 +202,8 @@ export default function ProductDetail() {
                       onClick={() => setSelectedStorage(option.label)} // Update the selected storage when clicked
                       className={`px-3 py-1.5 text-sm rounded-lg border ${
                         selectedStorage === option.label
-                          ? "border-gray-900 bg-gray-900 text-white"
-                          : "border-gray-300 text-gray-700 hover:border-gray-400"
+                          ? "border-orange-600 bg-orange-600 text-white"
+                          : "border-orange-300 text-gray-700 hover:border-orange-400"
                       }`}
                     >
                       {option.label}
@@ -232,8 +232,8 @@ export default function ProductDetail() {
                     onClick={() => setSelectedSize(size)} // Set the selected size when the user clicks a size
                     className={`px-3 py-1.5 text-sm rounded-lg border ${
                       selectedSize === size
-                        ? "border-gray-900 bg-gray-900 text-white"
-                        : "border-gray-300 text-gray-700 hover:border-gray-400"
+                        ? "border-orange-600 bg-orange-600 text-white"
+                        : "border-orange-300 text-gray-700 hover:border-orange-400"
                     }`}
                   >
                     {size}
@@ -243,7 +243,7 @@ export default function ProductDetail() {
             </div>
           )}
 
-          <div className="mt-6 flex items-center gap-2 border border-gray-300 rounded-lg w-fit">
+          <div className="mt-6 flex items-center gap-2 border border-orange-300 rounded-lg w-fit">
             <button
               type="button"
               onClick={handleDecrease}
@@ -269,7 +269,7 @@ export default function ProductDetail() {
             type="button"
             onClick={handleAddToCart}
             disabled={variantIncomplete}
-            className="mt-6 w-full bg-gray-900 text-white rounded-lg py-2.5 hover:bg-gray-800 transition-colors disabled:cursor-not-allowed disabled:bg-gray-300"
+            className="mt-6 w-full bg-orange-600 text-white rounded-lg py-2.5 hover:bg-orange-700 transition-colors disabled:cursor-not-allowed disabled:bg-orange-200"
           >
             {variantIncomplete ? "Select options" : "Add to Cart"}
           </button>

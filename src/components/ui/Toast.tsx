@@ -13,7 +13,7 @@ export default function Toast({ message }: ToastProps) {
       }`}
     >
       {message && (
-        <div className="bg-orange-500 text-white text-sm px-4 py-2.5 rounded-md shadow-lg">
+        <div className="bg-orange-600 text-white text-sm px-4 py-2.5 rounded-md shadow-lg">
           {message}
         </div>
       )}
