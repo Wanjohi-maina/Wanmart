@@ -175,7 +175,7 @@ export default function ProductDetail() {
                       key={color}
                       type="button"
                       onClick={() => setSelectedColor(color)} // Update the selected color when clicked
-                      className={`px-3 py-1.5 text-sm rounded-md border ${
+                      className={`px-3 py-1.5 text-sm rounded-lg border ${
                         selectedColor === color
                           ? "border-gray-900 bg-gray-900 text-white"
                           : "border-gray-300 text-gray-700 hover:border-gray-400"
@@ -200,7 +200,7 @@ export default function ProductDetail() {
                       key={option.label}
                       type="button"
                       onClick={() => setSelectedStorage(option.label)} // Update the selected storage when clicked
-                      className={`px-3 py-1.5 text-sm rounded-md border ${
+                      className={`px-3 py-1.5 text-sm rounded-lg border ${
                         selectedStorage === option.label
                           ? "border-gray-900 bg-gray-900 text-white"
                           : "border-gray-300 text-gray-700 hover:border-gray-400"
@@ -230,7 +230,7 @@ export default function ProductDetail() {
                     key={size}
                     type="button"
                     onClick={() => setSelectedSize(size)} // Set the selected size when the user clicks a size
-                    className={`px-3 py-1.5 text-sm rounded-md border ${
+                    className={`px-3 py-1.5 text-sm rounded-lg border ${
                       selectedSize === size
                         ? "border-gray-900 bg-gray-900 text-white"
                         : "border-gray-300 text-gray-700 hover:border-gray-400"
@@ -243,7 +243,7 @@ export default function ProductDetail() {
             </div>
           )}
 
-          <div className="mt-6 flex items-center gap-2 border border-gray-300 rounded-md w-fit">
+          <div className="mt-6 flex items-center gap-2 border border-gray-300 rounded-lg w-fit">
             <button
               type="button"
               onClick={handleDecrease}
@@ -269,7 +269,7 @@ export default function ProductDetail() {
             type="button"
             onClick={handleAddToCart}
             disabled={variantIncomplete}
-            className="mt-6 w-full bg-gray-900 text-white rounded-md py-2.5 hover:bg-gray-800 transition-colors disabled:cursor-not-allowed disabled:bg-gray-300"
+            className="mt-6 w-full bg-gray-900 text-white rounded-lg py-2.5 hover:bg-gray-800 transition-colors disabled:cursor-not-allowed disabled:bg-gray-300"
           >
             {variantIncomplete ? "Select options" : "Add to Cart"}
           </button>
