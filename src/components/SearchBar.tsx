@@ -69,7 +69,7 @@ export default function SearchBar() {
             onFocus={() => setIsFocused(true)}
             onKeyDown={handleKeyDown}
             placeholder="Search products..."
-            className={`w-full rounded-xl border px-3 py-1.5 pr-9 text-sm outline-none transition-colors ${
+            className={`w-full rounded-full border px-3 py-1.5 pr-9 text-sm outline-none transition-colors ${
               isFocused
                 ? "border-orange-600 ring-1 ring-orange-600"
                 : "border-orange-300"

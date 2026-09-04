@@ -66,7 +66,7 @@ export default function Cart() {
         <button
           type="button"
           onClick={() => setPendingAction({ type: "clear" })}
-          className="text-sm text-white bg-red-600 px-3 py-1.5 rounded-lg  hover:bg-red-500 transition-colors"
+          className="text-sm text-white bg-red-600 px-3 py-1.5 rounded-full hover:bg-red-500 transition-colors"
         >
           Clear cart
         </button>
@@ -152,7 +152,7 @@ export default function Cart() {
                       variant,
                     )
                   } // Update the quantity of the product in the cart when the input value changes
-                  className="w-16 border border-orange-300 hover:border-orange-400 rounded-md px-2 py-1 text-sm"
+                  className="w-16 border border-orange-300 hover:border-orange-400 rounded-lg px-2 py-1 text-sm"
                 />
                 {/* Remove this specific product variant from the cart */}
                 <button
@@ -190,7 +190,7 @@ export default function Cart() {
         <div className="mt-4 flex justify-center sm:justify-end">
           <Link
             to="/checkout"
-            className="w-full rounded-lg bg-orange-600 px-6 py-3 text-center text-white transition-colors hover:bg-orange-700 sm:w-auto"
+            className="w-full rounded-full bg-orange-600 px-6 py-3 text-center text-white transition-colors hover:bg-orange-700 sm:w-auto"
           >
             Checkout
           </Link>

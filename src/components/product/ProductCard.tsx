@@ -46,7 +46,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {needsVariant ? (
           <Link
             to={`/product/${product.id}`}
-            className="mt-auto block w-full text-center text-sm text-white bg-orange-600 rounded-lg py-1.5 hover:bg-orange-700 transition-colors"
+            className="mt-auto block w-full text-center text-sm text-white bg-orange-600 rounded-full py-1.5 hover:bg-orange-700 transition-colors"
           >
             View options
           </Link>
@@ -54,12 +54,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           <button
             type="button"
             onClick={() => addToCart(product, 1, product.price)}
-            className="mt-auto w-full text-sm bg-orange-600 text-white rounded-lg py-1.5 hover:bg-orange-700 transition-colors"
+            className="mt-auto w-full text-sm bg-orange-600 text-white rounded-full py-1.5 hover:bg-orange-700 transition-colors"
           >
             Add to Cart
           </button>
         ) : (
-          <div className="mt-auto w-full flex items-center justify-between border border-orange-300 rounded-lg py-1">
+          <div className="mt-auto w-full flex items-center justify-between border border-orange-300 rounded-full py-1">
             <button
               type="button"
               onClick={() => updateQuantity(product.id, quantity - 1)}
