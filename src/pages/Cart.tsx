@@ -14,11 +14,8 @@ type PendingAction =
   | { type: "clear" };
 
 export default function Cart() {
-  const { items, updateQuantity, removeFromCart, clearCart, totalPrice } =
-    useCart();
-  const [pendingAction, setPendingAction] = useState<PendingAction | null>(
-    null,
-  );
+  const { items, updateQuantity, removeFromCart, clearCart, totalPrice } = useCart();
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
 
   if (items.length === 0) {
     return (

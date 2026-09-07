@@ -22,11 +22,13 @@ type BaseProduct = {
   highlights: string[];
   specifications: ProductSpecification[]
   price: number;
+  discountPercent?: number;
   imageUrl: string;
   categoryId: string;
   stock: number;
   rating: number;
   reviewCount: number;
+  featured: boolean;
 };
 
 export type ElectronicsProduct = BaseProduct & {

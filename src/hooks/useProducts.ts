@@ -6,6 +6,7 @@ import type { Product } from '../types'
 type UseProductsOptions = {
     searchQuery?: string
     categorySlug?: string
+    sort?: 'featured' | 'new'
 }
 
 type UseProductsResult = {
@@ -13,7 +14,7 @@ type UseProductsResult = {
 }
 
 export function useProducts(options: UseProductsOptions = {}): UseProductsResult {
-    const { searchQuery, categorySlug } = options // Destructure the options object to extract searchQuery and categorySlug, providing default values if they are not provided
+    const { searchQuery, categorySlug, sort } = options // Destructure the options object to extract searchQuery and categorySlug, providing default values if they are not provided
 
     const data = useMemo(() => { // Use useMemo to memoize the filtered products based on searchQuery and categorySlug, so that the filtering logic is only re-executed when these dependencies change
         let result = mockProducts // Start with the full list of mock products
@@ -31,9 +32,15 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
             const categoryIds = resolveCategoryIds(categorySlug) // Use the resolveCategoryIds function to get the IDs of the category and its children based on the provided slug
             result = result.filter((product) => categoryIds.includes(product.categoryId)) // Filter the products to include only those whose categoryId is in the list of resolved category IDs
         } 
+        if (sort === 'new') { 
+            result = [...result].reverse() // If the sort option is 'new', reverse the order of the filtered products to show the newest products first
+        }
+        if (sort === 'featured') {
+            result = result.filter((product) => product.featured) // If the sort option is 'featured', filter the products to include only those that are marked as featured
+        }
 
         return result // Return the filtered list of products based on the search query and category slug
-    }, [searchQuery, categorySlug])
+    }, [searchQuery, categorySlug, sort])
 
     return { data } 
 }

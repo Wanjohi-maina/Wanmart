@@ -18,10 +18,11 @@ function SectionHeading({ eyebrow, title }: { eyebrow: string; title: string }) 
 
 export default function Home() {
     const { parents } = useCategories()
-    const { data: allProducts } = useProducts()
+    const { data: featured } = useProducts({ sort: 'featured' })
+    const { data: newArrivals } = useProducts({ sort: 'new' })
 
-    const featured = allProducts.slice(0, 8)
-    const newArrivals = [...allProducts].reverse().slice(0, 4)
+    const featuredPreview = featured.slice(0, 8)
+    const newArrivalsPreview = newArrivals.slice(0, 4)
 
     return (
         <div>
@@ -42,11 +43,11 @@ export default function Home() {
                     {/* Hero CTA */}
                     <div className="mt-6 sm:mt-8 flex justify-center">
                         
-                        <a  href="#categories"
+                        <Link  to="/shop"
                             className="w-full sm:w-auto bg-gray-900 text-white text-sm sm:text-base font-medium rounded-full px-8 py-3 sm:px-10 sm:py-3.5 hover:bg-gray-800 transition-colors"
                         >
                             Shop Now
-                        </a>
+                        </Link>
                     </div>
                 </div>
 
@@ -92,13 +93,28 @@ export default function Home() {
             </section>
 
             {/* Featured Products */}
-            {featured.length > 0 && (
+            {featuredPreview.length > 0 && (
                 <section className="px-4 py-14 sm:py-20 max-w-6xl mx-auto">
-                    <div className="mb-8 sm:mb-12">
+                    <div className="flex items-end justify-between mb-8 sm:mb-12">
                         <SectionHeading eyebrow="Curated for you" title="Featured Products" />
+                        <Link
+                            to="/shop?filter=featured"
+                            className="hidden sm:inline-block text-sm font-medium text-gray-900 hover:underline"
+                        >
+                            View all
+                        </Link>
                     </div>
 
-                    <ProductGrid products={featured} />
+                    <ProductGrid products={featuredPreview} />
+                    {/* Mobile View */}
+                    <div className="mt-8 text-center sm:hidden">
+                        <Link
+                            to="/shop?filter=featured"
+                            className="text-sm font-medium text-gray-900 hover:underline"
+                        >
+                            View all products →
+                        </Link>
+                    </div>
                 </section>
             )}
 
@@ -124,23 +140,37 @@ export default function Home() {
                         accessories, and more.
                     </p>
 
-                    <a
-                        href="#categories"
+                    <Link
+                        to="/shop?filter=new"
                         className="mt-6 sm:mt-8 inline-block bg-white text-gray-900 text-sm sm:text-base font-medium rounded-full px-7 py-3 sm:px-8 sm:py-3.5 hover:bg-gray-100 transition-colors"
                     >
                         Shop New Arrivals
-                    </a>
+                    </Link>
                 </div>
             </section>
 
             {/* New Arrivals */}
-            {newArrivals.length > 0 && (
+            {newArrivalsPreview.length > 0 && (
                 <section className="px-4 py-14 sm:py-20 max-w-6xl mx-auto">
-                    <div className="mb-8 sm:mb-12">
+                    <div className="flex items-end justify-between mb-8 sm:mb-12">
                         <SectionHeading eyebrow="Just added" title="New Arrivals" />
+                        <Link
+                            to="/shop?filter=new"
+                            className="hidden sm:inline-block text-sm font-medium text-gray-900 hover:underline"
+                        >
+                            View all
+                        </Link>
                     </div>
-
-                    <ProductGrid products={newArrivals} />
+                    <ProductGrid products={newArrivalsPreview} />
+                    {/* Mobile View */}
+                    <div className="mt-8 text-center sm:hidden">
+                        <Link
+                            to="/shop?filter=new"
+                            className="text-sm font-medium text-gray-900 hover:underline"
+                        >
+                            View all products →
+                        </Link>
+                    </div>
                 </section>
             )}
 
