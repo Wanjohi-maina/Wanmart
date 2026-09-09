@@ -14,8 +14,17 @@ type PendingAction =
   | { type: "clear" };
 
 export default function Cart() {
-  const { items, updateQuantity, removeFromCart, clearCart, totalPrice } = useCart();
-  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
+  const {
+    items,
+    updateQuantity,
+    removeFromCart,
+    clearCart,
+    totalPrice,
+    totalItems,
+  } = useCart();
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(
+    null,
+  );
 
   if (items.length === 0) {
     return (
@@ -56,13 +65,13 @@ export default function Cart() {
           }
         : null;
 
-  // Calculate what the cart would cost with no discounts applied      
-  const originalSubTotal = items.reduce((total, item) => {
+  // Calculate what the cart would cost with no discounts applied
+  const originalSubtotal = items.reduce((total, item) => {
     const originalPrice = item.originalUnitPrice ?? item.unitPrice; // Use the original unit price if available, otherwise use the current unit price
     return total + originalPrice * item.quantity; // Calculate the total by multiplying the original price by the quantity for each item
   }, 0);
 
-  const totalDiscount = originalSubTotal - totalPrice; // Calculate the total discount by subtracting the current total price from the original subtotal  
+  const totalDiscount = originalSubtotal - totalPrice; // Calculate the total discount by subtracting the current total price from the original subtotal
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -107,10 +116,14 @@ export default function Cart() {
           const lineTotal = item.unitPrice * item.quantity;
 
           // Check whether the item has a higher original price than its current price
-          const hasDiscount = typeof item.originalUnitPrice === "number" && item.originalUnitPrice > item.unitPrice;
+          const hasDiscount =
+            typeof item.originalUnitPrice === "number" &&
+            item.originalUnitPrice > item.unitPrice;
 
           // // Calculate the original line total only when the item is discounted
-          const originalLineTotal = hasDiscount ? item.originalUnitPrice! * item.quantity : null;
+          const originalLineTotal = hasDiscount
+            ? item.originalUnitPrice! * item.quantity
+            : null;
 
           return (
             <li
@@ -140,17 +153,17 @@ export default function Cart() {
 
                   <p className="flex flex-col text-sm text-gray-600 sm:flex-row sm:items-center ">
                     <div>
-                    $
-                    {item.quantity > 1
-                      ? lineTotal.toFixed(2)
-                      : item.unitPrice.toFixed(2)}
-                    {item.quantity > 1 && (
-                      <span className="text-gray-500 font-normal">
-                        {` · $${item.unitPrice.toFixed(2)} each`}
-                      </span>
-                    )} 
+                      $
+                      {item.quantity > 1
+                        ? lineTotal.toFixed(2)
+                        : item.unitPrice.toFixed(2)}
+                      {item.quantity > 1 && (
+                        <span className="text-gray-500 font-normal">
+                          {` · $${item.unitPrice.toFixed(2)} each`}
+                        </span>
+                      )}
                     </div>
-                      {hasDiscount && (
+                    {hasDiscount && (
                       <span className="text-sm text-gray-400 line-through sm:ml-2">
                         ${originalLineTotal!.toFixed(2)}
                       </span>
@@ -197,8 +210,13 @@ export default function Cart() {
       <div className="mt-6 rounded-lg bg-gray-50 p-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm text-gray-500">
-            <span>Subtotal</span>
-            <span>${originalSubTotal.toFixed(2)}</span>
+            <div>
+              <span>Subtotal</span>
+              <span className="ml-2 text-gray-400 text-xs">
+                {`(${totalItems} item${totalItems > 1 ? "s" : ""})`}
+              </span>
+            </div>
+            <span>${originalSubtotal.toFixed(2)}</span>
           </div>
           {totalDiscount > 0 && (
             <div className="flex items-center justify-between text-sm text-orange-600">

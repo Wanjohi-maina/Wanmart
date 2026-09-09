@@ -14,7 +14,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     product.kind === "electronics" ||
     product.kind === "clothing" ||
     product.kind === "sneakers";
-  
+
   const hasVariablePrice = product.kind === "electronics";
   // Determine if the product has a discount and calculate the discounted price if applicable
   const hasDiscount =
@@ -57,15 +57,15 @@ export default function ProductCard({ product }: ProductCardProps) {
           {hasDiscount ? (
             <p className="text-sm">
               <span className="text-gray-900 font-medium">
-                {hasVariablePrice ? 'From' : ''} ${discountedPrice.toFixed(2)}
+                {hasVariablePrice ? "From " : ""}${discountedPrice.toFixed(2)}
               </span>
               <span className="ml-2 text-gray-500 line-through">
-                 ${product.price.toFixed(2)}
+                ${product.price.toFixed(2)}
               </span>
             </p>
           ) : (
             <p className="text-sm text-gray-500">
-              {hasVariablePrice ? 'From' : ''} ${product.price.toFixed(2)}
+              {hasVariablePrice ? "From " : ""}${product.price.toFixed(2)}
             </p>
           )}
         </Link>
@@ -79,10 +79,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         ) : quantity === 0 ? (
           <button
             type="button"
-            onClick={() => addToCart(product, {
-              unitPrice: discountedPrice,
-              originalUnitPrice: hasDiscount ? product.price : undefined,
-            })}
+            onClick={() =>
+              addToCart(product, {
+                unitPrice: discountedPrice,
+                originalUnitPrice: hasDiscount ? product.price : undefined,
+              })
+            }
             className="mt-auto w-full text-sm bg-orange-600 text-white rounded-full py-1.5 hover:bg-orange-700 transition-colors"
           >
             Add to Cart
