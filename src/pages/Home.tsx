@@ -127,24 +127,19 @@ export default function Home() {
                 />
 
                 <div className="relative px-4 py-20 sm:py-28 md:py-32 text-center">
-                    <p className="text-sm font-medium text-gray-300">
-                        Shop the latest
-                    </p>
-
-                    <h2 className="mt-2 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white max-w-2xl mx-auto leading-tight">
-                        New finds. Everyday essentials.
+                    <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white max-w-2xl mx-auto leading-tight">
+                        20% Off Selected Phones
                     </h2>
 
                     <p className="mt-3 sm:mt-4 text-gray-200 text-sm sm:text-base max-w-md mx-auto">
-                        Discover new arrivals across tech, fashion,
-                        accessories, and more.
+                        Upgrade your everyday essentials with savings on selected smartphones.
                     </p>
 
                     <Link
-                        to="/shop?filter=new"
+                        to="/category/phones"
                         className="mt-6 sm:mt-8 inline-block bg-white text-gray-900 text-sm sm:text-base font-medium rounded-full px-7 py-3 sm:px-8 sm:py-3.5 hover:bg-gray-100 transition-colors"
                     >
-                        Shop New Arrivals
+                        Shop Phones
                     </Link>
                 </div>
             </section>

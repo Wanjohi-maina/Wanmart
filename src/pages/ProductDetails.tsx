@@ -64,9 +64,21 @@ export default function ProductDetail() {
         )
       : undefined;
 
-  // Calculate the final price by adding any storage price modifier
-  const displayPrice =
-    product.price + (selectedStorageOption?.priceModifier ?? 0);
+  const priceModifier = selectedStorageOption?.priceModifier ?? 0;
+  // Determine if the product has a discount and calculate the base price accordingly
+  const hasDiscount =
+    typeof product.discountPercent === "number" && product.discountPercent > 0;
+
+  // Calculate the display price based on the selected storage option and any applicable discount  
+  const displayPrice = hasDiscount
+    ? (product.price + priceModifier) * (1 - product.discountPercent! / 100)
+    : product.price + priceModifier;
+
+  // Calculate the original price at selection, including any storage price modifier
+  const originalPriceAtSelection = product.price + priceModifier;
+
+  // Calculate the original total price based on the original price and selected quantity
+  const originalTotal = originalPriceAtSelection * selectedQuantity;
 
   // Check if the product requires electronics variants
   const needsElectronicsVariant = product.kind === "electronics";
@@ -96,18 +108,28 @@ export default function ProductDetail() {
     if (!product) return;
     if (variantIncomplete) return;
 
-    addToCart(product, selectedQuantity, displayPrice, {
-      color: selectedColor ?? undefined,
-      storage: selectedStorage ?? undefined,
-      size: selectedSize ?? undefined,
-    }); // four arguments; product added, it's quantity, final price, selected variants
+    addToCart(product, {
+      quantity: selectedQuantity,
+      unitPrice: displayPrice,
+      variant: {
+        color: selectedColor ?? undefined,
+        storage: selectedStorage ?? undefined,
+        size: selectedSize ?? undefined,
+      },
+      originalUnitPrice: hasDiscount ? originalPriceAtSelection : undefined,
+    });
     setSelectedQuantity(1);
   }
 
   return (
     <>
       <div className="max-w-4xl mx-auto px-4 py-8 grid md:grid-cols-2 gap-8">
-        <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+        <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+          {hasDiscount && (
+            <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-sm font-semibold px-2.5 py-1 rounded">
+              -{product.discountPercent}%
+            </span>
+          )}
           <img
             src={displayImage}
             alt={product.name}
@@ -123,7 +145,7 @@ export default function ProductDetail() {
           <h1 className="text-2xl font-semibold text-gray-900 mt-3">
             {product.name}
           </h1>
-          {'brand' in product &&(
+          {"brand" in product && (
             <p className="text-sm text-gray-500 mt-1">{product.brand}</p>
           )}
           <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
@@ -145,13 +167,21 @@ export default function ProductDetail() {
                 {` · $${displayPrice.toFixed(2)} each`}
               </span>
             )}
+            {hasDiscount && (
+              <span className="ml-2 text-gray-500 line-through text-base font-normal">
+                $
+                {priceIsFinal && selectedQuantity > 1
+                  ? originalTotal.toFixed(2)
+                  : originalPriceAtSelection.toFixed(2)}
+              </span>
+            )}
             {needsElectronicsVariant && !selectedStorage && (
               <span className="text-sm text-gray-400 font-normal">
                 {" (starting price)"}
               </span>
             )}
           </p>
-          
+
           {product.highlights.length > 0 && (
             <ul className="mt-4 list-disc space-y-1.5 pl-5 text-sm text-gray-700">
               {product.highlights.map((highlight, index) => (
@@ -159,7 +189,7 @@ export default function ProductDetail() {
               ))}
             </ul>
           )}
-          
+
           {/* Only show color and storage options for electronics */}
           {needsElectronicsVariant && (
             <>
@@ -275,17 +305,21 @@ export default function ProductDetail() {
           </button>
         </div>
       </div>
-      
+
       <section className="max-w-4xl mx-auto px-4 py-8 border-t border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Product Overview</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">
+          Product Overview
+        </h2>
         <p className="text-gray-600">{product.description}</p>
       </section>
 
       {product.specifications.length > 0 && (
         <section className="max-w-4xl mx-auto px-4 py-8 border-t border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Specifications</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            Specifications
+          </h2>
           <dl className="divide-y divide-gray-100">
-            {product.specifications.map((spec)=> (
+            {product.specifications.map((spec) => (
               <div key={spec.label} className="flex py-2 text-sm">
                 <dt className="w-40 shrink-0 text-gray-500">{spec.label}</dt>
                 <dd className="text-gray-800">{spec.value}</dd>

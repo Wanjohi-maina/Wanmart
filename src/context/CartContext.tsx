@@ -15,14 +15,16 @@ type CartVariant = {
   size?: string;
 };
 
+type AddToCartOptions = {
+  quantity?: number;
+  unitPrice?: number;
+  variant?: CartVariant;
+  originalUnitPrice?: number;
+};
+
 type CartContextValue = {
   items: CartItem[];
-  addToCart: (
-    product: Product,
-    quantity?: number,
-    unitPrice?: number,
-    variant?: CartVariant,
-  ) => void;
+  addToCart: (product: Product, options?: AddToCartOptions) => void;
   removeFromCart: (productId: string, variant?: CartVariant) => void;
   updateQuantity: (
     productId: string,
@@ -78,12 +80,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }, 2000);
   }
 
-  function addToCart(
-    product: Product,
-    quantity: number = 1,
-    unitPrice: number = product.price,
-    variant?: CartVariant,
-  ) {
+  function addToCart(product: Product, options: AddToCartOptions = {}) {
+    const {
+      quantity = 1,
+      unitPrice = product.price,
+      variant,
+      originalUnitPrice,
+    } = options;
     setItems((prevItems) => {
       // Create a unique key based on the product and selected variants
       const key = getCartItemKey(product.id, variant);
@@ -106,6 +109,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           product,
           quantity,
           unitPrice,
+          originalUnitPrice,
           selectedColor: variant?.color,
           selectedStorage: variant?.storage,
           selectedSize: variant?.size,

@@ -16,7 +16,7 @@ type UseProductsResult = {
 export function useProducts(options: UseProductsOptions = {}): UseProductsResult {
     const { searchQuery, categorySlug, sort } = options // Destructure the options object to extract searchQuery and categorySlug, providing default values if they are not provided
 
-    const data = useMemo(() => { // Use useMemo to memoize the filtered products based on searchQuery and categorySlug, so that the filtering logic is only re-executed when these dependencies change
+    const data = useMemo(() => { // Use useMemo to memoize the filtered products based on searchQuery, categorySlug, and sort, so that the filtering logic is only re-executed when these dependencies change
         let result = mockProducts // Start with the full list of mock products
 
         if (searchQuery && searchQuery.trim() !== '') { // Check if a search query is provided and is not just whitespace
@@ -39,7 +39,7 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
             result = result.filter((product) => product.featured) // If the sort option is 'featured', filter the products to include only those that are marked as featured
         }
 
-        return result // Return the filtered list of products based on the search query and category slug
+        return result // Return the filtered list of products based on the search query, category slug, and sort option
     }, [searchQuery, categorySlug, sort])
 
     return { data } 
