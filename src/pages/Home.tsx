@@ -195,7 +195,7 @@ export default function Home() {
 
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-8">
             <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
                 <Sparkles className="h-5 w-5 text-gray-900" />
               </div>
 
@@ -209,7 +209,7 @@ export default function Home() {
               </p>
             </div>
             <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
                 <ShoppingBag className="h-5 w-5 text-gray-900" />
               </div>
 
@@ -223,7 +223,7 @@ export default function Home() {
               </p>
             </div>
             <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
                 <ShieldCheck className="h-5 w-5 text-gray-900" />
               </div>
 
