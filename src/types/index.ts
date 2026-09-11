@@ -3,6 +3,7 @@ export type Category = {
   name: string;
   slug: string;
   parentId: string | null;
+  imageUrl?: string;
 };
 
 export type StorageOption = {
@@ -29,6 +30,7 @@ type BaseProduct = {
   rating: number;
   reviewCount: number;
   featured: boolean;
+  dateAdded: string;
 };
 
 export type ElectronicsProduct = BaseProduct & {

@@ -1,19 +1,19 @@
 import type { Category } from '../types'
 
 export const categories: Category[] = [
-    { id: 'electronics', name: 'Electronics', slug: 'electronics', parentId: null },
-    { id: 'phones', name: 'Phones', slug: 'phones', parentId: 'electronics' },
-    { id: 'laptops', name: 'Laptops', slug: 'laptops', parentId: 'electronics' },
+    { id: 'electronics', name: 'Electronics', slug: 'electronics', parentId: null, imageUrl: '/categories/electronics.webp' },
+    { id: 'phones', name: 'Phones', slug: 'phones', parentId: 'electronics'},
+    { id: 'laptops', name: 'Laptops', slug: 'laptops', parentId: 'electronics'},
 
-    { id: 'fashion', name: 'Fashion', slug: 'fashion', parentId: null },
+    { id: 'fashion', name: 'Fashion', slug: 'fashion', parentId: null, imageUrl: '/categories/fashion.webp' },
     { id: 'clothing', name: 'Clothing', slug: 'clothing', parentId: 'fashion' },
-    { id: 'sneakers', name: 'Sneakers', slug: 'sneakers', parentId: 'fashion' },
+    { id: 'sneakers', name: 'Sneakers', slug: 'sneakers', parentId: 'fashion'},
 
-    { id: 'accessories', name: 'Accessories', slug: 'accessories', parentId: null },
-    { id: 'watches', name: 'Watches', slug: 'watches', parentId: 'accessories' },
-    { id: 'sunglasses', name: 'Sunglasses', slug: 'sunglasses', parentId: 'accessories' },
+    { id: 'accessories', name: 'Accessories', slug: 'accessories', parentId: null, imageUrl: '/categories/accessories.webp' },
+    { id: 'watches', name: 'Watches', slug: 'watches', parentId: 'accessories'},
+    { id: 'sunglasses', name: 'Sunglasses', slug: 'sunglasses', parentId: 'accessories'},
 
-    { id: 'perfumes', name: 'Perfumes', slug: 'perfumes', parentId: null },
+    { id: 'perfumes', name: 'Perfumes', slug: 'perfumes', parentId: null, imageUrl: '/categories/perfumes.webp' },
     { id: 'men-fragrance', name: 'Men Fragrances', slug: 'men-fragrance', parentId: 'perfumes' },
     { id: 'women-fragrance', name: 'Women Fragrances', slug: 'women-fragrance', parentId: 'perfumes' },
 ]

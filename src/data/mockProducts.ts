@@ -4,6 +4,7 @@ export const mockProducts: Product[] = [
   // Phones
   {
     id: "p1",
+    dateAdded: "2026-06-10",
     name: "iPhone 17",
     description:
       "Experience powerful performance and a sleek design with the iPhone 17. Featuring an advanced camera system, vibrant display, fast 5G connectivity, and all-day battery life, it delivers a smooth and reliable experience for work, entertainment, and everyday use.",
@@ -58,6 +59,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p2",
+    dateAdded: "2026-06-10",
     name: "iPhone 17 Pro",
     description:
       "The iPhone 17 Pro delivers pro-level performance with the A19 Pro chip and an advanced 48MP Pro Fusion camera system. Its 6.3-inch ProMotion display offers a smooth 120Hz experience, while the durable aluminum unibody provides a premium finish. With up to 33 hours of video playback and iOS 26 with Apple Intelligence, it’s built for demanding everyday use.",
@@ -112,6 +114,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p3",
+    dateAdded: "2026-05-20",
     name: "Samsung Galaxy S26",
     description:
       "The Samsung Galaxy S26 combines a sleek, durable design with a 6.3-inch Dynamic AMOLED 2X display and 120Hz adaptive refresh rate. Its 50MP camera system delivers detailed photos with up to 3× optical zoom, while the customized processor provides fast, smooth performance. With 12GB RAM, up to 512GB storage, and Galaxy AI features, it’s built for everyday performance and productivity.",
@@ -160,6 +163,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p4",
+    dateAdded: "2026-05-20",
     name: "Samsung Galaxy S26 Ultra",
     description:
       "The Galaxy S26 Ultra delivers flagship performance with a 6.9-inch Dynamic AMOLED 2X display and built-in Privacy Display. Its 200MP camera system offers powerful zoom and low-light photography, while the Snapdragon 8 Elite Gen 5 for Galaxy handles demanding tasks with ease. With a 5,000mAh battery, S Pen support, and Galaxy AI, it’s built for power users and creators.",
@@ -219,6 +223,7 @@ export const mockProducts: Product[] = [
   // Laptops
   {
     id: "p5",
+    dateAdded: "2026-04-15",
     name: 'MacBook Air 13" M5',
     description: `The MacBook Air 13" with M5 combines powerful performance with an ultra-portable, fanless design. Its 13.6-inch Liquid Retina display, up to 18-hour battery life, and M5 chip make it ideal for work, study, and creative tasks. It also includes Wi-Fi 7, a 12MP Center Stage camera, and Apple Intelligence.`,
     highlights: [
@@ -270,6 +275,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p6",
+    dateAdded: "2026-04-15",
     name: 'MacBook Pro 14" M5',
     description: `The MacBook Pro 14" with M5 delivers powerful performance in a compact professional laptop. Its 14.2-inch Liquid Retina XDR display with ProMotion up to 120Hz provides an exceptional viewing experience, while the M5 chip handles demanding workloads with ease. With up to 24 hours of video streaming, extensive connectivity, and Apple Intelligence, it's built for developers, creators, and professionals.`,
     highlights: [
@@ -321,6 +327,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p7",
+    dateAdded: "2026-03-01",
     name: "Dell XPS 14",
     description:
       "The Dell XPS 14 is a premium, lightweight laptop built for productivity, development, and creative work. It features a sharp 14-inch display with up to 120Hz refresh rate, modern Intel Core Ultra processors, fast LPDDR5X memory, and PCIe NVMe SSD storage.",
@@ -373,6 +380,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p8",
+    dateAdded: "2026-03-01",
     name: "ASUS ROG Zephyrus G14 (2026)",
     description:
       "The ROG Zephyrus G14 combines powerful gaming performance with an ultra-portable 14-inch design. It features an AMD Ryzen AI 9 processor, RTX 5060 graphics, and a stunning 3K 120Hz OLED display. With up to 32GB RAM and 2TB SSD storage, it's built for gaming, development, and creative work.",
@@ -424,6 +432,7 @@ export const mockProducts: Product[] = [
   // Clothing
   {
     id: "p9",
+    dateAdded: "2026-01-10",
     name: "Essentials Crewneck Tee",
     description:
       "A versatile everyday T-shirt made with a soft, comfortable fabric and a classic crewneck design. Its clean, minimal style makes it easy to pair with jeans, shorts, or layered outfits.",
@@ -453,6 +462,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p10",
+    dateAdded: "2026-01-10",
     name: "Classic Denim Jacket",
     description:
       "A timeless denim jacket featuring a versatile design that's perfect for casual, everyday wear. Its durable denim construction and classic styling make it an easy layering piece for any season.",
@@ -484,6 +494,7 @@ export const mockProducts: Product[] = [
   // Sneakers
   {
     id: "p11",
+    dateAdded: "2026-07-01",
     name: "Nike Air Force 1",
     description:
       "The Air Force 1 is a timeless sneaker with a clean, versatile design that works effortlessly with casual and everyday outfits. Its cushioned construction provides comfortable wear, while the classic silhouette keeps the look effortlessly stylish",
@@ -513,6 +524,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p12",
+    dateAdded: "2026-02-05",
     name: "Vans Hylane",
     description:
       "The Vans Hylane combines a retro-inspired skate aesthetic with a modern, comfortable design. Its low-top silhouette and signature Vans styling make it an easy choice for casual everyday outfits",
@@ -544,6 +556,7 @@ export const mockProducts: Product[] = [
   // Watches
   {
     id: "p13",
+    dateAdded: "2026-02-15",
     name: "Fossil Grant",
     description:
       "The Fossil Grant Chronograph combines classic styling with practical functionality. Its timeless design and refined details make it a versatile choice for both everyday wear and more formal occasions.",
@@ -575,6 +588,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p14",
+    dateAdded: "2026-06-25",
     name: "Seiko 5 Sports",
     description:
       "The Seiko 5 Sports combines reliable automatic movement with a sporty, versatile design. Its durable construction and bold dial make it a great everyday watch for casual and active styles.",
@@ -608,6 +622,7 @@ export const mockProducts: Product[] = [
   // Sunglasses
   {
     id: "p15",
+    dateAdded: "2026-01-20",
     name: "Ray-Ban Aviator Classic",
     description:
       "The Ray-Ban Aviator Classic is an iconic pair of sunglasses featuring the timeless aviator silhouette. Its lightweight metal frame and signature lenses provide a stylish, versatile look for everyday wear",
@@ -637,6 +652,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p16",
+    dateAdded: "2026-01-20",
     name: "Ray-Ban Wayfarer",
     description:
       "The Ray-Ban Wayfarer features an iconic rectangular frame with a timeless design. Its versatile style makes it an easy choice for everyday wear, combining classic aesthetics with comfortable, durable construction",
@@ -668,6 +684,7 @@ export const mockProducts: Product[] = [
   // Men's Fragrance
   {
     id: "p17",
+    dateAdded: "2026-07-05",
     name: "Bleu de Chanel EDP",
     description:
       "Bleu de Chanel EDP is a sophisticated men’s fragrance with a fresh, woody character. Its aromatic citrus opening develops into warm, woody notes, creating a versatile scent suitable for both everyday wear and evening occasions.",
@@ -698,6 +715,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p18",
+    dateAdded: "2026-03-15",
     name: "Dior Sauvage",
     description:
       "Dior Sauvage is a fresh, bold men’s fragrance with a distinctive citrus and woody character. Its versatile scent works well for everyday wear while adding a refined touch for evening occasions.",
@@ -730,6 +748,7 @@ export const mockProducts: Product[] = [
   // Women's Fragrance
   {
     id: "p19",
+    dateAdded: "2026-07-05",
     name: "Chanel Coco Mademoiselle EDP",
     description:
       "Chanel Coco Mademoiselle is an elegant women’s fragrance with a fresh citrus opening and a sophisticated floral-woody character. Its refined, modern scent makes it a versatile choice for both everyday wear and special occasions",
@@ -760,6 +779,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p20",
+    dateAdded: "2026-03-15",
     name: "Carolina Herrera Good Girl",
     description:
       "Carolina Herrera Good Girl is a sophisticated women’s fragrance that blends sweet, floral notes with a warm, sensual base. Its distinctive character makes it a stylish choice for evenings, special occasions, and confident everyday wear.",
