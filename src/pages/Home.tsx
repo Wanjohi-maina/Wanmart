@@ -55,7 +55,7 @@ export default function Home() {
             <div className="mt-6 sm:mt-8">
               <Link
                 to="/shop"
-                className="inline-block bg-white text-gray-900 text-sm sm:text-base font-medium rounded-full px-8 py-3 sm:px-10 sm:py-3.5 hover:bg-gray-100 transition-colors"
+                className="inline-block bg-orange-600 text-white text-sm sm:text-base font-medium rounded-full px-8 py-3 sm:px-10 sm:py-3.5 hover:bg-orange-700 transition-colors"
               >
                 Shop Now
               </Link>
@@ -144,7 +144,7 @@ export default function Home() {
 
           <Link
             to="/category/phones"
-            className="mt-6 sm:mt-8 inline-block bg-white text-gray-900 text-sm sm:text-base font-medium rounded-full px-7 py-3 sm:px-8 sm:py-3.5 hover:bg-gray-100 transition-colors"
+            className="mt-6 sm:mt-8 inline-block bg-orange-600 text-white text-sm sm:text-base font-medium rounded-full px-7 py-3 sm:px-8 sm:py-3.5 hover:bg-orange-700 transition-colors"
           >
             Shop Phones
           </Link>

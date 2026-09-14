@@ -71,11 +71,11 @@ export default function SearchBar() {
             placeholder="Search products..."
             className={`w-full rounded-full border px-3 py-1.5 pr-9 text-sm outline-none transition-colors ${
               isFocused
-                ? "border-orange-600 ring-1 ring-orange-600"
-                : "border-orange-300"
+                ? "border-gray-900 ring-1 ring-gray-900"
+                : "border-gray-300"
             }`}
           />
-          <SearchIcon className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-orange-400" />
+          <SearchIcon className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
         </div>
 
         {/* Display search results when the dropdown should be visible */}

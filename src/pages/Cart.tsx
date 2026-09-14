@@ -184,7 +184,7 @@ export default function Cart() {
                       variant,
                     )
                   } // Update the quantity of the product in the cart when the input value changes
-                  className="w-16 border border-orange-300 hover:border-orange-400 rounded-lg px-2 py-1 text-sm"
+                  className="w-16 border border-gray-300 hover:border-gray-400 rounded-lg px-2 py-1 text-sm"
                 />
                 {/* Remove this specific product variant from the cart */}
                 <button

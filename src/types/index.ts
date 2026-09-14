@@ -25,6 +25,7 @@ type BaseProduct = {
   price: number;
   discountPercent?: number;
   imageUrl: string;
+  images?: string[];
   categoryId: string;
   stock: number;
   rating: number;
@@ -41,6 +42,7 @@ export type ElectronicsProduct = BaseProduct & {
   colors: string[];
   storageOptions: StorageOption[];
   colorImages: Record<string, string>;
+  galleryByColor?: Record<string, string[]>;
 };
 
 export type ClothingProduct = BaseProduct & {

@@ -34,7 +34,7 @@ export const mockProducts: Product[] = [
     ],
     price: 799,
     discountPercent: 20,
-    imageUrl: "/products/iphone/Black-iPhone17.webp",
+    imageUrl: "/products/iphone/Black/Black-iPhone17-side.webp",
     categoryId: "phones",
     stock: 12,
     rating: 4.7,
@@ -50,12 +50,39 @@ export const mockProducts: Product[] = [
       { label: "512GB", priceModifier: 200 },
     ],
     colorImages: {
-      Black: "/products/iphone/Black-iPhone17.webp",
-      White: "/products/iphone/White-iPhone17.webp",
-      Sage: "/products/iphone/Sage-iPhone17.webp",
-      Lavender: "/products/iphone/Lavender-iPhone17.webp",
-      "Mist Blue": "/products/iphone/MistBlue-iPhone17.webp",
+      "Black": "/products/iphone/Black/Black-iPhone17-side.webp",
+      "White": "/products/iphone/White/White-iPhone17-side.webp",
+      "Sage": "/products/iphone/Sage/Sage-iPhone17-side.webp",
+      "Lavender": "/products/iphone/Lavender/Lavender-iPhone17-side.webp",
+      "Mist Blue": "/products/iphone/MistBlue/MistBlue-iPhone17-side.webp",
     },
+    galleryByColor: {
+      "Black": [
+        "/products/iphone/Black/Black-iPhone17-side.webp",
+        "/products/iphone/Black/Black-iPhone17-back.webp",
+        "/products/iphone/Black/Black-iPhone17-camera.webp",
+      ],
+      "White":[
+        "/products/iphone/White/White-iPhone17-side.webp",
+        "/products/iphone/White/White-iPhone17-back.webp",
+        "/products/iphone/White/White-iPhone17-camera.webp",
+      ],
+      "Sage":[
+        "/products/iphone/Sage/Sage-iPhone17-side.webp",
+        "/products/iphone/Sage/Sage-iPhone17-back.webp",
+        "/products/iphone/Sage/Sage-iPhone17-camera.webp",
+      ],
+      "Lavender":[
+        "/products/iphone/Lavender/Lavender-iPhone17-side.webp",
+        "/products/iphone/Lavender/Lavender-iPhone17-back.webp",
+        "/products/iphone/Lavender/Lavender-iPhone17-camera.webp",
+      ],
+      "Mist Blue":[
+        "/products/iphone/MistBlue/MistBlue-iPhone17-side.webp",
+        "/products/iphone/MistBlue/MistBlue-iPhone17-back.webp",
+        "/products/iphone/MistBlue/MistBlue-iPhone17-camera.webp",
+      ],
+    }
   },
   {
     id: "p2",

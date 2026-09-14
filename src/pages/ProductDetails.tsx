@@ -42,6 +42,8 @@ export default function ProductDetail() {
       : null,
   );
 
+  const [seletedImage, setSelectedImage] = useState<string | null>(null);
+
   if (!product) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-16 text-center text-gray-400">
@@ -50,11 +52,27 @@ export default function ProductDetail() {
     );
   }
 
-  // Display the selected color image for electronics, otherwise use the default image
-  const displayImage =
+  // Use the selected color image for electronics; otherwise use the default product image
+  const baseImage =
     product.kind === "electronics" && selectedColor
       ? product.colorImages[selectedColor]
       : product.imageUrl;
+
+  // Get the gallery images for the selected color, or fall back to the product's general images
+  const galleryForSelection: string[] =
+    product.kind === "electronics" && selectedColor
+      ? (product.galleryByColor?.[selectedColor] ?? [baseImage])
+      : (product.images ?? [baseImage]);
+
+  // Put the base image first and remove any duplicate of it
+  const gallery = [
+    baseImage,
+    ...galleryForSelection.filter((img) => img !== baseImage),
+  ];
+
+  // Keep the selected image only if it still exists in the current gallery; otherwise show the base image
+  const displayImage =
+    seletedImage && gallery.includes(seletedImage) ? seletedImage : baseImage;
 
   // Find the storage option selected by the user
   const selectedStorageOption =
@@ -69,7 +87,7 @@ export default function ProductDetail() {
   const hasDiscount =
     typeof product.discountPercent === "number" && product.discountPercent > 0;
 
-  // Calculate the display price based on the selected storage option and any applicable discount  
+  // Calculate the display price based on the selected storage option and any applicable discount
   const displayPrice = hasDiscount
     ? (product.price + priceModifier) * (1 - product.discountPercent! / 100)
     : product.price + priceModifier;
@@ -104,6 +122,27 @@ export default function ProductDetail() {
     setSelectedQuantity((qty) => qty + 1);
   }
 
+  function handleColorSelect(color: string) {
+    setSelectedColor(color);
+    setSelectedImage(null);
+  }
+
+  function handleThumbnailKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+
+    e.preventDefault();
+
+    const currentIndex = gallery.indexOf(displayImage);
+    if (currentIndex === -1) return;
+
+    const nextIndex =
+      e.key === "ArrowRight"
+        ? Math.min(currentIndex + 1, gallery.length - 1)
+        : Math.max(currentIndex - 1, 0);
+
+    setSelectedImage(gallery[nextIndex]);
+  }
+
   function handleAddToCart() {
     if (!product) return;
     if (variantIncomplete) return;
@@ -123,20 +162,52 @@ export default function ProductDetail() {
 
   return (
     <>
-      <div className="max-w-4xl mx-auto px-4 py-8 grid md:grid-cols-2 gap-8">
-        <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
-          {hasDiscount && (
-            <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-sm font-semibold px-2.5 py-1 rounded">
-              -{product.discountPercent}%
-            </span>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-12 grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
+        <div>
+          <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+            {hasDiscount && (
+              <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-sm font-semibold px-2.5 py-1 rounded">
+                -{product.discountPercent}%
+              </span>
+            )}
+            <img
+              src={displayImage}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {gallery.length > 1 && (
+            <div
+              role="listbox"
+              aria-label="Product images"
+              tabIndex={0}
+              onKeyDown={handleThumbnailKeyDown}
+              className="mt-3 flex gap-2 overflow-x-auto pb-1 outline-none focus-visible:ring-2 focus-visible:ring-gray-900 rounded-md"
+            >
+              {gallery.map((img, i) => (
+                <button
+                  key={img}
+                  type="button"
+                  role="option"
+                  aria-selected={displayImage === img}
+                  onClick={() => setSelectedImage(img)}
+                  aria-label={`View image ${i + 1}`}
+                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-md overflow-hidden border-2 shrink-0 ${
+                    displayImage === img
+                      ? "border-gray-900"
+                      : "border-transparent hover:border-gray-300"
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
           )}
-          <img
-            src={displayImage}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
         </div>
-
         <div>
           <Link to="/" className="text-sm text-gray-500 hover:underline">
             ← Back to shopping
@@ -204,11 +275,11 @@ export default function ProductDetail() {
                     <button
                       key={color}
                       type="button"
-                      onClick={() => setSelectedColor(color)} // Update the selected color when clicked
+                      onClick={() => handleColorSelect(color)} // Update the selected color when clicked
                       className={`px-3 py-1.5 text-sm rounded-full border ${
                         selectedColor === color
-                          ? "border-orange-600 bg-orange-600 text-white"
-                          : "border-orange-300 text-gray-700 hover:border-orange-400"
+                          ? "border-gray-900 bg-gray-900 text-white"
+                          : "border-gray-300 text-gray-700 hover:border-gray-400"
                       }`}
                     >
                       {color}
@@ -232,8 +303,8 @@ export default function ProductDetail() {
                       onClick={() => setSelectedStorage(option.label)} // Update the selected storage when clicked
                       className={`px-3 py-1.5 text-sm rounded-full border ${
                         selectedStorage === option.label
-                          ? "border-orange-600 bg-orange-600 text-white"
-                          : "border-orange-300 text-gray-700 hover:border-orange-400"
+                          ? "border-gray-900 bg-gray-900 text-white"
+                          : "border-gray-300 text-gray-700 hover:border-gray-400"
                       }`}
                     >
                       {option.label}
@@ -262,8 +333,8 @@ export default function ProductDetail() {
                     onClick={() => setSelectedSize(size)} // Set the selected size when the user clicks a size
                     className={`px-3 py-1.5 text-sm rounded-full border ${
                       selectedSize === size
-                        ? "border-orange-600 bg-orange-600 text-white"
-                        : "border-orange-300 text-gray-700 hover:border-orange-400"
+                        ? "border-gray-600 bg-gray-600 text-white"
+                        : "border-gray-300 text-gray-700 hover:border-gray-400"
                     }`}
                   >
                     {size}
@@ -273,7 +344,7 @@ export default function ProductDetail() {
             </div>
           )}
 
-          <div className="mt-6 flex items-center gap-2 border border-orange-300 rounded-full w-fit">
+          <div className="mt-6 flex items-center gap-2 border border-gray-300 rounded-full w-fit">
             <button
               type="button"
               onClick={handleDecrease}
