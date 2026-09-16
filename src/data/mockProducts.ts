@@ -134,7 +134,7 @@ export const mockProducts: Product[] = [
       { label: "1TB", priceModifier: 400 },
     ],
     colorImages: {
-      Silver: "/products/iphone/Silver-iPhone17Pro.webp",
+      "Silver": "/products/iphone/Silver-iPhone17Pro.webp",
       "Cosmic Orange": "/products/iphone/CosmicOrange-iPhone17Pro.webp",
       "Deep Blue": "/products/iphone/DeepBlue-iPhone17Pro.webp",
     },
@@ -241,8 +241,8 @@ export const mockProducts: Product[] = [
     ],
     colorImages: {
       "Cobalt Violet": "/products/samsung/CobaltViolet-SamsungS26Ultra.webp",
-      Black: "/products/samsung/Black-SamsungS26Ultra.webp",
-      White: "/products/samsung/White-SamsungS26Ultra.webp",
+      "Black": "/products/samsung/Black-SamsungS26Ultra.webp",
+      "White": "/products/samsung/White-SamsungS26Ultra.webp",
       "Sky Blue": "/products/samsung/SkyBlue-SamsungS26Ultra.webp",
     },
   },
@@ -294,9 +294,9 @@ export const mockProducts: Product[] = [
       { label: "2TB SSD", priceModifier: 800 },
     ],
     colorImages: {
-      Silver: "/products/macbook/Silver-MacBookAir.webp",
-      Midnight: "/products/macbook/Midnight-MacBookAir.webp",
-      Starlight: "/products/macbook/Starlight-MacBookAir.webp",
+      "Silver": "/products/macbook/Silver-MacBookAir.webp",
+      "Midnight": "/products/macbook/Midnight-MacBookAir.webp",
+      "Starlight": "/products/macbook/Starlight-MacBookAir.webp",
       "Sky Blue": "/products/macbook/SkyBlue-MacBookAir.webp",
     },
   },
@@ -348,7 +348,7 @@ export const mockProducts: Product[] = [
       { label: "4TB SSD", priceModifier: 1500 },
     ],
     colorImages: {
-      Silver: "/products/macbook/Silver-MacBookPro.webp",
+      "Silver": "/products/macbook/Silver-MacBookPro.webp",
       "Space Black": "/products/macbook/SpaceBlack-MacBookPro.webp",
     },
   },
@@ -402,7 +402,7 @@ export const mockProducts: Product[] = [
       { label: "2TB SSD", priceModifier: 1250 },
     ],
     colorImages: {
-      Graphite: "/products/XPS-Dell.webp",
+      "Graphite": "/products/XPS-Dell.webp",
     },
   },
   {

@@ -127,20 +127,25 @@ export default function ProductDetail() {
     setSelectedImage(null);
   }
 
+  // Handle left and right arrow keys for navigating the image gallery
   function handleThumbnailKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    // Ignore all keys except the left and right arrow keys
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
 
-    e.preventDefault();
+    e.preventDefault(); // Ignore all keys except the left and right arrow keys
 
+    // Find the index of the currently displayed image
     const currentIndex = gallery.indexOf(displayImage);
-    if (currentIndex === -1) return;
 
+    if (currentIndex === -1) return; // Stop if the displayed image isn't found in the gallery
+
+    // Move forward with Right Arrow or backward with Left Arrow, while staying within the gallery's first and last indexes
     const nextIndex =
       e.key === "ArrowRight"
         ? Math.min(currentIndex + 1, gallery.length - 1)
         : Math.max(currentIndex - 1, 0);
 
-    setSelectedImage(gallery[nextIndex]);
+    setSelectedImage(gallery[nextIndex]); // Display the image at the new index
   }
 
   function handleAddToCart() {
@@ -213,13 +218,13 @@ export default function ProductDetail() {
             ← Back to shopping
           </Link>
 
-          <h1 className="text-2xl font-semibold text-gray-900 mt-3">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 mt-3">
             {product.name}
           </h1>
           {"brand" in product && (
             <p className="text-sm text-gray-500 mt-1">{product.brand}</p>
           )}
-          <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+          <div className="flex items-center gap-2 mt-1 text-xs sm:text-sm text-gray-500">
             <span>★★★★★ {product.rating.toFixed(1)}</span>
             <span>({product.reviewCount} reviews)</span>
             <span>·</span>
@@ -228,7 +233,7 @@ export default function ProductDetail() {
             </span>
           </div>
 
-          <p className="text-xl text-gray-800 mt-2">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-800 mt-2">
             $
             {priceIsFinal && selectedQuantity > 1
               ? totalPrice.toFixed(2)
@@ -239,7 +244,7 @@ export default function ProductDetail() {
               </span>
             )}
             {hasDiscount && (
-              <span className="ml-2 text-gray-500 line-through text-base font-normal">
+              <span className="ml-2 text-gray-500 line-through text-sm sm:text-base font-normal">
                 $
                 {priceIsFinal && selectedQuantity > 1
                   ? originalTotal.toFixed(2)
@@ -247,7 +252,7 @@ export default function ProductDetail() {
               </span>
             )}
             {needsElectronicsVariant && !selectedStorage && (
-              <span className="text-sm text-gray-400 font-normal">
+              <span className="text-xs sm:text-sm text-gray-400 font-normal">
                 {" (starting price)"}
               </span>
             )}
@@ -264,7 +269,7 @@ export default function ProductDetail() {
           {/* Only show color and storage options for electronics */}
           {needsElectronicsVariant && (
             <>
-              <div className="mt-6">
+              <div className="mt-5 sm:mt-6">
                 <p className="text-sm font-medium text-gray-800 mb-2">
                   Color{selectedColor ? `: ${selectedColor}` : ""}
                 </p>
@@ -319,7 +324,7 @@ export default function ProductDetail() {
 
           {/* Only show the size selector for products that require a size */}
           {needsSize && (
-            <div className="mt-6">
+            <div className="mt-5 sm:mt-6">
               <p className="text-sm font-medium text-gray-800 mb-2">
                 Size{selectedSize ? `: ${selectedSize}` : ""}
               </p>
@@ -344,7 +349,7 @@ export default function ProductDetail() {
             </div>
           )}
 
-          <div className="mt-6 flex items-center gap-2 border border-gray-300 rounded-full w-fit">
+          <div className="mt-5 sm:mt-6 flex items-center gap-2 border border-gray-300 rounded-full w-fit">
             <button
               type="button"
               onClick={handleDecrease}
@@ -370,39 +375,40 @@ export default function ProductDetail() {
             type="button"
             onClick={handleAddToCart}
             disabled={variantIncomplete}
-            className="mt-6 w-full bg-orange-600 text-white rounded-full py-2.5 hover:bg-orange-700 transition-colors disabled:cursor-not-allowed disabled:bg-orange-200"
+            className="mt-6 w-full bg-orange-600 text-white text-sm sm:text-base rounded-full py-2.5 sm:py-3 hover:bg-orange-700 transition-colors disabled:cursor-not-allowed disabled:bg-orange-200"
           >
             {variantIncomplete ? "Select options" : "Add to Cart"}
           </button>
         </div>
       </div>
-
-      <section className="max-w-4xl mx-auto px-4 py-8 border-t border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">
-          Product Overview
-        </h2>
-        <p className="text-gray-600">{product.description}</p>
-      </section>
-
-      {product.specifications.length > 0 && (
-        <section className="max-w-4xl mx-auto px-4 py-8 border-t border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">
-            Specifications
+      <div>
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 border-t border-gray-200">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
+            Product Overview
           </h2>
-          <dl className="divide-y divide-gray-100">
-            {product.specifications.map((spec) => (
-              <div key={spec.label} className="flex py-2 text-sm">
-                <dt className="w-40 shrink-0 text-gray-500">{spec.label}</dt>
-                <dd className="text-gray-800">{spec.value}</dd>
-              </div>
-            ))}
-          </dl>
+          <p className="text-sm sm:text-base text-gray-600">{product.description}</p>
         </section>
-      )}
+
+        {product.specifications.length > 0 && (
+          <section className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 border-t border-gray-200">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
+              Specifications
+            </h2>
+            <dl className="divide-y divide-gray-100">
+              {product.specifications.map((spec) => (
+                <div key={spec.label} className="flex py-2 text-sm">
+                  <dt className="w-40 shrink-0 text-gray-500">{spec.label}</dt>
+                  <dd className="text-gray-800">{spec.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+      </div>
 
       {relatedProducts.length > 0 && (
-        <section className="max-w-6xl mx-auto px-4 py-12 border-t border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12 border-t border-gray-200">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-5 sm:mb-6">
             You might also like
           </h2>
           <ProductGrid products={relatedProducts} />
