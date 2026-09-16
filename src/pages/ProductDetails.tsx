@@ -338,7 +338,7 @@ export default function ProductDetail() {
                     onClick={() => setSelectedSize(size)} // Set the selected size when the user clicks a size
                     className={`px-3 py-1.5 text-sm rounded-full border ${
                       selectedSize === size
-                        ? "border-gray-600 bg-gray-600 text-white"
+                        ? "border-gray-900 bg-gray-900 text-white"
                         : "border-gray-300 text-gray-700 hover:border-gray-400"
                     }`}
                   >
