@@ -127,7 +127,7 @@ export default function Home() {
       {/* Promotional Banner */}
       <section className="relative bg-gray-900 overflow-hidden">
         <img
-          src="/products/iphone/iphone-17G.webp"
+          src="/products/iphone/iPhone17/iphone-17G.webp"
           alt="Iphone 17 Promotional Banner"
           className="absolute inset-0 h-full w-full object-cover opacity-40"
         />

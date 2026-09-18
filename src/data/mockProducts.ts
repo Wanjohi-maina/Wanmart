@@ -34,7 +34,7 @@ export const mockProducts: Product[] = [
     ],
     price: 799,
     discountPercent: 20,
-    imageUrl: "/products/iphone/Black/Black-iPhone17-side.webp",
+    imageUrl: "/products/iphone/iPhone17/Black/Black-iPhone17-side.webp",
     categoryId: "phones",
     stock: 12,
     rating: 4.7,
@@ -50,74 +50,98 @@ export const mockProducts: Product[] = [
       { label: "512GB", priceModifier: 200 },
     ],
     colorImages: {
-      "Black": "/products/iphone/Black/Black-iPhone17-side.webp",
-      "White": "/products/iphone/White/White-iPhone17-side.webp",
-      "Sage": "/products/iphone/Sage/Sage-iPhone17-side.webp",
-      "Lavender": "/products/iphone/Lavender/Lavender-iPhone17-side.webp",
-      "Mist Blue": "/products/iphone/MistBlue/MistBlue-iPhone17-side.webp",
+      Black: "/products/iphone/iPhone17/Black/Black-iPhone17-side.webp",
+      White: "/products/iphone/iPhone17/White/White-iPhone17-side.webp",
+      Sage: "/products/iphone/iPhone17/Sage/Sage-iPhone17-side.webp",
+      Lavender:
+        "/products/iphone/iPhone17/Lavender/Lavender-iPhone17-side.webp",
+      "Mist Blue":
+        "/products/iphone/iPhone17/MistBlue/MistBlue-iPhone17-side.webp",
     },
     galleryByColor: {
-      "Black": [
-        "/products/iphone/Black/Black-iPhone17-side.webp",
-        "/products/iphone/Black/Black-iPhone17-back.webp",
-        "/products/iphone/Black/Black-iPhone17-camera.webp",
+      Black: [
+        "/products/iphone/iPhone17/Black/Black-iPhone17-side.webp",
+        "/products/iphone/iPhone17/Black/Black-iPhone17-back.webp",
+        "/products/iphone/iPhone17/Black/Black-iPhone17-camera.webp",
       ],
-      "White":[
-        "/products/iphone/White/White-iPhone17-side.webp",
-        "/products/iphone/White/White-iPhone17-back.webp",
-        "/products/iphone/White/White-iPhone17-camera.webp",
+      White: [
+        "/products/iphone/iPhone17/White/White-iPhone17-side.webp",
+        "/products/iphone/iPhone17/White/White-iPhone17-back.webp",
+        "/products/iphone/iPhone17/White/White-iPhone17-camera.webp",
       ],
-      "Sage":[
-        "/products/iphone/Sage/Sage-iPhone17-side.webp",
-        "/products/iphone/Sage/Sage-iPhone17-back.webp",
-        "/products/iphone/Sage/Sage-iPhone17-camera.webp",
+      Sage: [
+        "/products/iphone/iPhone17/Sage/Sage-iPhone17-side.webp",
+        "/products/iphone/iPhone17/Sage/Sage-iPhone17-back.webp",
+        "/products/iphone/iPhone17/Sage/Sage-iPhone17-camera.webp",
       ],
-      "Lavender":[
-        "/products/iphone/Lavender/Lavender-iPhone17-side.webp",
-        "/products/iphone/Lavender/Lavender-iPhone17-back.webp",
-        "/products/iphone/Lavender/Lavender-iPhone17-camera.webp",
+      Lavender: [
+        "/products/iphone/iPhone17/Lavender/Lavender-iPhone17-side.webp",
+        "/products/iphone/iPhone17/Lavender/Lavender-iPhone17-back.webp",
+        "/products/iphone/iPhone17/Lavender/Lavender-iPhone17-camera.webp",
       ],
-      "Mist Blue":[
-        "/products/iphone/MistBlue/MistBlue-iPhone17-side.webp",
-        "/products/iphone/MistBlue/MistBlue-iPhone17-back.webp",
-        "/products/iphone/MistBlue/MistBlue-iPhone17-camera.webp",
+      "Mist Blue": [
+        "/products/iphone/iPhone17/MistBlue/MistBlue-iPhone17-side.webp",
+        "/products/iphone/iPhone17/MistBlue/MistBlue-iPhone17-back.webp",
+        "/products/iphone/iPhone17/MistBlue/MistBlue-iPhone17-camera.webp",
       ],
-    }
+    },
   },
   {
     id: "p2",
-    dateAdded: "2026-06-10",
-    name: "iPhone 17 Pro",
+    dateAdded: "2026-09-18",
+    name: "iPhone 18 Pro",
     description:
-      "The iPhone 17 Pro delivers pro-level performance with the A19 Pro chip and an advanced 48MP Pro Fusion camera system. Its 6.3-inch ProMotion display offers a smooth 120Hz experience, while the durable aluminum unibody provides a premium finish. With up to 33 hours of video playback and iOS 26 with Apple Intelligence, it’s built for demanding everyday use.",
+      "The iPhone 18 Pro delivers pro-level performance with the A20 Pro chip and an advanced 48MP Pro Fusion camera system with variable aperture. Its 6.3-inch ProMotion display offers a smooth 120Hz experience, while the aluminum unibody provides a premium finish. With up to 36 hours of video playback and iOS 27 with Apple Intelligence and Siri AI, it’s built for demanding everyday use.",
     highlights: [
       "6.3-inch ProMotion display up to 120Hz",
-      "48MP Pro Fusion camera system",
-      "Up to 8× optical-quality zoom",
+      "48MP Pro Fusion camera system with variable aperture",
+      "48MP Fusion Ultra Wide camera",
+      "48MP Fusion Telephoto camera with 4× optical zoom",
       "18MP Center Stage front camera",
-      "A19 Pro chip with 6-core GPU",
-      "Up to 33 hours of video playback",
+      "A20 Pro chip with 7-core GPU",
+      "Up to 36 hours of video playback",
       "Aluminum unibody design",
-      "256GB, 512GB or 1TB storage",
-      "Ceramic Shield 2 front",
-      "iOS 26 + Apple Intelligence",
+      "256GB, 512GB, 1TB or 2TB storage",
+      "Ceramic Shield 2 front and back",
+      "iOS 27 + Apple Intelligence and Siri AI",
     ],
     specifications: [
-      { label: "Display", value: "6.3-inch Super Retina XDR, ProMotion 120Hz" },
-      { label: "Chip", value: "A19 Pro" },
+      {
+        label: "Display",
+        value: "6.3-inch Super Retina XDR, ProMotion up to 120Hz",
+      },
+      { label: "Chip", value: "A20 Pro" },
       {
         label: "Rear camera",
-        value: "48MP Pro Fusion, up to 8× optical-quality zoom",
+        value: "48MP Pro Fusion system with variable aperture",
       },
-      { label: "Front camera", value: "18MP Center Stage" },
-      { label: "Battery", value: "Up to 33 hours video playback" },
-      { label: "Weight", value: "206g" },
-      { label: "Build", value: "Aluminum unibody, Ceramic Shield 2 front" },
-      { label: "Connectivity", value: "5G, Wi-Fi 7, Bluetooth 6" },
-      { label: "OS", value: "iOS 26" },
+      {
+        label: "Front camera",
+        value: "18MP Center Stage",
+      },
+      {
+        label: "Battery",
+        value: "Up to 36 hours video playback",
+      },
+      {
+        label: "Weight",
+        value: "211g",
+      },
+      {
+        label: "Build",
+        value: "Aluminum unibody, Ceramic Shield 2 front and back",
+      },
+      {
+        label: "Connectivity",
+        value: "5G, Wi-Fi 7, Bluetooth 6",
+      },
+      {
+        label: "OS",
+        value: "iOS 27",
+      },
     ],
-    price: 1099,
-    imageUrl: "/products/iphone/Silver-iPhone17Pro.webp",
+    price: 1199,
+    imageUrl: "/products/iphone/iPhone18Pro/Silver/Silver-iPhone18Pro.webp",
     categoryId: "phones",
     stock: 12,
     rating: 4.7,
@@ -127,16 +151,40 @@ export const mockProducts: Product[] = [
     brand: "Apple",
     warrantyMonths: 12,
     condition: "new",
-    colors: ["Silver", "Cosmic Orange", "Deep Blue"],
+    colors: ["Silver", "Black", "Glacier", "Burgundy"],
     storageOptions: [
       { label: "256GB", priceModifier: 0 },
       { label: "512GB", priceModifier: 200 },
-      { label: "1TB", priceModifier: 400 },
+      { label: "1TB", priceModifier: 600 },
     ],
     colorImages: {
-      "Silver": "/products/iphone/Silver-iPhone17Pro.webp",
-      "Cosmic Orange": "/products/iphone/CosmicOrange-iPhone17Pro.webp",
-      "Deep Blue": "/products/iphone/DeepBlue-iPhone17Pro.webp",
+      Silver: "/products/iphone/iPhone18Pro/Silver/Silver-iPhone18Pro.webp",
+      Black: "/products/iphone/iPhone18Pro/Black/Black-iPhone18Pro.webp",
+      Glacier: "/products/iphone/iPhone18Pro/Glacier/Glacier-iPhone18Pro.webp",
+      Burgundy:
+        "/products/iphone/iPhone18Pro/Burgundy/Burgundy-iPhone18Pro.webp",
+    },
+    galleryByColor: {
+      Silver: [
+        "/products/iphone/iPhone18Pro/Silver/Silver-iPhone18Pro.webp",
+        "/products/iphone/iPhone18Pro/Silver/Silver-iPhone18Pro-back.webp",
+        "/products/iphone/iPhone18Pro/Silver/Silver-iPhone18Pro-camera.webp",
+      ],
+      Black: [
+        "/products/iphone/iPhone18Pro/Black/Black-iPhone18Pro.webp",
+        "/products/iphone/iPhone18Pro/Black/Black-iPhone18Pro-back.webp",
+        "/products/iphone/iPhone18Pro/Black/Black-iPhone18Pro-camera.webp",
+      ],
+      Glacier: [
+        "/products/iphone/iPhone18Pro/Glacier/Glacier-iPhone18Pro.webp",
+        "/products/iphone/iPhone18Pro/Glacier/Glacier-iPhone18Pro-back.webp",
+        "/products/iphone/iPhone18Pro/Glacier/Glacier-iPhone18Pro-camera.webp",
+      ],
+      Burgundy: [
+        "/products/iphone/iPhone18Pro/Burgundy/Burgundy-iPhone18Pro.webp",
+        "/products/iphone/iPhone18Pro/Burgundy/Burgundy-iPhone18Pro-back.webp",
+        "/products/iphone/iPhone18Pro/Burgundy/Burgundy-iPhone18Pro-camera.webp",
+      ],
     },
   },
   {
@@ -169,7 +217,7 @@ export const mockProducts: Product[] = [
     ],
     price: 899,
     discountPercent: 20,
-    imageUrl: "/products/samsung/SamsungS26.webp",
+    imageUrl: "/products/samsung/S26/CobaltViolet/CobaltViolet-SamsungS26.webp",
     categoryId: "phones",
     stock: 8,
     rating: 4.5,
@@ -179,13 +227,39 @@ export const mockProducts: Product[] = [
     brand: "Samsung",
     warrantyMonths: 12,
     condition: "new",
-    colors: ["Cobalt Violet"],
+    colors: ["Cobalt Violet", "Black", "White", "Sky Blue"],
     storageOptions: [
       { label: "256GB", priceModifier: 0 },
       { label: "512GB", priceModifier: 200 },
     ],
     colorImages: {
-      "Cobalt Violet": "/products/samsung/SamsungS26.webp",
+      "Cobalt Violet":
+        "/products/samsung/S26/CobaltViolet/CobaltViolet-SamsungS26.webp",
+      Black: "/products/samsung/S26/Black/Black-SamsungS26.webp",
+      White: "/products/samsung/S26/White/White-SamsungS26.webp",
+      "Sky Blue": "/products/samsung/S26/SkyBlue/SkyBlue-SamsungS26.webp",
+    },
+    galleryByColor: {
+      "Cobalt Violet": [
+        "/products/samsung/S26/CobaltViolet/CobaltViolet-SamsungS26.webp",
+        "/products/samsung/S26/CobaltViolet/CobaltViolet-SamsungS26-side.webp",
+        "/products/samsung/S26/CobaltViolet/CobaltViolet-SamsungS26-back.webp",
+      ],
+      Black: [
+        "/products/samsung/S26/Black/Black-SamsungS26.webp",
+        "/products/samsung/S26/Black/Black-SamsungS26-side.webp",
+        "/products/samsung/S26/Black/Black-SamsungS26-back.webp",
+      ],
+      White: [
+        "/products/samsung/S26/White/White-SamsungS26.webp",
+        "/products/samsung/S26/White/White-SamsungS26-side.webp",
+        "/products/samsung/S26/White/White-SamsungS26-back.webp",
+      ],
+      "Sky Blue": [
+        "/products/samsung/S26/SkyBlue/SkyBlue-SamsungS26.webp",
+        "/products/samsung/S26/SkyBlue/SkyBlue-SamsungS26-side.webp",
+        "/products/samsung/S26/SkyBlue/SkyBlue-SamsungS26-back.webp",
+      ],
     },
   },
   {
@@ -223,7 +297,8 @@ export const mockProducts: Product[] = [
       { label: "OS", value: "Android 16, One UI 8.5, Galaxy AI" },
     ],
     price: 1299,
-    imageUrl: "/products/samsung/CobaltViolet-SamsungS26Ultra.webp",
+    imageUrl:
+      "/products/samsung/S26Ultra/CobaltViolet/CobaltViolet-SamsungS26Ultra.webp",
     categoryId: "phones",
     stock: 8,
     rating: 4.5,
@@ -240,10 +315,34 @@ export const mockProducts: Product[] = [
       { label: "1TB", priceModifier: 500 },
     ],
     colorImages: {
-      "Cobalt Violet": "/products/samsung/CobaltViolet-SamsungS26Ultra.webp",
-      "Black": "/products/samsung/Black-SamsungS26Ultra.webp",
-      "White": "/products/samsung/White-SamsungS26Ultra.webp",
-      "Sky Blue": "/products/samsung/SkyBlue-SamsungS26Ultra.webp",
+      "Cobalt Violet":
+        "/products/samsung/S26Ultra/CobaltViolet/CobaltViolet-SamsungS26Ultra.webp",
+      Black: "/products/samsung/S26Ultra/Black/Black-SamsungS26Ultra.webp",
+      White: "/products/samsung/S26Ultra/White/White-SamsungS26Ultra.webp",
+      "Sky Blue":
+        "/products/samsung/S26Ultra/SkyBlue/SkyBlue-SamsungS26Ultra.webp",
+    },
+    galleryByColor: {
+      "Cobalt Violet": [
+        "/products/samsung/S26Ultra/CobaltViolet/CobaltViolet-SamsungS26Ultra.webp",
+        "/products/samsung/S26Ultra/CobaltViolet/CobaltViolet-SamsungS26Ultra-side.webp",
+        "/products/samsung/S26Ultra/CobaltViolet/CobaltViolet-SamsungS26Ultra-back.webp",
+      ],
+      Black: [
+        "/products/samsung/S26Ultra/Black/Black-SamsungS26Ultra.webp",
+        "/products/samsung/S26Ultra/Black/Black-SamsungS26Ultra-side.webp",
+        "/products/samsung/S26Ultra/Black/Black-SamsungS26Ultra-back.webp",
+      ],
+      White: [
+        "/products/samsung/S26Ultra/White/White-SamsungS26Ultra.webp",
+        "/products/samsung/S26Ultra/White/White-SamsungS26Ultra-side.webp",
+        "/products/samsung/S26Ultra/White/White-SamsungS26Ultra-back.webp",
+      ],
+      "Sky Blue": [
+        "/products/samsung/S26Ultra/SkyBlue/SkyBlue-SamsungS26Ultra.webp",
+        "/products/samsung/S26Ultra/SkyBlue/SkyBlue-SamsungS26Ultra-side.webp",
+        "/products/samsung/S26Ultra/SkyBlue/SkyBlue-SamsungS26Ultra-back.webp",
+      ],
     },
   },
 
@@ -277,7 +376,7 @@ export const mockProducts: Product[] = [
       { label: "OS", value: "macOS Tahoe" },
     ],
     price: 1299,
-    imageUrl: "/products/macbook/Silver-MacBookAir.webp",
+    imageUrl: "/products/macbook/MacBookAir/Silver/Silver-MacBookAir.webp",
     categoryId: "laptops",
     stock: 5,
     rating: 4.8,
@@ -294,10 +393,39 @@ export const mockProducts: Product[] = [
       { label: "2TB SSD", priceModifier: 800 },
     ],
     colorImages: {
-      "Silver": "/products/macbook/Silver-MacBookAir.webp",
-      "Midnight": "/products/macbook/Midnight-MacBookAir.webp",
-      "Starlight": "/products/macbook/Starlight-MacBookAir.webp",
-      "Sky Blue": "/products/macbook/SkyBlue-MacBookAir.webp",
+      Silver: "/products/macbook/MacBookAir/Silver/Silver-MacBookAir.webp",
+      Midnight:
+        "/products/macbook/MacBookAir/Midnight/Midnight-MacBookAir.webp",
+      Starlight:
+        "/products/macbook/MacBookAir/Starlight/Starlight-MacBookAir.webp",
+      "Sky Blue":
+        "/products/macbook/MacBookAir/SkyBlue/SkyBlue-MacBookAir.webp",
+    },
+    galleryByColor: {
+      Silver: [
+        "/products/macbook/MacBookAir/Silver/Silver-MacBookAir.webp",
+        "/products/macbook/MacBookAir/Silver/Silver-MacBookAir-front.webp",
+        "/products/macbook/MacBookAir/Silver/Silver-MacBookAir-side.webp",
+        "/products/macbook/MacBookAir/Silver/Silver-MacBookAir-closed.webp",
+      ],
+      Midnight: [
+        "/products/macbook/MacBookAir/Midnight/Midnight-MacBookAir.webp",
+        "/products/macbook/MacBookAir/Midnight/Midnight-MacBookAir-front.webp",
+        "/products/macbook/MacBookAir/Midnight/Midnight-MacBookAir-side.webp",
+        "/products/macbook/MacBookAir/Midnight/Midnight-MacBookAir-closed.webp",
+      ],
+      Starlight: [
+        "/products/macbook/MacBookAir/Starlight/Starlight-MacBookAir.webp",
+        "/products/macbook/MacBookAir/Starlight/Starlight-MacBookAir-front.webp",
+        "/products/macbook/MacBookAir/Starlight/Starlight-MacBookAir-side.webp",
+        "/products/macbook/MacBookAir/Starlight/Starlight-MacBookAir-closed.webp",
+      ],
+      "Sky Blue": [
+        "/products/macbook/MacBookAir/SkyBlue/SkyBlue-MacBookAir.webp",
+        "/products/macbook/MacBookAir/SkyBlue/SkyBlue-MacBookAir-front.webp",
+        "/products/macbook/MacBookAir/SkyBlue/SkyBlue-MacBookAir-side.webp",
+        "/products/macbook/MacBookAir/SkyBlue/SkyBlue-MacBookAir-closed.webp",
+      ],
     },
   },
   {
@@ -331,7 +459,8 @@ export const mockProducts: Product[] = [
       { label: "OS", value: "macOS Tahoe" },
     ],
     price: 1999,
-    imageUrl: "/products/macbook/SpaceBlack-MacBookPro.webp",
+    imageUrl:
+      "/products/macbook/MacBookPro/SpaceBlack/SpaceBlack-MacBookPro.webp",
     categoryId: "laptops",
     stock: 5,
     rating: 4.8,
@@ -348,8 +477,23 @@ export const mockProducts: Product[] = [
       { label: "4TB SSD", priceModifier: 1500 },
     ],
     colorImages: {
-      "Silver": "/products/macbook/Silver-MacBookPro.webp",
-      "Space Black": "/products/macbook/SpaceBlack-MacBookPro.webp",
+      "Space Black":
+        "/products/macbook/MacBookPro/SpaceBlack/SpaceBlack-MacBookPro.webp",
+      Silver: "/products/macbook/MacBookPro/Silver/Silver-MacBookPro.webp",
+    },
+    galleryByColor: {
+      "Space Black": [
+        "/products/macbook/MacBookPro/SpaceBlack/SpaceBlack-MacBookPro.webp",
+        "/products/macbook/MacBookPro/SpaceBlack/SpaceBlack-MacBookPro-front.webp",
+        "/products/macbook/MacBookPro/SpaceBlack/SpaceBlack-MacBookPro-side.webp",
+        "/products/macbook/MacBookPro/SpaceBlack/SpaceBlack-MacBookPro-closed.webp",
+      ],
+      Silver: [
+        "/products/macbook/MacBookPro/Silver/Silver-MacBookPro.webp",
+        "/products/macbook/MacBookPro/Silver/Silver-MacBookPro-front.webp",
+        "/products/macbook/MacBookPro/Silver/Silver-MacBookPro-side.webp",
+        "/products/macbook/MacBookPro/Silver/Silver-MacBookPro-closed.webp",
+      ],
     },
   },
   {
@@ -385,7 +529,7 @@ export const mockProducts: Product[] = [
       { label: "Build", value: "Premium aluminum chassis" },
     ],
     price: 1550,
-    imageUrl: "/products/XPS-Dell.webp",
+    imageUrl: "/products/dell/XPS-Dell.webp",
     categoryId: "laptops",
     stock: 6,
     rating: 4.4,
@@ -402,7 +546,15 @@ export const mockProducts: Product[] = [
       { label: "2TB SSD", priceModifier: 1250 },
     ],
     colorImages: {
-      "Graphite": "/products/XPS-Dell.webp",
+      Graphite: "/products/dell/XPS-Dell.webp",
+    },
+    galleryByColor: {
+      Graphite: [
+        "/products/dell/XPS-Dell.webp",
+        "/products/dell/XPS-Dell-sidefront.webp",
+        "/products/dell/XPS-Dell-frontside.webp",
+        "/products/dell/XPS-Dell-side.webp",
+      ],
     },
   },
   {
@@ -435,7 +587,7 @@ export const mockProducts: Product[] = [
       { label: "Audio", value: "Dolby Atmos 4-speaker system" },
     ],
     price: 2199,
-    imageUrl: "/products/asus/White-ASUS.webp",
+    imageUrl: "/products/asus/White/White-ASUS.webp",
     categoryId: "laptops",
     stock: 6,
     rating: 4.4,
@@ -445,14 +597,28 @@ export const mockProducts: Product[] = [
     brand: "ASUS",
     warrantyMonths: 24,
     condition: "new",
-    colors: ["Eclipse Gray", "Platinum White"],
+    colors: ["Platinum White", "Eclipse Gray"],
     storageOptions: [
       { label: "1TB SSD", priceModifier: 0 },
       { label: "2TB SSD", priceModifier: 300 },
     ],
     colorImages: {
-      "Eclipse Gray": "/products/asus/Gray-ASUS.webp",
-      "Platinum White": "/products/asus/White-ASUS.webp",
+      "Platinum White": "/products/asus/White/White-ASUS.webp",
+      "Eclipse Gray": "/products/asus/Gray/Gray-ASUS.webp",
+    },
+    galleryByColor: {
+      "Platinum White": [
+        "/products/asus/White/White-ASUS.webp",
+        "/products/asus/White/White-ASUS-topside.webp",
+        "/products/asus/White/White-ASUS-front.webp",
+        "/products/asus/White/White-ASUS-side.webp",
+      ],
+      "Eclipse Gray": [
+        "/products/asus/Gray/Gray-ASUS.webp",
+        "/products/asus/Gray/Gray-ASUS-topside.webp",
+        "/products/asus/Gray/Gray-ASUS-front.webp",
+        "/products/asus/Gray/Gray-ASUS-side.webp",
+      ],
     },
   },
 
@@ -477,7 +643,7 @@ export const mockProducts: Product[] = [
     ],
     price: 18,
     imageUrl: "/products/fashion/Tee/T-shirt.webp",
-    images:[
+    images: [
       "/products/fashion/Tee/T-shirt.webp",
       "/products/fashion/Tee/T-shirt-back.webp",
     ],
@@ -511,7 +677,7 @@ export const mockProducts: Product[] = [
     ],
     price: 65,
     imageUrl: "/products/fashion/Denim/denim.webp",
-    images:[
+    images: [
       "/products/fashion/Denim/denim.webp",
       "/products/fashion/Denim/denim-front.webp",
       "/products/fashion/Denim/denim-side.webp",
@@ -531,7 +697,7 @@ export const mockProducts: Product[] = [
   // Sneakers
   {
     id: "p11",
-    dateAdded: "2026-07-01",
+    dateAdded: "2026-02-05",
     name: "Nike Air Force 1",
     description:
       "The Air Force 1 is a timeless sneaker with a clean, versatile design that works effortlessly with casual and everyday outfits. Its cushioned construction provides comfortable wear, while the classic silhouette keeps the look effortlessly stylish",
@@ -550,11 +716,11 @@ export const mockProducts: Product[] = [
     price: 110,
     imageUrl: "/products/fashion/AirForce/Nike-AirForce1.webp",
     images: [
-        "/products/fashion/AirForce/Nike-AirForce1.webp",
-        "/products/fashion/AirForce/Nike-AirForce1-sideA.webp",
-        "/products/fashion/AirForce/Nike-AirForce1-sideB.webp",
-        "/products/fashion/AirForce/Nike-AirForce1-top.webp",
-        "/products/fashion/AirForce/Nike-AirForce1-back.webp",
+      "/products/fashion/AirForce/Nike-AirForce1.webp",
+      "/products/fashion/AirForce/Nike-AirForce1-sideA.webp",
+      "/products/fashion/AirForce/Nike-AirForce1-sideB.webp",
+      "/products/fashion/AirForce/Nike-AirForce1-top.webp",
+      "/products/fashion/AirForce/Nike-AirForce1-back.webp",
     ],
     categoryId: "sneakers",
     stock: 20,
@@ -568,7 +734,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p12",
-    dateAdded: "2026-02-05",
+    dateAdded: "2026-07-01",
     name: "Vans Hylane",
     description:
       "The Vans Hylane combines a retro-inspired skate aesthetic with a modern, comfortable design. Its low-top silhouette and signature Vans styling make it an easy choice for casual everyday outfits",
@@ -586,7 +752,7 @@ export const mockProducts: Product[] = [
     ],
     price: 85,
     imageUrl: "/products/fashion/Vans/Hylane.webp",
-    images:[
+    images: [
       "/products/fashion/Vans/Hylane.webp",
       "/products/fashion/Vans/Hylane-side.webp",
       "/products/fashion/Vans/Hylane-back.webp",
@@ -626,7 +792,7 @@ export const mockProducts: Product[] = [
     ],
     price: 140,
     imageUrl: "/products/accessories/Fossil/Fossil.webp",
-    images:[
+    images: [
       "/products/accessories/Fossil/Fossil.webp",
       "/products/accessories/Fossil/Fossil-front.webp",
       "/products/accessories/Fossil/Fossil-side.webp",
@@ -664,7 +830,7 @@ export const mockProducts: Product[] = [
     ],
     price: 450,
     imageUrl: "/products/accessories/Seiko/Seiko.webp",
-    images:[
+    images: [
       "/products/accessories/Seiko/Seiko.webp",
       "/products/accessories/Seiko/Seiko-front.webp",
       "/products/accessories/Seiko/Seiko-side.webp",
@@ -703,7 +869,7 @@ export const mockProducts: Product[] = [
     ],
     price: 190,
     imageUrl: "/products/accessories/Aviator/Aviator-Classic.webp",
-    images:[
+    images: [
       "/products/accessories/Aviator/Aviator-Classic.webp",
       "/products/accessories/Aviator/Aviator-Classic-front.webp",
       "/products/accessories/Aviator/Aviator-Classic-side.webp",
@@ -738,7 +904,7 @@ export const mockProducts: Product[] = [
     ],
     price: 171,
     imageUrl: "/products/accessories/Wayfarer/Wayfarer.webp",
-    images:[
+    images: [
       "/products/accessories/Wayfarer/Wayfarer.webp",
       "/products/accessories/Wayfarer/Wayfarer-front.webp",
       "/products/accessories/Wayfarer/Wayfarer-side.webp",
@@ -756,7 +922,7 @@ export const mockProducts: Product[] = [
   // Men's Fragrance
   {
     id: "p17",
-    dateAdded: "2026-07-05",
+    dateAdded: "2026-03-15",
     name: "Bleu de Chanel EDP",
     description:
       "Bleu de Chanel EDP is a sophisticated men’s fragrance with a fresh, woody character. Its aromatic citrus opening develops into warm, woody notes, creating a versatile scent suitable for both everyday wear and evening occasions.",
@@ -774,7 +940,7 @@ export const mockProducts: Product[] = [
     ],
     price: 128,
     imageUrl: "/products/perfumes/EDP/EDP.webp",
-    images:[
+    images: [
       "/products/perfumes/EDP/EDP.webp",
       "/products/perfumes/EDP/EDP-front.webp",
     ],
@@ -791,7 +957,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "p18",
-    dateAdded: "2026-03-15",
+    dateAdded: "2026-07-05",
     name: "Dior Sauvage",
     description:
       "Dior Sauvage is a fresh, bold men’s fragrance with a distinctive citrus and woody character. Its versatile scent works well for everyday wear while adding a refined touch for evening occasions.",
@@ -809,7 +975,7 @@ export const mockProducts: Product[] = [
     ],
     price: 115,
     imageUrl: "/products/perfumes/Dior/Dior.webp",
-    images:[
+    images: [
       "/products/perfumes/Dior/Dior.webp",
       "/products/perfumes/Dior/Dior-note.webp",
       "/products/perfumes/Dior/Dior-front.webp",
@@ -829,7 +995,7 @@ export const mockProducts: Product[] = [
   // Women's Fragrance
   {
     id: "p19",
-    dateAdded: "2026-07-05",
+    dateAdded: "2026-06-05",
     name: "Chanel Coco Mademoiselle EDP",
     description:
       "Chanel Coco Mademoiselle is an elegant women’s fragrance with a fresh citrus opening and a sophisticated floral-woody character. Its refined, modern scent makes it a versatile choice for both everyday wear and special occasions",
@@ -847,7 +1013,7 @@ export const mockProducts: Product[] = [
     ],
     price: 185,
     imageUrl: "/products/perfumes/Chanel/Chanel.webp",
-    images:[
+    images: [
       "/products/perfumes/Chanel/Chanel.webp",
       "/products/perfumes/Chanel/Chanel-front.webp",
       "/products/perfumes/Chanel/Chanel-frontB.webp",
@@ -883,7 +1049,7 @@ export const mockProducts: Product[] = [
     ],
     price: 90,
     imageUrl: "/products/perfumes/Carolina/Good-Girl.webp",
-    images:[
+    images: [
       "/products/perfumes/Carolina/Good-Girl.webp",
       "/products/perfumes/Carolina/Good-GirlA.webp",
       "/products/perfumes/Carolina/Good-GirlB.webp",
