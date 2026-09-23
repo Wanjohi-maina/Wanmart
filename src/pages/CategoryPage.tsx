@@ -9,13 +9,17 @@ import ProductGrid from "../components/product/ProductGrid";
 
 export default function CategoryPage() {
   const { slug } = useParams<{ slug: string }>(); // Get the category slug from the URL parameters using useParams hook
-  const { data: matched } = useProducts({ categorySlug: slug }); // Fetch products that match the given category slug using the useProducts hook
-  const { all: allCategories, getBySlug } = useCategories(); // Fetch all categories and a function to get a category by its slug using the useCategories hook
-
-  const category = slug ? getBySlug(slug) : undefined; // Get the category object that matches the given slug using the getBySlug function, or undefined if no slug is provided
-  const parentCategory = category?.parentId // Get the parent category object of the current category if it exists,
-    ? allCategories.find((c) => c.id === category.parentId)
-    : undefined;
+  const {
+    data: matched,
+    loading: productsLoading,
+    error: productsError,
+  } = useProducts({ categorySlug: slug }); // Fetch products that match the given category slug using the useProducts hook
+  const {
+    all: allCategories,
+    getBySlug,
+    loading: categoriesLoading,
+    error: categoriesError,
+  } = useCategories(); // Fetch all categories and a function to get a category by its slug using the useCategories hook
 
   const [sort, setSort] = useState<SortOption>("default");
 
@@ -27,6 +31,32 @@ export default function CategoryPage() {
       return [...matched].sort((a, b) => b.price - a.price); // Sort the matched products in descending order of price
     return matched;
   }, [matched, sort]);
+
+  const loading = productsLoading || categoriesLoading;
+  const error = productsError || categoriesError;
+
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-16 flex justify-center">
+        <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-600 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error(error)
+    
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-16 text-center text-red-600">
+        Something went wrong loading this category. Please try again.
+      </div>
+    );
+  }
+
+  const category = slug ? getBySlug(slug) : undefined; // Get the category object that matches the given slug using the getBySlug function, or undefined if no slug is provided
+  const parentCategory = category?.parentId // Get the parent category object of the current category if it exists,
+    ? allCategories.find((c) => c.id === category.parentId)
+    : undefined;
 
   if (!category) {
     return (

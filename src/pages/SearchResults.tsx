@@ -9,7 +9,7 @@ import ProductGrid from "../components/product/ProductGrid";
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") ?? "";
-  const { data: matched } = useProducts({ searchQuery: query });
+  const { data: matched, loading, error } = useProducts({ searchQuery: query });
 
   const [sort, setSort] = useState<SortOption>("default");
 
@@ -20,6 +20,24 @@ export default function SearchResults() {
       return [...matched].sort((a, b) => b.price - a.price);
     return matched;
   }, [matched, sort]);
+
+  if(loading) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-16 flex justify-center">
+        <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-600 rounded-full animate-spin"></div>
+      </div>
+    )
+  }
+
+  if(error) {
+    console.error(error)
+    
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-16 text-center text-red-600">
+        Something went wrong loading search results. Please try again.
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">

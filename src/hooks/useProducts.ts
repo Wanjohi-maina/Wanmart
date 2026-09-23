@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { rowToProduct } from "../lib/productMapper";
-import { resolveCategoryIds } from './useCategories'
+import { resolveCategoryIds } from "./useCategories";
 import type { Product } from "../types";
 
 type UseProductsOptions = {
@@ -33,58 +33,66 @@ export function useProducts(
       setLoading(true);
       setError(null);
 
-      // Start building the query from the products table
-      let query = supabase.from("products").select("*");
+      try {
+        // Start building the query from the products table
+        let query = supabase.from("products").select("*");
 
-      // If a search term exists, search the product name or description
-      if (searchQuery && searchQuery.trim() !== "") {
-        // Remove extra spaces from the beginning and end of the search term
-        const q = searchQuery.trim();
-        // Find products whose name or description contains the search term
-        query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
-      }
+        // If a search term exists, search the product name or description
+        if (searchQuery && searchQuery.trim() !== "") {
+          // Remove extra spaces from the beginning and end of the search term
+          const q = searchQuery.trim();
+          // Find products whose name or description contains the search term
+          query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
+        }
 
-      // If a category was provided, filter products by that category
-      if (categorySlug) {
-        // Convert the category slug into the matching category IDs
-        const categoryIds = await resolveCategoryIds(categorySlug);
-        if (categoryIds.length > 0) {
-          // Only return products whose category_id matches one of these IDs
-          query = query.in("category_id", categoryIds);
-        } else {
-          // No matching category was found, so return an empty result
-          if (!cancelled) {
-            setData([]);
-            setLoading(false);
+        // If a category was provided, filter products by that category
+        if (categorySlug) {
+          // Convert the category slug into the matching category IDs
+          const categoryIds = await resolveCategoryIds(categorySlug);
+          if (categoryIds.length > 0) {
+            // Only return products whose category_id matches one of these IDs
+            query = query.in("category_id", categoryIds);
+          } else {
+            // No matching category was found, so return an empty result
+            if (!cancelled) {
+              setData([]);
+            }
+            return;
           }
+        }
+
+        // If the user wants featured products, only include featured items
+        if (sort === "featured") {
+          query = query.eq("featured", true);
+        }
+
+        // If the user wants new products, sort by date with newest first
+        if (sort === "new") {
+          query = query.order("date_added", { ascending: false });
+        }
+
+        // Execute the completed Supabase query
+        const { data: rows, error: fetchError } = await query;
+
+        // Stop if this request has been cancelled
+        if (cancelled) return;
+
+        if (fetchError) {
+          setError(fetchError.message); // Store the error message so the UI can display it
+          setData([]); // Clear any existing products because the request failed
           return;
         }
-      }
-
-      // If the user wants featured products, only include featured items
-      if (sort === "featured") {
-        query = query.eq("featured", true);
-      }
-
-      // If the user wants new products, sort by date with newest first
-      if (sort === "new") {
-        query = query.order("date_added", { ascending: false });
-      }
-
-      // Execute the completed Supabase query
-      const { data: rows, error: fetchError } = await query;
-
-      // Stop if this request has been cancelled
-      if (cancelled) return;
-
-      if (fetchError) {
-        setError(fetchError.message); // Store the error message so the UI can display it
-        setData([]); // Clear any existing products because the request failed
-      } else {
         // Convert the database rows into the Product format and store the products in state
         setData((rows ?? []).map(rowToProduct));
+      } catch (err) {
+        if (cancelled) return;
+        setError(err instanceof Error ? err.message : "Something went wrong");
+        setData([]);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     }
 
     // Run the function to fetch the products
@@ -123,24 +131,34 @@ export function useProduct(id: string | undefined): {
       setLoading(true);
       setError(null);
 
-      // Fetch the product from the products table
-      const { data: row, error: fetchError } = await supabase
-        .from("products")
-        .select("*") // Select all columns from the product row
-        .eq("id", id) // Only get the product whose id matches the id passed into this hook
-        .maybeSingle(); // Expect either one product or no product
+      try {
+        // Fetch the product from the products table
+        const { data: row, error: fetchError } = await supabase
+          .from("products")
+          .select("*") // Select all columns from the product row
+          .eq("id", id) // Only get the product whose id matches the id passed into this hook
+          .maybeSingle(); // Expect either one product or no product
 
-      // Stop if this request has been cancelled
-      if (cancelled) return;
+        // Stop if this request has been cancelled
+        if (cancelled) return;
 
-      if (fetchError) {
-        setError(fetchError.message);
-        setData(undefined);
-      } else {
+        if (fetchError) {
+          setError(fetchError.message);
+          setData(undefined);
+          return;
+        }
         // Convert the row to a Product if it exists; otherwise, clear the data
         setData(row ? rowToProduct(row) : undefined);
+      } catch (err) {
+        if (cancelled) return;
+
+        setError(err instanceof Error ? err.message : "Something went wrong");
+        setData(undefined);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     }
 
     fetchProduct();

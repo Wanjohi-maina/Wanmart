@@ -23,9 +23,21 @@ function SectionHeading({
 }
 
 export default function Home() {
-  const { parents } = useCategories();
-  const { data: featured } = useProducts({ sort: "featured" });
-  const { data: newArrivals } = useProducts({ sort: "new" });
+  const {
+    parents,
+    loading: categoriesLoading,
+    error: categoriesError,
+  } = useCategories();
+  const {
+    data: featured,
+    loading: featuredLoading,
+    error: featuredError,
+  } = useProducts({ sort: "featured" });
+  const {
+    data: newArrivals,
+    loading: newArrivalsLoading,
+    error: newArrivalsError,
+  } = useProducts({ sort: "new" });
 
   const featuredPreview = featured.slice(0, 8);
   const newArrivalsPreview = newArrivals.slice(0, 4);
@@ -73,30 +85,54 @@ export default function Home() {
           <SectionHeading eyebrow="Explore" title="Shop by Category" />
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-          {parents.map((category) => (
-            <Link
-              key={category.id}
-              to={`/category/${category.slug}`}
-              className="group"
-            >
-              <div className="rounded-lg aspect-square bg-gray-100 overflow-hidden">
-                <img
-                  src={category.imageUrl ?? "/categories/placeholder.webp"}
-                  alt={category.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-              <p className="mt-3 text-sm sm:text-base text-center font-medium text-gray-900">
-                {category.name}
-              </p>
-            </Link>
-          ))}
-        </div>
+        {categoriesLoading ? (
+          <div className="flex justify-center">
+            <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-600 rounded-full animate-spin"></div>
+          </div>
+        ) : categoriesError ? (
+          <p className="text-sm text-red-600">
+            Something went wrong loading categories. Please try again.
+          </p>
+        ) : parents.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+            {parents.map((category) => (
+              <Link
+                key={category.id}
+                to={`/category/${category.slug}`}
+                className="group"
+              >
+                <div className="rounded-lg aspect-square bg-gray-100 overflow-hidden">
+                  <img
+                    src={category.imageUrl ?? "/categories/placeholder.webp"}
+                    alt={category.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <p className="mt-3 text-sm sm:text-base text-center font-medium text-gray-900">
+                  {category.name}
+                </p>
+              </Link>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       {/* Featured Products */}
-      {featuredPreview.length > 0 && (
+      {featuredLoading ? (
+        <section className="px-4 py-14 sm:py-20 max-w-6xl mx-auto">
+          <SectionHeading eyebrow="Curated for you" title="Featured Products" />
+          <div className="mt-8 flex justify-center">
+            <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-600 rounded-full animate-spin"></div>
+          </div>
+        </section>
+      ) : featuredError ? (
+        <section className="px-4 py-14 sm:py-20 max-w-6xl mx-auto">
+          <SectionHeading eyebrow="Curated for you" title="Featured Products" />
+          <p className="mt-6 text-sm text-red-600">
+            Something went wrong loading featured products. Please try again.
+          </p>
+        </section>
+      ) : featuredPreview.length > 0 ? (
         <section className="px-4 py-14 sm:py-20 max-w-6xl mx-auto">
           <div className="flex items-end justify-between mb-8 sm:mb-12">
             <SectionHeading
@@ -118,11 +154,11 @@ export default function Home() {
               to="/shop?filter=featured"
               className="text-sm font-medium text-gray-900 hover:underline"
             >
-              View all products →
+              View all products &rarr;
             </Link>
           </div>
         </section>
-      )}
+      ) : null}
 
       {/* Promotional Banner */}
       <section className="relative bg-gray-900 overflow-hidden">
@@ -152,7 +188,21 @@ export default function Home() {
       </section>
 
       {/* New Arrivals */}
-      {newArrivalsPreview.length > 0 && (
+      {newArrivalsLoading ? (
+        <section className="px-4 py-14 sm:py-20 max-w-6xl mx-auto">
+          <SectionHeading eyebrow="Just added" title="New Arrivals" />
+          <div className="mt-8 flex justify-center">
+            <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-600 rounded-full animate-spin"></div>
+          </div>
+        </section>
+      ) : newArrivalsError ? (
+        <section className="px-4 py-14 sm:py-20 max-w-6xl mx-auto">
+          <SectionHeading eyebrow="Just added" title="New Arrivals" />
+          <p className="mt-6 text-sm text-red-600">
+            Something went wrong loading new arrivals. Please try again.
+          </p>
+        </section>
+      ) : newArrivalsPreview.length > 0 ? (
         <section className="px-4 py-14 sm:py-20 max-w-6xl mx-auto">
           <div className="flex items-end justify-between mb-8 sm:mb-12">
             <SectionHeading eyebrow="Just added" title="New Arrivals" />
@@ -170,11 +220,11 @@ export default function Home() {
               to="/shop?filter=new"
               className="text-sm font-medium text-gray-900 hover:underline"
             >
-              View all products →
+              View all products &rarr;
             </Link>
           </div>
         </section>
-      )}
+      ) : null}
 
       {/* Why Shop With Us */}
       <section className="bg-gray-100 px-4 py-16 sm:py-20">

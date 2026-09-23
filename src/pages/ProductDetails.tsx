@@ -6,7 +6,7 @@ import ProductGrid from "../components/product/ProductGrid";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const { data: product } = useProduct(id);
+  const { data: product, loading, error } = useProduct(id);
   const { addToCart } = useCart();
 
   const { data: allProducts } = useProducts();
@@ -43,6 +43,24 @@ export default function ProductDetail() {
   );
 
   const [seletedImage, setSelectedImage] = useState<string | null>(null);
+
+  if(loading) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-16 flex justify-center">
+        <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-600 rounded-full animate-spin"></div>
+      </div>
+    )
+  }
+
+  if(error) {
+    console.error(error)
+    
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-16 text-center text-red-600">
+        Something went wrong loading this product. Please try again.
+      </div>
+    )
+  }
 
   if (!product) {
     return (
