@@ -1,6 +1,7 @@
-import { useMemo } from "react";
-import { mockProducts } from "../data/mockProducts";
-import { resolveCategoryIds } from "../data/categories";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabaseClient";
+import { rowToProduct } from "../lib/productMapper";
+import { resolveCategoryIds } from './useCategories'
 import type { Product } from "../types";
 
 type UseProductsOptions = {
@@ -11,6 +12,8 @@ type UseProductsOptions = {
 
 type UseProductsResult = {
   data: Product[];
+  loading: boolean;
+  error: string | null;
 };
 
 export function useProducts(
@@ -18,51 +21,134 @@ export function useProducts(
 ): UseProductsResult {
   const { searchQuery, categorySlug, sort } = options; // Destructure the options object to extract searchQuery and categorySlug, providing default values if they are not provided
 
-  const data = useMemo(() => {
-    // Use useMemo to memoize the filtered products based on searchQuery, categorySlug, and sort, so that the filtering logic is only re-executed when these dependencies change
-    let result = mockProducts; // Start with the full list of mock products
+  const [data, setData] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    if (searchQuery && searchQuery.trim() !== "") {
-      // Check if a search query is provided and is not just whitespace
-      const q = searchQuery.trim().toLowerCase(); // Trim whitespace from the search query and convert it to lowercase for case-insensitive comparison
-      result = result.filter(
-        (product) =>
-          product.name.toLowerCase().includes(q) ||
-          product.description.toLowerCase().includes(q),
-      ); // If a search query is provided and is not just whitespace, filter the products to include only those whose name or description includes the search query (case-insensitive)
+  useEffect(() => {
+    // Track whether this request has been cancelled so an old request cannot update the state after a new one starts
+    let cancelled = false;
+
+    async function fetchProducts() {
+      setLoading(true);
+      setError(null);
+
+      // Start building the query from the products table
+      let query = supabase.from("products").select("*");
+
+      // If a search term exists, search the product name or description
+      if (searchQuery && searchQuery.trim() !== "") {
+        // Remove extra spaces from the beginning and end of the search term
+        const q = searchQuery.trim();
+        // Find products whose name or description contains the search term
+        query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
+      }
+
+      // If a category was provided, filter products by that category
+      if (categorySlug) {
+        // Convert the category slug into the matching category IDs
+        const categoryIds = await resolveCategoryIds(categorySlug);
+        if (categoryIds.length > 0) {
+          // Only return products whose category_id matches one of these IDs
+          query = query.in("category_id", categoryIds);
+        } else {
+          // No matching category was found, so return an empty result
+          if (!cancelled) {
+            setData([]);
+            setLoading(false);
+          }
+          return;
+        }
+      }
+
+      // If the user wants featured products, only include featured items
+      if (sort === "featured") {
+        query = query.eq("featured", true);
+      }
+
+      // If the user wants new products, sort by date with newest first
+      if (sort === "new") {
+        query = query.order("date_added", { ascending: false });
+      }
+
+      // Execute the completed Supabase query
+      const { data: rows, error: fetchError } = await query;
+
+      // Stop if this request has been cancelled
+      if (cancelled) return;
+
+      if (fetchError) {
+        setError(fetchError.message); // Store the error message so the UI can display it
+        setData([]); // Clear any existing products because the request failed
+      } else {
+        // Convert the database rows into the Product format and store the products in state
+        setData((rows ?? []).map(rowToProduct));
+      }
+      setLoading(false);
     }
 
-    if (categorySlug) {
-      // Check if a category slug is provided
-      const categoryIds = resolveCategoryIds(categorySlug); // Use the resolveCategoryIds function to get the IDs of the category and its children based on the provided slug
-      result = result.filter((product) =>
-        categoryIds.includes(product.categoryId),
-      ); // Filter the products to include only those whose categoryId is in the list of resolved category IDs
-    }
+    // Run the function to fetch the products
+    fetchProducts();
 
-    if (sort === "featured") {
-      result = result.filter((product) => product.featured); // If the sort option is 'featured', filter the products to include only those that are marked as featured
-    }
-
-    // Sort new products by date added, with the newest products first
-    if (sort === "new") {
-      result = [...result].sort(
-        (a, b) =>
-          new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime(),
-      );
-    }
-
-    return result; // Return the filtered list of products based on the search query, category slug, and sort option
+    // Cleanup function that runs when the effect is replaced or unmounted
+    return () => {
+      // Mark this request as cancelled so it cannot update state later
+      cancelled = true;
+    };
   }, [searchQuery, categorySlug, sort]);
 
-  return { data };
+  return { data, loading, error };
 }
+
 export function useProduct(id: string | undefined): {
   data: Product | undefined;
+  loading: boolean;
+  error: string | null;
 } {
-  const data = useMemo(
-    () => mockProducts.find((product) => product.id === id),
-    [id],
-  ); // Find the product with the matching id from the mockProducts array and memoize the result based on the id dependency
-  return { data }; // Return the found product (or undefined if not found) in an object with a data property
+  const [data, setData] = useState<Product | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // If there is no product id, there is nothing to fetch.
+    if (!id) {
+      setData(undefined);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function fetchProduct() {
+      setLoading(true);
+      setError(null);
+
+      // Fetch the product from the products table
+      const { data: row, error: fetchError } = await supabase
+        .from("products")
+        .select("*") // Select all columns from the product row
+        .eq("id", id) // Only get the product whose id matches the id passed into this hook
+        .maybeSingle(); // Expect either one product or no product
+
+      // Stop if this request has been cancelled
+      if (cancelled) return;
+
+      if (fetchError) {
+        setError(fetchError.message);
+        setData(undefined);
+      } else {
+        // Convert the row to a Product if it exists; otherwise, clear the data
+        setData(row ? rowToProduct(row) : undefined);
+      }
+      setLoading(false);
+    }
+
+    fetchProduct();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  return { data, loading, error };
 }
