@@ -12,16 +12,16 @@ export type StorageOption = {
 };
 
 export type ProductSpecification = {
-  label: string
-  value: string
-}
+  label: string;
+  value: string;
+};
 
 type BaseProduct = {
   id: string;
   name: string;
   description: string;
   highlights: string[];
-  specifications: ProductSpecification[]
+  specifications: ProductSpecification[];
   price: number;
   discountPercent?: number;
   imageUrl: string;
