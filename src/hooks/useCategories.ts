@@ -41,22 +41,33 @@ export function useCategories(): UseCategoriesResult {
 
     async function fetchCategories() {
       setLoading(true);
+      setError(null);
 
-      // Get all columns from the categories table
-      const { data, error: fetchError } = await supabase
-        .from("categories")
-        .select("*");
+      try {
+        // Get all columns from the categories table
+        const { data, error: fetchError } = await supabase
+          .from("categories")
+          .select("*");
 
-      // Stop if this request has been cancelled
-      if (cancelled) return;
+        // Stop if this request has been cancelled
+        if (cancelled) return;
 
-      // Check whether Supabase returned an error, otherwise convert each database row into our frontend Category type
-      if (fetchError) {
-        setError(fetchError.message);
-      } else {
+        // Check whether Supabase returned an error, otherwise convert each database row into our frontend Category type
+        if (fetchError) {
+          setError(fetchError.message);
+          return;
+        }
+
         setAll((data ?? []).map(rowToCategory));
+      } catch (err) {
+        if (cancelled) return;
+        setError(err instanceof Error ? err.message : "Something went wrong");
+        setAll([]);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
-      setLoading(false); 
     }
 
     fetchCategories();
@@ -81,29 +92,32 @@ export function useCategories(): UseCategoriesResult {
 }
 
 // Get category IDs for a given slug
-export async function resolveCategoryIds (slug: string): Promise<string []> {
-   // Find the category by slug 
-   const {data: category, error: categoryError} = await supabase
-       .from('categories')
-       .select('id')
-       .eq('slug', slug)
-       .maybeSingle()
+export async function resolveCategoryIds(slug: string): Promise<string[]> {
+  try {
+    // Find the category by slug
+    const { data: category, error: categoryError } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("slug", slug)
+      .maybeSingle();
 
     // Return empty array if category isn't found
-    if (categoryError || !category) return []   
+    if (categoryError || !category) return [];
 
     // Find the category's children
-    const {data: children, error: childrenError} = await supabase
-        .from('categories')
-        .select('id')
-        .eq('parent_id', category.id)
+    const { data: children, error: childrenError } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("parent_id", category.id);
 
     // Use the parent ID if fetching children fails
-    if(childrenError) return [category.id] 
+    if (childrenError) return [category.id];
 
     // Return child IDs, or the current category ID if there are no children
-    return children && children.length > 0 
-       ? children.map((c) => c.id)
-       : [category.id]
+    return children && children.length > 0
+      ? children.map((c) => c.id)
+      : [category.id];
+  } catch {
+    return [];
+  }
 }
-

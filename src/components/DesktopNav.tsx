@@ -19,7 +19,7 @@ export default function DesktopNav() {
 
             {children.length > 0 && (
               <div className="invisible absolute left-0 top-full pt-5 opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100">  
-              <div className="min-w-[180px] rounded-md border border-gray-200 bg-white py-2 shadow-lg">
+              <div className="min-w-45 rounded-md border border-gray-200 bg-white py-2 shadow-lg">
                 {children.map((child) => (
                   <Link
                     key={child.id}
