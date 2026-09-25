@@ -104,7 +104,7 @@ export default function Cart() {
             item.selectedSize,
           ]
             .filter(Boolean)
-            .join(" . ");
+            .join(" \u00b7 ");
 
           // Use the selected color image for electronics, otherwise use the default product image
           const displayImage =

@@ -69,6 +69,8 @@ export function useProducts(
         // If the user wants new products, sort by date with newest first
         if (sort === "new") {
           query = query.order("date_added", { ascending: false });
+        } else {
+          query = query.order("display_order", { ascending: true });
         }
 
         // Execute the completed Supabase query
