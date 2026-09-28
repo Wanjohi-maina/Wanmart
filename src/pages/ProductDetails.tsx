@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useProduct, useProducts } from "../hooks/useProducts";
 import { useCart } from "../context/CartContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductGrid from "../components/product/ProductGrid";
 
 export default function ProductDetail() {
@@ -20,46 +20,49 @@ export default function ProductDetail() {
         .slice(0, 4)
     : [];
 
+  // Tracks how many units the customer plans to add to the cart.
   const [selectedQuantity, setSelectedQuantity] = useState(1);
 
-  // Automatically select the only available color for electronics; otherwise, start with no color selected
-  const [selectedColor, setSelectedColor] = useState<string | null>(() =>
-    product?.kind === "electronics" && product.colors.length === 1
-      ? product.colors[0]
-      : null,
-  );
-  // Automatically select the only available storage option for electronics; otherwise, start with no storage selected
-  const [selectedStorage, setSelectedStorage] = useState<string | null>(() =>
-    product?.kind === "electronics" && product.storageOptions.length === 1
-      ? product.storageOptions[0].label
-      : null,
-  );
-  // Automatically select the only available size for clothing or sneakers; otherwise, start with no size selected
-  const [selectedSize, setSelectedSize] = useState<string | null>(() =>
-    (product?.kind === "clothing" || product?.kind === "sneakers") &&
-    product.sizes.length === 1
-      ? product.sizes[0]
-      : null,
-  );
+  // Tracks the chosen product options; null means no option is selected yet.
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
+  useEffect(() => {
+    // Product data loads asynchronously, so choose single options after it arrives.
+    if (!product) return;
+
+    if (product.kind === "electronics") {
+      setSelectedColor(product.colors.length === 1 ? product.colors[0] : null);
+      setSelectedStorage(
+        product.storageOptions.length === 1
+          ? product.storageOptions[0].label
+          : null,
+      );
+    } else if (product.kind === "clothing" || product.kind === "sneakers") {
+      setSelectedSize(product.sizes.length === 1 ? product.sizes[0] : null);
+    }
+  }, [product]);
+
+  // Tracks a chosen gallery image; null displays the current base image.
   const [seletedImage, setSelectedImage] = useState<string | null>(null);
 
-  if(loading) {
+  if (loading) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-16 flex justify-center">
         <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-600 rounded-full animate-spin"></div>
       </div>
-    )
+    );
   }
 
-  if(error) {
-    console.error(error)
-    
+  if (error) {
+    console.error(error);
+
     return (
       <div className="max-w-6xl mx-auto px-4 py-16 text-center text-red-600">
         Something went wrong loading this product. Please try again.
       </div>
-    )
+    );
   }
 
   if (!product) {
@@ -404,7 +407,9 @@ export default function ProductDetail() {
           <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
             Product Overview
           </h2>
-          <p className="text-sm sm:text-base text-gray-600">{product.description}</p>
+          <p className="text-sm sm:text-base text-gray-600">
+            {product.description}
+          </p>
         </section>
 
         {product.specifications.length > 0 && (
