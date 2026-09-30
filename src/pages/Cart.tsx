@@ -88,7 +88,7 @@ export default function Cart() {
 
       <ul className="bg-gray-50 p-4 rounded-lg">
         {/* Loop through all items currently in the cart */}
-        {items.map((item, index) => {
+        {items.map((item) => {
           // Create a variant object containing the item's selected options
           const variant = {
             color: item.selectedColor,
@@ -127,7 +127,7 @@ export default function Cart() {
 
           return (
             <li
-              key={`${item.product.id}-${index}`}
+              key={`${item.product.id}|${item.selectedColor ?? ""}|${item.selectedStorage ?? ""}|${item.selectedSize ?? ""}`}
               className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-gray-100 mt-4 rounded-lg"
             >
               <div className="flex items-center gap-4 w-full">
@@ -153,19 +153,18 @@ export default function Cart() {
 
                   <p className="flex flex-col text-sm text-gray-600 sm:flex-row sm:items-center ">
                     <div>
-                      $
-                      {item.quantity > 1
-                        ? lineTotal.toFixed(2)
-                        : item.unitPrice.toFixed(2)}
+                      KES {item.quantity > 1
+                        ? lineTotal.toLocaleString()
+                        : item.unitPrice.toLocaleString()}
                       {item.quantity > 1 && (
                         <span className="text-gray-500 font-normal">
-                          {` · $${item.unitPrice.toFixed(2)} each`}
+                          {` · KES ${item.unitPrice.toLocaleString()} each`}
                         </span>
                       )}
                     </div>
                     {hasDiscount && (
                       <span className="text-sm text-gray-400 line-through sm:ml-2">
-                        ${originalLineTotal!.toFixed(2)}
+                        KES {originalLineTotal!.toLocaleString()}
                       </span>
                     )}
                   </p>
@@ -216,17 +215,17 @@ export default function Cart() {
                 {`(${totalItems} item${totalItems > 1 ? "s" : ""})`}
               </span>
             </div>
-            <span>${originalSubtotal.toFixed(2)}</span>
+            <span>KES {originalSubtotal.toLocaleString()}</span>
           </div>
           {totalDiscount > 0 && (
             <div className="flex items-center justify-between text-sm text-orange-600">
               <span>Discount</span>
-              <span>-${totalDiscount.toFixed(2)}</span>
+              <span className="text-xs">- KES {totalDiscount.toLocaleString()}</span>
             </div>
           )}
           <div className="flex items-center justify-between border-t border-gray-200 pt-3 text-lg font-semibold text-gray-900">
             <span>Total</span>
-            <span>${totalPrice.toFixed(2)}</span>
+            <span>KES {totalPrice.toLocaleString()}</span>
           </div>
         </div>
 

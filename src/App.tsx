@@ -8,6 +8,7 @@ import Cart from "./pages/Cart";
 import Layout from "./components/Layout";
 import Shop from "./pages/Shop";
 import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
 function App() {
   return (
     <CartProvider>
@@ -21,6 +22,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
           </Route>
         </Routes>
       </BrowserRouter>

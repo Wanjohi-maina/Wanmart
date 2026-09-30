@@ -105,7 +105,7 @@ export default function SearchBar() {
                             {product.name}
                           </p>
                           <p className="text-xs text-gray-500">
-                            ${product.price.toFixed(2)}
+                            KES {product.price.toLocaleString()}
                           </p>
                         </div>
                       </Link>

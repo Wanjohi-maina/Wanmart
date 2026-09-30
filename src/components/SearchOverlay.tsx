@@ -77,7 +77,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         {product.name}
                       </p>
                       <p className="text-sm text-gray-500">
-                        ${product.price.toFixed(2)}
+                        KES {product.price.toLocaleString()}
                       </p>
                     </div>
                   </Link>

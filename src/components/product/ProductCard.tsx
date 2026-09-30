@@ -57,15 +57,15 @@ export default function ProductCard({ product }: ProductCardProps) {
           {hasDiscount ? (
             <p className="text-sm">
               <span className="text-gray-900 font-medium">
-                {hasVariablePrice ? "From " : ""}${discountedPrice.toFixed(2)}
+                {hasVariablePrice ? "From " : ""}KES {discountedPrice.toLocaleString()}
               </span>
               <span className="ml-2 text-gray-500 line-through">
-                ${product.price.toFixed(2)}
+                KES {product.price.toLocaleString()}
               </span>
             </p>
           ) : (
             <p className="text-sm text-gray-500">
-              {hasVariablePrice ? "From " : ""}${product.price.toFixed(2)}
+              {hasVariablePrice ? "From " : ""}KES {product.price.toLocaleString()}
             </p>
           )}
         </Link>

@@ -254,22 +254,20 @@ export default function ProductDetail() {
             </span>
           </div>
 
-          <p className="text-lg sm:text-xl md:text-2xl text-gray-800 mt-2">
-            $
-            {priceIsFinal && selectedQuantity > 1
-              ? totalPrice.toFixed(2)
-              : displayPrice.toFixed(2)}
+          <p className=" text-lg sm:text-xl md:text-2xl text-gray-800 mt-2">
+            KES {priceIsFinal && selectedQuantity > 1
+              ? totalPrice.toLocaleString()
+              : displayPrice.toLocaleString()}
             {priceIsFinal && selectedQuantity > 1 && (
               <span className="text-base text-gray-400 font-normal">
-                {` · $${displayPrice.toFixed(2)} each`}
+                {` · KES ${displayPrice.toLocaleString()} each`}
               </span>
             )}
             {hasDiscount && (
               <span className="ml-2 text-gray-500 line-through text-sm sm:text-base font-normal">
-                $
-                {priceIsFinal && selectedQuantity > 1
-                  ? originalTotal.toFixed(2)
-                  : originalPriceAtSelection.toFixed(2)}
+                KES {priceIsFinal && selectedQuantity > 1
+                  ? originalTotal.toLocaleString()
+                  : originalPriceAtSelection.toLocaleString()}
               </span>
             )}
             {needsElectronicsVariant && !selectedStorage && (
@@ -335,7 +333,7 @@ export default function ProductDetail() {
                     >
                       {option.label}
                       {option.priceModifier > 0 &&
-                        ` (+$${option.priceModifier})`}
+                        ` (+KES${option.priceModifier.toLocaleString()})`}
                     </button>
                   ))}
                 </div>

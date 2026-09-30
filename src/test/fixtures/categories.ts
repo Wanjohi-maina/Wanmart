@@ -1,4 +1,4 @@
-import type { Category } from '../types'
+import type { Category } from '../../types'
 
 export const categories: Category[] = [
     { id: 'electronics', name: 'Electronics', slug: 'electronics', parentId: null, imageUrl: '/categories/electronics.webp' },
