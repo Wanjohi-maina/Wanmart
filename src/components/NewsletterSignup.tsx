@@ -3,7 +3,7 @@ export default function NewsletterSignup() {
     const [email, setEmail] = useState('')
     const [submitted, setSubmitted] = useState(false)
 
-    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
 
         if (email.trim() === '') return
