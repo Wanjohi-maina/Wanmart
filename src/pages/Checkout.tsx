@@ -317,7 +317,7 @@ export default function Checkout() {
                     </div>
 
                     <p className="text-sm font-medium text-gray-900 whitespace-nowrap">
-                      KSh {lineTotal.toLocaleString()}
+                      KES {lineTotal.toLocaleString()}
                     </p>
                   </li>
                 );
@@ -333,7 +333,7 @@ export default function Checkout() {
                     </span>
                 </div>
                 <span>
-                  KSh {originalSubtotal.toLocaleString()}
+                  KES {originalSubtotal.toLocaleString()}
                 </span>
               </div>
 
@@ -342,7 +342,7 @@ export default function Checkout() {
                   <span>Discount</span>
 
                   <span>
-                    - KSh {totalDiscount.toLocaleString()}
+                    - KES {totalDiscount.toLocaleString()}
                   </span>
                 </div>
               )}
@@ -351,7 +351,7 @@ export default function Checkout() {
                 <span>Total</span>
 
                 <span>
-                  KSh {totalPrice.toLocaleString()}
+                  KES {totalPrice.toLocaleString()}
                 </span>
               </div>
             </div>
