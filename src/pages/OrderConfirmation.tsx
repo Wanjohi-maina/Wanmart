@@ -195,9 +195,7 @@ export default function OrderConfirmation() {
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
           <p className="text-gray-700">
             Order ID:{" "}
-            <span className="font-mono text-gray-900">
-              {order.order_id}
-            </span>
+            <span className="font-mono text-gray-900">{order.order_id}</span>
           </p>
           <span
             className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${orderStatusClassName(order.status)}`}
@@ -226,23 +224,17 @@ export default function OrderConfirmation() {
             <dl className="space-y-3 text-sm">
               <div>
                 <dt className="text-gray-500">Name</dt>
-                <dd className="mt-0.5 text-gray-900">
-                  {order.customer_name}
-                </dd>
+                <dd className="mt-0.5 text-gray-900">{order.customer_name}</dd>
               </div>
 
               <div>
                 <dt className="text-gray-500">Email</dt>
-                <dd className="mt-0.5 text-gray-900">
-                  {order.email}
-                </dd>
+                <dd className="mt-0.5 text-gray-900">{order.email}</dd>
               </div>
 
               <div>
                 <dt className="text-gray-500">Phone</dt>
-                <dd className="mt-0.5 text-gray-900">
-                  {order.phone}
-                </dd>
+                <dd className="mt-0.5 text-gray-900">{order.phone}</dd>
               </div>
 
               <div>
@@ -265,15 +257,12 @@ export default function OrderConfirmation() {
             </p>
 
             <p className="mt-1 text-sm text-gray-500">
-              {paymentMessage(
-                order.payment_method,
-                order.payment_status,
-              )}
+              {paymentMessage(order.payment_method, order.payment_status)}
             </p>
           </section>
         </div>
 
-        {/* Right side - Order summary */}
+        {/* Order summary */}
         <aside className="lg:col-span-1">
           <div className="rounded-lg bg-gray-50 p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-5">
@@ -342,8 +331,7 @@ export default function OrderConfirmation() {
 
                   <span className="text-gray-400 text-xs">
                     {" "}
-                    ({itemCount}{" "}
-                    {itemCount === 1 ? "item" : "items"})
+                    ({itemCount} {itemCount === 1 ? "item" : "items"})
                   </span>
                 </div>
 

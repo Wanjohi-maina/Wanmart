@@ -58,7 +58,7 @@ function itemMatchesKey(item: CartItem, key: string): boolean {
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
-    const storedCart = localStorage.getItem(STORAGE_KEY); // Retrieve the cart data from localStorage using the STORAGE_KEY. If there is stored data, parse it from JSON format into a JavaScript object (array of CartItem). If there is no stored data, return an empty array to initialize the cart state.
+    const storedCart = localStorage.getItem(STORAGE_KEY); 
     return storedCart ? JSON.parse(storedCart) : [];
   }); // Look in localStorage and restore the cart
 
