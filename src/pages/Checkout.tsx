@@ -82,14 +82,39 @@ export default function Checkout() {
         );
         return;
       }
-      // Make sure the database actually returned an order ID.
-      if (!data?.order_id) {
-        setError("Order was created, but no order ID was returned.");
+
+      // Make sure the order ID and access token were returned.
+      if (!data?.order_id || !data?.access_token) {
+        setError(
+          "The order response is missing its ID or access token. Please contact support before retrying.",
+        );
         return;
       }
 
+      const orderId = data.order_id as string;
+      const accessToken = data.access_token as string;
+
+      // Save the token so the confirmation page can verify the order.
+      sessionStorage.setItem(`order_access_token_${orderId}`, accessToken);
+
+      if (paymentMethod === "mpesa") {
+        // Ask the Edge Function to initiate the M-Pesa STK Push.
+        // The confirmation page reads the outcome from the database.
+        const { data: stkData, error: stkError } =
+          await supabase.functions.invoke("mpesa-stk-push", {
+            body: { orderId, accessToken },
+          });
+
+        if (stkError) {
+          console.error("M-Pesa initiation error:", stkError);
+        } else if (stkData?.success === false || stkData?.error) {
+          console.error("M-Pesa initiation response:", stkData);
+        }
+      }
+
       clearCart(); // Clear the cart after successful order creation.
-      navigate(`/order-confirmation/${data.order_id}`); // Navigate to the order confirmation page with the order ID.
+
+      navigate(`/order-confirmation/${orderId}`);
     } catch (error) {
       console.error("Error creating order:", error);
       setError(
@@ -327,32 +352,26 @@ export default function Checkout() {
             <div className="mt-6 space-y-2 border-t border-gray-200 pt-4">
               <div className="flex items-center justify-between text-sm text-gray-500">
                 <div>
-                    <span> Subtotal </span>
-                    <span className=" text-gray-400 text-xs">
-                        ({totalItems}{" "}{totalItems === 1 ? "item" : "items"})
-                    </span>
+                  <span> Subtotal </span>
+                  <span className=" text-gray-400 text-xs">
+                    ({totalItems} {totalItems === 1 ? "item" : "items"})
+                  </span>
                 </div>
-                <span>
-                  KES {originalSubtotal.toLocaleString()}
-                </span>
+                <span>KES {originalSubtotal.toLocaleString()}</span>
               </div>
 
               {totalDiscount > 0 && (
                 <div className="flex items-center justify-between text-sm text-orange-600">
                   <span>Discount</span>
 
-                  <span>
-                    - KES {totalDiscount.toLocaleString()}
-                  </span>
+                  <span>- KES {totalDiscount.toLocaleString()}</span>
                 </div>
               )}
 
               <div className="flex items-center justify-between border-t border-gray-200 pt-3 text-lg font-semibold text-gray-900">
                 <span>Total</span>
 
-                <span>
-                  KES {totalPrice.toLocaleString()}
-                </span>
+                <span>KES {totalPrice.toLocaleString()}</span>
               </div>
             </div>
             {/* Place order button */}
@@ -361,10 +380,13 @@ export default function Checkout() {
               disabled={submitting}
               className="mt-6 w-full rounded-full bg-orange-600 px-6 py-3 text-center text-white transition-colors hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-               {submitting ? "Placing Order..." : "Place Order"} 
+              {submitting ? "Placing Order..." : "Place Order"}
             </button>
             {/* Return to cart */}
-            <Link to="/cart" className="mt-3 block text-center text-sm text-gray-500 hover:text-orange-600">
+            <Link
+              to="/cart"
+              className="mt-3 block text-center text-sm text-gray-500 hover:text-orange-600"
+            >
               ← Return to Cart
             </Link>
           </div>

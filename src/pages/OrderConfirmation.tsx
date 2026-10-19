@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams} from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 // Type for one item in the order
@@ -25,6 +25,7 @@ type OrderConfirmation = {
   status: string;
   payment_status: string;
   payment_method: string;
+  mpesa_initiation_status: string | null;
   currency: string;
   subtotal: number;
   discount_total: number;
@@ -34,32 +35,88 @@ type OrderConfirmation = {
   items: OrderConfirmationItem[];
 };
 
+// Polling settings for orders that are waiting on an M-Pesa payment.
+const FAST_POLL_MS = 4000;
+const SLOW_POLL_MS = 15000;
+const FAST_WINDOW_MS = 3 * 60 * 1000;
+const STOP_POLLING_AFTER_MS = 30 * 60 * 1000;
+
+type PaymentView = "awaiting" | "paid" | "failed" | "review" | "cod";
+
+// Work out which payment state to show from the order's database values.
+function getPaymentView(order: OrderConfirmation): PaymentView {
+  if (order.payment_status === "paid") {
+    // Paid but cancelled means the payment arrived after the order expired.
+    return order.status === "cancelled" ? "review" : "paid";
+  }
+
+  if (order.payment_status === "failed") return "failed";
+  if (order.payment_method === "mpesa") return "awaiting";
+
+  return "cod";
+}
+
 function paymentMethodLabel(method: string) {
   if (method === "mpesa") return "M-Pesa";
   if (method === "cash_on_delivery") return "Cash on Delivery";
   return method;
 }
 
-function paymentMessage(method: string, paymentStatus: string) {
-  if (paymentStatus === "failed") {
-    return "The payment was not completed and the order has been cancelled.";
-  }
-  if (method === "cash_on_delivery" && paymentStatus === "paid") {
-    return "Your order has been paid for and will be delivered soon.";
-  }
-  if (method === "cash_on_delivery") {
-    return "Pay when you receive your order.";
-  }
+function paymentMessage(
+  view: PaymentView,
+  method: string,
+  waitedLong: boolean,
+  initiation: string | null,
+) {
+  switch (view) {
+    case "paid":
+      return method === "cash_on_delivery"
+        ? "Your order has been paid for and will be delivered soon."
+        : "M-Pesa payment received. Your order is confirmed.";
 
-  if (method === "mpesa" && paymentStatus === "paid") {
-    return "M-Pesa payment received.";
-  }
+    case "failed":
+      return method === "cash_on_delivery"
+        ? "This order has been cancelled."
+        : "The payment was not completed and the order has been cancelled. If you received an M-Pesa confirmation message, please contact support.";
 
-  if (method === "mpesa") {
-    return "Complete your M-Pesa payment. We will confirm the order once payment is received.";
-  }
+    case "review":
+      return "We received your payment, but your order needs a quick review by our team before it can be processed. Please keep your M-Pesa confirmation message.";
 
-  return "Your order has been placed.";
+    case "awaiting":
+      if (initiation === "failed" || initiation === "not_started") {
+        return "We could not send the M-Pesa payment prompt to your phone. Please start a new order and try again, or contact support.";
+      }
+      if (initiation === "unknown" || initiation === "initiating") {
+        return "We could not confirm that the M-Pesa prompt was sent. Check your phone. If you enter your PIN, this page will update once the payment is confirmed. Please contact support before trying again.";
+      }
+      return waitedLong
+        ? "We have not received confirmation yet. If you entered your M-Pesa PIN, keep this page open. It will update as soon as the payment is confirmed."
+        : "Check your phone and enter your M-Pesa PIN to complete the payment. This page will update automatically.";
+
+    default:
+      return "Pay when you receive your order.";
+  }
+}
+
+function headingFor(
+  view: PaymentView,
+  promptNotSent: boolean,
+  method: string,
+) {
+  switch (view) {
+    case "awaiting":
+      return promptNotSent
+        ? "Payment could not be started"
+        : "Waiting for your payment";
+    case "failed":
+      return method === "cash_on_delivery"
+        ? "Order cancelled"
+        : "Payment not completed";
+    case "review":
+      return "We received your payment";
+    default:
+      return "Thank you for your order";
+  }
 }
 
 function orderStatusLabel(status: string) {
@@ -90,6 +147,7 @@ export default function OrderConfirmation() {
   const [order, setOrder] = useState<OrderConfirmation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [waitedLong, setWaitedLong] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -98,51 +156,88 @@ export default function OrderConfirmation() {
       return;
     }
 
-    async function fetchOrder() {
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let lastOrder: OrderConfirmation | null = null;
+    const startedAt = Date.now();
+
+    async function load() {
+      // Get the access token saved when the order was created.
+      const accessToken = sessionStorage.getItem(`order_access_token_${id}`);
+
+      // Don't fetch the order if the access token is missing.
+      if (!accessToken) {
+        setError("Unable to verify your order. Please return to checkout.");
+        setLoading(false);
+        return;
+      }
+
       try {
         const { data, error: orderError } = await supabase.rpc(
           "get_order_confirmation",
           {
             p_order_id: id,
+            p_access_token: accessToken,
           },
         );
 
-        // Supabase returned an error.
+        if (cancelled) return;
+
         if (orderError) {
           console.error("Error fetching order:", orderError);
 
+          // Only show an error if the order has never loaded.
+          // A failed background poll keeps the last known order on screen.
+          if (!lastOrder) {
+            setError(
+              orderError.message.toLowerCase().includes("order not found")
+                ? "We could not find this order."
+                : orderError.message,
+            );
+          }
+        } else if (!data) {
+          if (!lastOrder) setError("We could not find this order.");
+        } else {
+          lastOrder = data as OrderConfirmation;
+          setError(null);
+          setOrder(lastOrder);
+        }
+      } catch (err) {
+        if (cancelled) return;
+
+        console.error("Error fetching order:", err);
+
+        if (!lastOrder) {
           setError(
-            orderError.message.toLowerCase().includes("order not found")
-              ? "We could not find this order."
-              : orderError.message,
+            err instanceof Error
+              ? err.message
+              : "Something went wrong while loading the order.",
           );
-
-          return;
         }
-
-        // No order was returned.
-        if (!data) {
-          setError("We could not find this order.");
-          return;
-        }
-
-        // Store the order in state.
-        setOrder(data as OrderConfirmation);
-      } catch (error) {
-        console.error("Error fetching order:", error);
-
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Something went wrong while loading the order.",
-        );
-      } finally {
-        // Stop showing the loading spinner.
-        setLoading(false);
       }
+
+      setLoading(false);
+
+      // Keep polling only while an M-Pesa payment is still awaited.
+      if (!lastOrder || getPaymentView(lastOrder) !== "awaiting") return;
+
+      const elapsed = Date.now() - startedAt;
+
+      if (elapsed >= FAST_WINDOW_MS) setWaitedLong(true);
+      if (elapsed >= STOP_POLLING_AFTER_MS) return;
+
+      timer = setTimeout(
+        load,
+        elapsed < FAST_WINDOW_MS ? FAST_POLL_MS : SLOW_POLL_MS,
+      );
     }
 
-    fetchOrder();
+    load();
+
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
   }, [id]);
 
   // Show loading spinner while fetching the order.
@@ -173,6 +268,29 @@ export default function OrderConfirmation() {
     );
   }
 
+  const view = getPaymentView(order);
+  const initiation = order.mpesa_initiation_status;
+
+  // The prompt never reached the customer's phone.
+  const promptNotSent =
+    view === "awaiting" &&
+    (initiation === "failed" || initiation === "not_started");
+
+  const displayMessage = paymentMessage(
+    view,
+    order.payment_method,
+    waitedLong,
+    initiation,
+  );
+
+  // A paid-but-cancelled order is under review, not simply cancelled.
+  const badgeLabel =
+    view === "review" ? "Payment under review" : orderStatusLabel(order.status);
+  const badgeClassName =
+    view === "review"
+      ? "bg-amber-100 text-amber-800"
+      : orderStatusClassName(order.status);
+
   // Calculate the total number of products in the order.
   const itemCount = order.items.reduce(
     (total, item) => total + Number(item.quantity),
@@ -189,7 +307,7 @@ export default function OrderConfirmation() {
     <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
       <div className="mb-8">
         <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
-          Thank you for your order
+          {headingFor(view, promptNotSent, order.payment_method)}
         </h1>
 
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
@@ -198,9 +316,9 @@ export default function OrderConfirmation() {
             <span className="font-mono text-gray-900">{order.order_id}</span>
           </p>
           <span
-            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${orderStatusClassName(order.status)}`}
+            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${badgeClassName}`}
           >
-            {orderStatusLabel(order.status)}
+            {badgeLabel}
           </span>
         </div>
 
@@ -256,9 +374,27 @@ export default function OrderConfirmation() {
               {paymentMethodLabel(order.payment_method)}
             </p>
 
-            <p className="mt-1 text-sm text-gray-500">
-              {paymentMessage(order.payment_method, order.payment_status)}
-            </p>
+            <div
+              className="mt-1 flex items-start gap-2 text-sm text-gray-500"
+              aria-live="polite"
+            >
+              {view === "awaiting" && !promptNotSent && (
+                <div
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 border-gray-300 border-t-orange-600 animate-spin"
+                  aria-hidden="true"
+                ></div>
+              )}
+              <p>{displayMessage}</p>
+            </div>
+
+            {(view === "failed" || promptNotSent) && (
+              <Link
+                to="/"
+                className="mt-4 inline-block text-sm text-orange-600 hover:underline"
+              >
+                Start a new order
+              </Link>
+            )}
           </section>
         </div>
 
