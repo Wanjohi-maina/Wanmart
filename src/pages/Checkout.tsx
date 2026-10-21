@@ -54,6 +54,22 @@ export default function Checkout() {
       setError("Name, email, phone, and address are required.");
       return;
     }
+    // For M-Pesa, check the number before any order is created
+    if (paymentMethod === "mpesa") {
+      const digits = phone.replace(/\D/g, "");
+      const validPhone =
+        (digits.startsWith("254") && digits.length === 12) ||
+        ((digits.startsWith("07") || digits.startsWith("01")) &&
+          digits.length === 10);
+
+      if (!validPhone) {
+        setError(
+          "Enter a valid Safaricom number for M-Pesa, for example 0712 345 678.",
+        );
+        return;
+      }
+    }
+
     setSubmitting(true);
 
     try {
@@ -246,7 +262,7 @@ export default function Checkout() {
                     <p className="text-sm font-medium text-gray-900">M-Pesa</p>
 
                     <p className="mt-1 text-xs text-gray-500">
-                      Pay securely using M-Pesa.
+                      Pay with M-Pesa. You'll get a prompt on your Safaricom number.
                     </p>
                   </div>
                 </div>
