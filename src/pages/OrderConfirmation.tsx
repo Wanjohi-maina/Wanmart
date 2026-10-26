@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 // Type for one item in the order
@@ -25,6 +25,7 @@ type OrderConfirmation = {
   status: string;
   payment_status: string;
   payment_method: string;
+  payment_resolution_status?: string | null;
   mpesa_initiation_status: string | null;
   currency: string;
   subtotal: number;
@@ -35,25 +36,71 @@ type OrderConfirmation = {
   items: OrderConfirmationItem[];
 };
 
-// Polling settings for orders that are waiting on an M-Pesa payment.
-const FAST_POLL_MS = 4000;
-const SLOW_POLL_MS = 15000;
+// Polling settings.
+const FAST_POLL_MS = 4000; // awaiting an M-Pesa payment, first 3 minutes
+const SLOW_POLL_MS = 15000; // awaiting an M-Pesa payment, after that
 const FAST_WINDOW_MS = 3 * 60 * 1000;
-const STOP_POLLING_AFTER_MS = 30 * 60 * 1000;
+const STOP_AWAITING_AFTER_MS = 30 * 60 * 1000;
+const STATUS_POLL_MS = 20000; // watching shipping and delivery updates
+const STOP_STATUS_AFTER_MS = 2 * 60 * 60 * 1000;
 
-type PaymentView = "awaiting" | "paid" | "failed" | "review" | "cod";
+type PaymentView =
+  | "awaiting"
+  | "paid"
+  | "failed"
+  | "review"
+  | "refundPending"
+  | "cod"
+  | "refunded";
 
 // Work out which payment state to show from the order's database values.
 function getPaymentView(order: OrderConfirmation): PaymentView {
+  if (order.payment_status === "refunded") return "refunded";
+
   if (order.payment_status === "paid") {
-    // Paid but cancelled means the payment arrived after the order expired.
-    return order.status === "cancelled" ? "review" : "paid";
+    if (order.status !== "cancelled") return "paid";
+
+    // Paid but cancelled: either we are refunding it, or it needs review.
+    return order.payment_resolution_status === "refund_pending"
+      ? "refundPending"
+      : "review";
   }
 
   if (order.payment_status === "failed") return "failed";
   if (order.payment_method === "mpesa") return "awaiting";
 
   return "cod";
+}
+
+// How long to wait before checking again, or null to stop checking.
+function nextPollDelay(
+  order: OrderConfirmation,
+  sincePageLoad: number,
+  sinceResume: number,
+): number | null {
+  const view = getPaymentView(order);
+
+  if (view === "awaiting") {
+    if (sincePageLoad >= STOP_AWAITING_AFTER_MS) return null;
+
+    const noPrompt =
+      order.mpesa_initiation_status === "failed" ||
+      order.mpesa_initiation_status === "not_started";
+
+    if (noPrompt) return SLOW_POLL_MS;
+
+    return sincePageLoad < FAST_WINDOW_MS ? FAST_POLL_MS : SLOW_POLL_MS;
+  }
+
+  // Payment is settled. Keep watching until the order reaches an end state.
+  const finished =
+    order.status === "delivered" ||
+    order.payment_status === "refunded" ||
+    view === "failed";
+
+  if (finished || sinceResume >= STOP_STATUS_AFTER_MS) return null;
+
+  return STATUS_POLL_MS;
 }
 
 function paymentMethodLabel(method: string) {
@@ -75,23 +122,33 @@ function paymentMessage(
         : "M-Pesa payment received. Your order is confirmed.";
 
     case "failed":
-      return method === "cash_on_delivery"
-        ? "This order has been cancelled."
-        : "The payment was not completed and the order has been cancelled. If you received an M-Pesa confirmation message, please contact support.";
+      if (method === "cash_on_delivery") {
+        return "This order has been cancelled.";
+      }
+      if (initiation === "failed" || initiation === "not_started") {
+        return "We could not send the M-Pesa payment prompt to your phone, so the order was cancelled. Please start a new order and try again, or contact support.";
+      }
+      return "The payment was not completed and the order has been cancelled. If you received an M-Pesa confirmation message, please contact support.";
 
     case "review":
       return "We received your payment, but your order needs a quick review by our team before it can be processed. Please keep your M-Pesa confirmation message.";
+
+    case "refundPending":
+      return "Your order has been cancelled and your refund is being processed. If you have any questions, please contact support.";  
 
     case "awaiting":
       if (initiation === "failed" || initiation === "not_started") {
         return "We could not send the M-Pesa payment prompt to your phone. Please start a new order and try again, or contact support.";
       }
       if (initiation === "unknown" || initiation === "initiating") {
-        return "We could not confirm that the M-Pesa prompt was sent. Check your phone. If you enter your PIN, this page will update once the payment is confirmed. Please contact support before trying again.";
+        return "We could not confirm that the M-Pesa prompt was sent. If a prompt appears and you pay, please contact support with your order ID so we can confirm it. Otherwise this order will be cancelled automatically.";
       }
       return waitedLong
-        ? "We have not received confirmation yet. If you entered your M-Pesa PIN, keep this page open. It will update as soon as the payment is confirmed."
+        ? "We have not received confirmation yet. If you entered your M-Pesa PIN, keep this page open and it will update when the payment is confirmed. If no prompt appeared on your phone, check that the number is a Safaricom line registered for M-Pesa. If no payment is confirmed, the order is cancelled automatically."
         : "Check your phone and enter your M-Pesa PIN to complete the payment. This page will update automatically.";
+
+    case "refunded":
+      return "Your payment has been refunded. If you have any questions, please contact support.";
 
     default:
       return "Pay when you receive your order.";
@@ -109,11 +166,16 @@ function headingFor(
         ? "Payment could not be started"
         : "Waiting for your payment";
     case "failed":
-      return method === "cash_on_delivery"
-        ? "Order cancelled"
+      if (method === "cash_on_delivery") return "Order cancelled";
+      return promptNotSent
+        ? "Payment could not be started"
         : "Payment not completed";
     case "review":
       return "We received your payment";
+    case "refundPending":
+      return "Your refund is on its way";  
+    case "refunded":
+      return "Order refunded";
     default:
       return "Thank you for your order";
   }
@@ -157,11 +219,15 @@ export default function OrderConfirmation() {
     }
 
     let cancelled = false;
+    let inFlight = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let lastOrder: OrderConfirmation | null = null;
     const startedAt = Date.now();
+    let resumedAt = startedAt;
 
     async function load() {
+      if (inFlight) return;
+
       // Get the access token saved when the order was created.
       const accessToken = sessionStorage.getItem(`order_access_token_${id}`);
 
@@ -171,6 +237,8 @@ export default function OrderConfirmation() {
         setLoading(false);
         return;
       }
+
+      inFlight = true;
 
       try {
         const { data, error: orderError } = await supabase.rpc(
@@ -187,7 +255,7 @@ export default function OrderConfirmation() {
           console.error("Error fetching order:", orderError);
 
           // Only show an error if the order has never loaded.
-          // A failed background poll keeps the last known order on screen.
+          // A failed background check keeps the last known order on screen.
           if (!lastOrder) {
             setError(
               orderError.message.toLowerCase().includes("order not found")
@@ -214,29 +282,53 @@ export default function OrderConfirmation() {
               : "Something went wrong while loading the order.",
           );
         }
+      } finally {
+        inFlight = false;
       }
+
+      if (cancelled) return;
 
       setLoading(false);
 
-      // Keep polling only while an M-Pesa payment is still awaited.
-      if (!lastOrder || getPaymentView(lastOrder) !== "awaiting") return;
+      if (!lastOrder) return;
 
-      const elapsed = Date.now() - startedAt;
+      const sincePageLoad = Date.now() - startedAt;
 
-      if (elapsed >= FAST_WINDOW_MS) setWaitedLong(true);
-      if (elapsed >= STOP_POLLING_AFTER_MS) return;
+      if (
+        getPaymentView(lastOrder) === "awaiting" &&
+        sincePageLoad >= FAST_WINDOW_MS
+      ) {
+        setWaitedLong(true);
+      }
 
-      timer = setTimeout(
-        load,
-        elapsed < FAST_WINDOW_MS ? FAST_POLL_MS : SLOW_POLL_MS,
+      const delay = nextPollDelay(
+        lastOrder,
+        sincePageLoad,
+        Date.now() - resumedAt,
       );
+
+      if (delay === null) return;
+
+      timer = setTimeout(load, delay);
     }
+
+    // Check straight away when the customer comes back to this tab.
+    function handleVisible() {
+      if (document.visibilityState !== "visible" || cancelled) return;
+
+      resumedAt = Date.now();
+      if (timer) clearTimeout(timer);
+      load();
+    }
+
+    document.addEventListener("visibilitychange", handleVisible);
 
     load();
 
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);
+      document.removeEventListener("visibilitychange", handleVisible);
     };
   }, [id]);
 
@@ -272,8 +364,9 @@ export default function OrderConfirmation() {
   const initiation = order.mpesa_initiation_status;
 
   // The prompt never reached the customer's phone.
-  const promptNotSent =
-    view === "awaiting" &&
+   const promptNotSent =
+    order.payment_method === "mpesa" &&
+    (view === "awaiting" || view === "failed") &&
     (initiation === "failed" || initiation === "not_started");
 
   const displayMessage = paymentMessage(
@@ -283,13 +376,36 @@ export default function OrderConfirmation() {
     initiation,
   );
 
+  // Once the order has left the warehouse, say so.
+  const statusMessage =
+    order.status === "shipped" && view === "paid"
+     ? order.payment_method === "cash_on_delivery"
+      ? "Your order is on its way."
+      : "M-Pesa payment received. Your order is on its way."
+      : order.status === "shipped" && view === "cod"
+        ? "Your order is on its way. Pay when you receive it."
+        : order.status === "delivered" && view === "paid"
+          ? order.payment_method === "cash_on_delivery"
+            ? "Your order has been delivered and paid for. Thank you for shopping with us"
+            : "M-Pesa payment received. Your order has been delivered. Thank you for shopping with us."
+          : null;  
   // A paid-but-cancelled order is under review, not simply cancelled.
   const badgeLabel =
-    view === "review" ? "Payment under review" : orderStatusLabel(order.status);
+    view === "review"
+      ? "Payment under review"
+      : view === "refundPending"
+        ? "Refund pending"
+        : view === "refunded"
+          ? "Refunded"
+          : orderStatusLabel(order.status);
   const badgeClassName =
     view === "review"
       ? "bg-amber-100 text-amber-800"
-      : orderStatusClassName(order.status);
+      : view === "refundPending"
+        ? "bg-blue-100 text-blue-800"
+        : view === "refunded"
+          ? "bg-purple-100 text-purple-800"
+          : orderStatusClassName(order.status);
 
   // Calculate the total number of products in the order.
   const itemCount = order.items.reduce(
@@ -384,7 +500,7 @@ export default function OrderConfirmation() {
                   aria-hidden="true"
                 ></div>
               )}
-              <p>{displayMessage}</p>
+              <p>{statusMessage ?? displayMessage}</p>
             </div>
 
             {(view === "failed" || promptNotSent) && (

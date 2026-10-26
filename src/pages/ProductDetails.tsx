@@ -249,7 +249,7 @@ export default function ProductDetail() {
             <span>★★★★★ {product.rating.toFixed(1)}</span>
             <span>({product.reviewCount} reviews)</span>
             <span>·</span>
-            <span>
+            <span className="text-orange-600">
               {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
             </span>
           </div>

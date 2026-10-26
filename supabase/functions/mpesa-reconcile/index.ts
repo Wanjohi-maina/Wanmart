@@ -127,10 +127,15 @@ Deno.serve(async (req: Request) => {
 
         // No ResultCode means Daraja has not given a final answer. Do nothing.
         if (code === undefined || code === null) {
-          results.push({ orderId: order.id, action: "unresolved" });
+          results.push({
+            orderId: order.id,
+            action: "unresolved",
+            httpStatus: res.status,
+            errorCode: data?.errorCode ?? null,
+            errorMessage: data?.errorMessage ?? null,
+          });
           continue;
         }
-
         if (String(code) === "0") {
           const { error } = await supabase.rpc("confirm_payment", {
             p_order_id: order.id,
