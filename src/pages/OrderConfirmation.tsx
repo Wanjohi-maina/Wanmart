@@ -125,7 +125,7 @@ function paymentMessage(
 
     case "failed":
       if (method === "cash_on_delivery") {
-        return "This order has been cancelled.";
+        return "This order has been cancelled. If you were not expecting this, please contact support.";
       }
       if (initiation === "failed" || initiation === "not_started") {
         return "We could not send the M-Pesa payment prompt to your phone, so the order was cancelled. Please start a new order and try again, or contact support.";
