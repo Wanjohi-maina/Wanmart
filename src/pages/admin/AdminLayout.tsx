@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
+import { useIdleLogout } from "./useIdleLogout";
 
 // Add Orders and Products here as those pages are built.
 const navItems = [
@@ -9,6 +10,7 @@ const navItems = [
 ];
 
 export default function AdminLayout() {
+  useIdleLogout()
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="sticky top-0 z-10 border-b border-gray-200 bg-white">

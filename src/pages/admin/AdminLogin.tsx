@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 
@@ -13,6 +13,14 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [idleNotice] = useState(
+    () => sessionStorage.getItem("admin_idle_signout") === "1",
+  );
+
+  useEffect(() => {
+    sessionStorage.removeItem("admin_idle_signout");
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -101,6 +109,15 @@ export default function AdminLogin() {
                 </button>
               </div>
             </div>
+            
+            {idleNotice && (
+              <div
+                className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+                role="status"
+              >
+                You were signed out because of inactivity.
+              </div>
+            )}
 
             {error && (
               <div
