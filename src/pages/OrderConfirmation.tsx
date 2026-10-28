@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+import { useCart } from "../context/CartContext";
+import type { CartItem } from "../types";
 
 // Type for one item in the order
 type OrderConfirmationItem = {
@@ -205,6 +207,8 @@ function orderStatusClassName(status: string) {
 export default function OrderConfirmation() {
   // Get the order ID from the URL.
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate()
+  const { restoreCart } = useCart()
 
   const [order, setOrder] = useState<OrderConfirmation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -388,7 +392,41 @@ export default function OrderConfirmation() {
           ? order.payment_method === "cash_on_delivery"
             ? "Your order has been delivered and paid for. Thank you for shopping with us"
             : "M-Pesa payment received. Your order has been delivered. Thank you for shopping with us."
-          : null;  
+          : null;
+
+  // A saved copy of the cart lets the customer retry with the same items.
+  const snapshotKey = `cart_snapshot_${id}`;
+  const canRetry =
+    order.payment_method === "mpesa" &&
+    sessionStorage.getItem(snapshotKey) !== null;
+
+  function handleRetry() {
+    const saved = sessionStorage.getItem(snapshotKey);
+    if (!saved || !order) return;
+
+    try {
+      const restored = JSON.parse(saved) as CartItem[];
+
+      if (!Array.isArray(restored) || restored.length === 0) return;
+
+      restoreCart(restored);
+      sessionStorage.removeItem(snapshotKey);
+
+      navigate("/checkout", {
+        state: {
+          prefill: {
+            name: order.customer_name,
+            email: order.email,
+            phone: order.phone,
+            address: order.address,
+          },
+        },
+      });
+    } catch (restoreError) {
+      console.error("Could not restore the cart:", restoreError);
+    }
+  }  
+
   // A paid-but-cancelled order is under review, not simply cancelled.
   const badgeLabel =
     view === "review"
@@ -504,12 +542,24 @@ export default function OrderConfirmation() {
             </div>
 
             {(view === "failed" || promptNotSent) && (
-              <Link
-                to="/"
-                className="mt-4 inline-block text-sm text-orange-600 hover:underline"
-              >
-                Start a new order
-              </Link>
+              <div className="mt-4">
+                {canRetry ? (
+                  <button
+                    type="button"
+                    onClick={handleRetry}
+                    className="w-full rounded-full bg-orange-600 px-5 py-3 text-base font-medium text-white transition-colors hover:bg-orange-700 sm:w-auto"
+                  >
+                    Try again
+                  </button>
+                ) : (
+                  <Link
+                    to="/"
+                    className="text-sm text-orange-600 hover:underline"
+                  >
+                    Start a new order
+                  </Link>
+                )}
+              </div>
             )}
           </section>
         </div>

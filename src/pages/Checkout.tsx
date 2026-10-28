@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { supabase } from "../lib/supabaseClient";
 
@@ -8,11 +8,24 @@ type PaymentMethod = "mpesa" | "cash_on_delivery";
 export default function Checkout() {
   const { items, totalPrice, totalItems, clearCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
+  // Details passed from the order page when retrying a failed payment.
+  const prefill = (
+    location.state as {
+      prefill?: {
+        name?: string;
+        email?: string;
+        phone?: string;
+        address?: string;
+      };
+    } | null
+  )?.prefill;
+
+  const [name, setName] = useState(prefill?.name ?? "");
+  const [email, setEmail] = useState(prefill?.email ?? "");
+  const [phone, setPhone] = useState(prefill?.phone ?? "");
+  const [address, setAddress] = useState(prefill?.address ?? "");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("mpesa");
 
   const [submitting, setSubmitting] = useState(false);
@@ -114,6 +127,16 @@ export default function Checkout() {
       sessionStorage.setItem(`order_access_token_${orderId}`, accessToken);
 
       if (paymentMethod === "mpesa") {
+        // Keep a copy of the cart so the customer can retry if payment fails.
+        try {
+          sessionStorage.setItem(
+            `cart_snapshot_${orderId}`,
+            JSON.stringify(items),
+          );
+        } catch (storageError) {
+          console.error("Could not save the cart copy:", storageError);
+        }
+
         // Ask the Edge Function to initiate the M-Pesa STK Push.
         // The confirmation page reads the outcome from the database.
         const { data: stkData, error: stkError } =

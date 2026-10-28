@@ -32,6 +32,7 @@ type CartContextValue = {
     variant?: CartVariant,
   ) => void;
   clearCart: () => void;
+  restoreCart: (items: CartItem[]) => void;
   totalItems: number;
   totalPrice: number;
 };
@@ -153,6 +154,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
   function clearCart() {
     setItems([]); // Clear the cart by setting the items state to an empty array.
   }
+  
+  // Add the saved items back to the cart after a failed payment.
+  function restoreCart(restoredItems: CartItem[]) {
+      setItems((prevItems) => {
+      const merged = [...prevItems];
+
+      for (const restored of restoredItems) {
+        const key = getCartItemKey(restored.product.id, {
+          color: restored.selectedColor,
+          storage: restored.selectedStorage,
+          size: restored.selectedSize,
+        });
+
+        const index = merged.findIndex((item) => itemMatchesKey(item, key));
+
+        if (index === -1) {
+          merged.push(restored);
+        } else {
+          merged[index] = {
+            ...merged[index],
+            quantity: Math.max(merged[index].quantity, restored.quantity),
+          };
+        }
+      }
+
+      return merged;
+    });
+  }
 
   // Calculate the total number of items in the cart by summing up the quantity of each item in the items array
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
@@ -173,6 +202,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeFromCart,
         updateQuantity,
         clearCart,
+        restoreCart,
       }}
     >
       {children}
