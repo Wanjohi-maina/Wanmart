@@ -6,6 +6,7 @@ import { useIdleLogout } from "./useIdleLogout";
 const navItems = [
     { to: "/admin", label: "Dashboard", end: true },
     { to: "/admin/orders", label: "Orders", end: false },
+    { to: "/admin/products", label: "Products", end: false },
     { to: "/admin/review", label: "Review", end: false },
 ];
 

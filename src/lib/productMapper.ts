@@ -17,7 +17,7 @@ export function rowToProduct(row: ProductRow): Product {
     imageUrl: row.image_url,
     images: row.images ?? undefined,
     categoryId: row.category_id,
-    stock: row.stock,
+    stock: row.stock - row.reserved_stock,
     rating: row.rating,
     reviewCount: row.review_count,
     featured: row.featured,

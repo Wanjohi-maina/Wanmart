@@ -14,6 +14,7 @@ const cards = [
   {
     title: "Products",
     description: "Add, edit and deactivate products and categories.",
+    to:"/admin/products"
   },
 ];
 

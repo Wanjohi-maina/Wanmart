@@ -39,10 +39,12 @@ export function useProducts(
 
         // If a search term exists, search the product name or description
         if (searchQuery && searchQuery.trim() !== "") {
-          // Remove extra spaces from the beginning and end of the search term
-          const q = searchQuery.trim();
+          // Remove characters that would break the filter, then trim the ends
+          const q = searchQuery.trim().replace(/[,()%*]/g, " ").trim();
           // Find products whose name or description contains the search term
-          query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
+          if (q !== "") {
+            query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
+          }
         }
 
         // If a category was provided, filter products by that category
@@ -66,13 +68,17 @@ export function useProducts(
           query = query.eq("featured", true);
         }
 
-        // If the user wants new products, sort by date with newest first
+        // If the user wants new products, sort by date, name with newest first
         if (sort === "new") {
-          query = query.order("date_added", { ascending: false });
+          query = query
+            .order("date_added", { ascending: false })
+            .order("name", { ascending: true });
         } else {
-          query = query.order("display_order", { ascending: true });
+          query = query
+            .order("display_order", { ascending: true })
+            .order("date_added", { ascending: false })
+            .order("name", { ascending: true });
         }
-
         // Execute the completed Supabase query
         const { data: rows, error: fetchError } = await query;
 

@@ -225,7 +225,7 @@ export default function Checkout() {
                   htmlFor="phone"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Phone Number
+                  Phone Number (M-Pesa)
                 </label>
                 <input
                   id="phone"

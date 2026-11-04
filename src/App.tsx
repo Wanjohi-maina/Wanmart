@@ -16,6 +16,8 @@ import AdminHome from "./pages/admin/AdminHome";
 import ReviewQueue from "./pages/admin/ReviewQueue";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminProductForm from "./pages/admin/AdminProductForm";
 function App() {
   return (
     <CartProvider>
@@ -39,6 +41,9 @@ function App() {
               <Route path="review" element={<ReviewQueue />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="orders/:id" element={<AdminOrderDetail />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="products/new" element={<AdminProductForm />} />
+              <Route path="products/:id" element={<AdminProductForm />} />
             </Route>
           </Route>
         </Routes>

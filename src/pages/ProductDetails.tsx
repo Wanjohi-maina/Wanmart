@@ -110,7 +110,10 @@ export default function ProductDetail() {
 
   // Calculate the display price based on the selected storage option and any applicable discount
   const displayPrice = hasDiscount
-    ? (product.price + priceModifier) * (1 - product.discountPercent! / 100)
+    ? Math.round(
+        ((product.price + priceModifier) * (100 - product.discountPercent!)) /
+          100,
+      )
     : product.price + priceModifier;
 
   // Calculate the original price at selection, including any storage price modifier
@@ -140,7 +143,8 @@ export default function ProductDetail() {
   }
 
   function handleIncrease() {
-    setSelectedQuantity((qty) => qty + 1);
+    if (!product) return;
+    setSelectedQuantity((qty) => Math.min(qty + 1, Math.max(product.stock, 1)));
   }
 
   function handleColorSelect(color: string) {
@@ -185,6 +189,9 @@ export default function ProductDetail() {
     });
     setSelectedQuantity(1);
   }
+
+  // Number of filled stars, kept between 0 and 5.
+  const filledStars = Math.max(0, Math.min(5, Math.round(product.rating)));
 
   return (
     <>
@@ -245,10 +252,25 @@ export default function ProductDetail() {
           {"brand" in product && (
             <p className="text-sm text-gray-500 mt-1">{product.brand}</p>
           )}
-          <div className="flex items-center gap-2 mt-1 text-xs sm:text-sm text-gray-500">
-            <span>★★★★★ {product.rating.toFixed(1)}</span>
-            <span>({product.reviewCount} reviews)</span>
-            <span>·</span>
+          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500 sm:text-sm">
+            {product.reviewCount > 0 && (
+              <>
+                <span aria-label={`Rated ${product.rating.toFixed(1)} out of 5`}>
+                  <span className="text-orange-500">
+                    {"★".repeat(filledStars)}
+                  </span>
+                  <span className="text-gray-300">
+                    {"★".repeat(5 - filledStars)}
+                  </span>{" "}
+                  {product.rating.toFixed(1)}
+                </span>
+                <span>
+                  ({product.reviewCount}{" "}
+                  {product.reviewCount === 1 ? "review" : "reviews"})
+                </span>
+                <span>·</span>
+              </>
+            )}
             <span className="text-orange-600">
               {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
             </span>
@@ -393,10 +415,14 @@ export default function ProductDetail() {
           <button
             type="button"
             onClick={handleAddToCart}
-            disabled={variantIncomplete}
+            disabled={variantIncomplete || product.stock <= 0}
             className="mt-6 w-full bg-orange-600 text-white text-sm sm:text-base rounded-full py-2.5 sm:py-3 hover:bg-orange-700 transition-colors disabled:cursor-not-allowed disabled:bg-orange-200"
           >
-            {variantIncomplete ? "Select options" : "Add to Cart"}
+            {product.stock <= 0
+              ? "Unavailable"
+              : variantIncomplete
+                ? "Select options"
+                : "Add to Cart"}
           </button>
         </div>
       </div>
