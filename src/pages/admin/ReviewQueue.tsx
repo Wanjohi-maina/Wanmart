@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
+import { useReviewCount } from "./reviewCountContext";
 
 type ReviewItem = {
   product_id: string;
@@ -475,6 +476,8 @@ export default function ReviewQueue() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { refresh } = useReviewCount();
+
   const load = useCallback(async () => {
     const { data, error: rpcError } = await supabase.rpc(
       "admin_get_review_queue",
@@ -543,7 +546,14 @@ export default function ReviewQueue() {
       {!loading && orders && orders.length > 0 && (
         <ul className="mt-6 grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
           {orders.map((order) => (
-            <ReviewCard key={order.order_id} order={order} onDone={load} />
+            <ReviewCard
+              key={order.order_id}
+              order={order}
+              onDone={() => {
+                load();
+                refresh();
+              }}
+            />
           ))}
         </ul>
       )}

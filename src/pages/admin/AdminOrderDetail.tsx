@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
+import { useReviewCount } from "./reviewCountContext";
 import {
   Badge,
   methodLabel,
@@ -211,6 +212,8 @@ export default function AdminOrderDetail() {
   const [actionError, setActionError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const { refresh } = useReviewCount();
+
   const load = useCallback(async () => {
     if (!id) return;
 
@@ -260,6 +263,7 @@ export default function AdminOrderDetail() {
     setText("");
     setSuccess(ACTIONS[action].success);
     await load();
+    refresh();
   }
 
   if (loading) {

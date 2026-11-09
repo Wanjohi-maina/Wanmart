@@ -1,17 +1,19 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 import { useIdleLogout } from "./useIdleLogout";
+import { ReviewCountProvider } from "./ReviewCountProvider";
+import { useReviewCount } from "./reviewCountContext";
 
-// Add Orders and Products here as those pages are built.
 const navItems = [
-    { to: "/admin", label: "Dashboard", end: true },
-    { to: "/admin/orders", label: "Orders", end: false },
-    { to: "/admin/products", label: "Products", end: false },
-    { to: "/admin/review", label: "Review", end: false },
+  { to: "/admin", label: "Dashboard", end: true, showCount: false },
+  { to: "/admin/orders", label: "Orders", end: false, showCount: false },
+  { to: "/admin/products", label: "Products", end: false, showCount: false },
+  { to: "/admin/review", label: "Review", end: false, showCount: true },
 ];
 
-export default function AdminLayout() {
-  useIdleLogout()
+function AdminShell() {
+  const { counts } = useReviewCount();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="sticky top-0 z-10 border-b border-gray-200 bg-white">
@@ -25,7 +27,7 @@ export default function AdminLayout() {
                 to={item.to}
                 end={item.end}
                 className={({ isActive }) =>
-                  `py-3 border-b-2 ${
+                  `inline-flex items-center py-3 border-b-2 ${
                     isActive
                       ? "border-orange-600 text-orange-600"
                       : "border-transparent text-gray-500 hover:text-gray-900"
@@ -33,6 +35,12 @@ export default function AdminLayout() {
                 }
               >
                 {item.label}
+                {item.showCount && counts && counts.total > 0 && (
+                  <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-orange-600 px-1.5 py-0.5 text-xs font-medium leading-none text-white">
+                    {counts.total > 99 ? "99+" : counts.total}
+                    <span className="sr-only"> waiting for review</span>
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
@@ -58,5 +66,15 @@ export default function AdminLayout() {
         <Outlet />
       </main>
     </div>
+  );
+}
+
+export default function AdminLayout() {
+  useIdleLogout();
+
+  return (
+    <ReviewCountProvider>
+      <AdminShell />
+    </ReviewCountProvider>
   );
 }
