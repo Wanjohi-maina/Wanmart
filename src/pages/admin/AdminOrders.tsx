@@ -101,18 +101,22 @@ export default function AdminOrders() {
       {/* Search */}
       <input
         type="search"
+        aria-label="Search orders"
         value={searchInput}
         onChange={(e) => setSearchInput(e.target.value)}
-        placeholder="Search name, phone, email, order ID or receipt"
+        placeholder="Search orders..."
         autoCapitalize="none"
         autoCorrect="off"
         spellCheck={false}
         className="mt-4 w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-base outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
       />
+      <p className="mt-1 text-xs text-gray-500">
+        Search by name, phone, email, order ID, or receipt.
+      </p>
 
       {/* Status filters */}
-      <div className="-mx-4 mt-3 overflow-x-auto px-4">
-        <div className="flex gap-2 whitespace-nowrap pb-1">
+      <div className="mt-3">
+        <div className="flex flex-wrap gap-2">
           {FILTERS.map((filter) => (
             <button
               key={filter.value}
