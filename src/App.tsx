@@ -18,6 +18,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminProductForm from "./pages/admin/AdminProductForm";
+import NotFound from "./pages/NotFound";
 function App() {
   return (
     <CartProvider>
@@ -32,6 +33,7 @@ function App() {
             <Route path="shop" element={<Shop />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="order-confirmation/:id" element={<OrderConfirmation />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
 
           <Route path="/admin/login" element={<AdminLogin />} />
