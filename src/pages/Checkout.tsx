@@ -421,6 +421,18 @@ export default function Checkout() {
             >
               {submitting ? "Placing Order..." : "Place Order"}
             </button>
+                        <p className="mt-3 text-center text-xs text-gray-500">
+              By placing your order you agree to our{" "}
+              <Link
+                to="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                Terms &amp; Conditions
+              </Link>
+              .
+            </p>
             {/* Return to cart */}
             <Link
               to="/cart"

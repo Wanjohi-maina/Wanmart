@@ -40,7 +40,7 @@ export default function NewsletterSignup() {
     }
 
     return (
-        <section className="bg-gray-50 border-t border-gray-100 px-4 py-14 sm:py-20">
+        <section className="bg-white border-t border-gray-100 px-4 py-14 sm:py-20">
             <div className="max-w-lg mx-auto text-center">
                 <h2 className="font-display text-2xl sm:text-3xl font-bold text-gray-900">
                     Stay in the loop

@@ -9,6 +9,11 @@ import Layout from "./components/Layout";
 import Shop from "./pages/Shop";
 import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import ContactPage from "./pages/ContactPage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import AboutPage from "./pages/AboutPage";
+import ScrollToTop from "./components/ScrollToTop";
 import AdminLogin from "./pages/admin/AdminLogin";
 import RequireAdmin from "./pages/admin/RequireAdmin";
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -23,6 +28,7 @@ function App() {
   return (
     <CartProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
@@ -33,6 +39,10 @@ function App() {
             <Route path="shop" element={<Shop />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="order-confirmation/:id" element={<OrderConfirmation />} />
+            <Route path="contact" element={<ContactPage />} />
+            <Route path="terms" element={<TermsPage />} />
+            <Route path="privacy" element={<PrivacyPage />} />
+            <Route path="about" element={<AboutPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
 
