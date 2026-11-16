@@ -231,7 +231,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center max-w-2xl mx-auto">
             <p className="text-sm font-medium text-gray-500">
-              The WanMart difference
+              The Wanmart difference
             </p>
 
             <h2 className="mt-2 font-display text-2xl sm:text-3xl font-bold text-gray-900">
