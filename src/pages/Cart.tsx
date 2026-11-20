@@ -1,7 +1,20 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  ArrowLeft,
+  ShoppingBag,
+  Trash2,
+  Minus,
+  Plus,
+  Tag,
+  Package,
+} from "lucide-react";
+
 import { useCart } from "../context/CartContext";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
+import CheckoutProgress from "../components/CheckoutProgress";
 
 // Define the actions that can be waiting for confirmation
 type PendingAction =
@@ -22,34 +35,38 @@ export default function Cart() {
     totalPrice,
     totalItems,
   } = useCart();
-  const [pendingAction, setPendingAction] = useState<PendingAction | null>(
-    null,
-  );
 
-  if (items.length === 0) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <p className="text-gray-400 mb-4">Your cart is empty.</p>
-        <Link to="/" className="text-orange-600 hover:underline">
-          Continue shopping
-        </Link>
-      </div>
-    );
-  } // If the cart is empty, display a message and a link to continue shopping.
+  const [pendingAction, setPendingAction] =
+    useState<PendingAction | null>(null);
 
+  // Calculate the original subtotal before discounts
+  const originalSubtotal = items.reduce((total, item) => {
+    const originalPrice =
+      item.originalUnitPrice ?? item.unitPrice;
+
+    return total + originalPrice * item.quantity;
+  }, 0);
+
+  // Calculate the total discount
+  const totalDiscount = originalSubtotal - totalPrice;
+
+  // Handle the confirmed action
   function handleConfirm() {
     if (!pendingAction) return;
 
     if (pendingAction.type === "remove") {
-      removeFromCart(pendingAction.productId, pendingAction.variant);
+      removeFromCart(
+        pendingAction.productId,
+        pendingAction.variant,
+      );
     } else {
-      // Clear the entire cart
       clearCart();
     }
-    setPendingAction(null); // Reset the pending action after confirming
+
+    setPendingAction(null);
   }
 
-  // Determine the title, message, and button text for the confirmation dialog
+  // Determine the confirmation dialog content
   const dialogCopy =
     pendingAction?.type === "remove"
       ? {
@@ -65,180 +82,353 @@ export default function Cart() {
           }
         : null;
 
-  // Calculate what the cart would cost with no discounts applied
-  const originalSubtotal = items.reduce((total, item) => {
-    const originalPrice = item.originalUnitPrice ?? item.unitPrice; // Use the original unit price if available, otherwise use the current unit price
-    return total + originalPrice * item.quantity; // Calculate the total by multiplying the original price by the quantity for each item
-  }, 0);
+  // Empty cart state
+  if (items.length === 0) {
+    return (
+      <div className="min-h-[60vh] px-4 py-12">
+        <div className="mx-auto max-w-3xl">
+          <CheckoutProgress currentStep="cart" />
 
-  const totalDiscount = originalSubtotal - totalPrice; // Calculate the total discount by subtracting the current total price from the original subtotal
+          <div className="mt-10 flex flex-col items-center rounded-2xl border border-gray-200 bg-white px-6 py-14 text-center shadow-sm">
+            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-orange-50">
+              <ShoppingBag
+                className="h-9 w-9 text-orange-600"
+                aria-hidden="true"
+              />
+            </div>
+
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Your cart is empty
+            </h1>
+
+            <p className="mt-2 max-w-sm text-sm leading-6 text-gray-500">
+              Looks like you haven't added anything to your cart yet.
+              Explore our products and find something you'll love.
+            </p>
+
+            <Link
+              to="/"
+              className="mt-7 inline-flex items-center gap-2 rounded-full bg-orange-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+            >
+              Continue shopping
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Your Cart</h1>
-        <button
-          type="button"
-          onClick={() => setPendingAction({ type: "clear" })}
-          className="text-sm text-white bg-red-600 px-3 py-1.5 rounded-full hover:bg-red-500 transition-colors"
-        >
-          Clear cart
-        </button>
-      </div>
+    <div className="px-4 py-8 sm:py-10">
+      <div className="mx-auto max-w-5xl">
+        {/* Checkout progress */}
+        <CheckoutProgress currentStep="cart" />
 
-      <ul className="bg-gray-50 p-4 rounded-lg">
-        {/* Loop through all items currently in the cart */}
-        {items.map((item) => {
-          // Create a variant object containing the item's selected options
-          const variant = {
-            color: item.selectedColor,
-            storage: item.selectedStorage,
-            size: item.selectedSize,
-          };
-          // Create a readable label from the selected variants
-          // filter(Boolean) removes any undefined or empty values
-          // join() combines the remaining values with a separator
-          const variantLabel = [
-            item.selectedColor,
-            item.selectedStorage,
-            item.selectedSize,
-          ]
-            .filter(Boolean)
-            .join(" \u00b7 ");
+        {/* Page heading */}
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+              Your Cart
+            </h1>
 
-          // Use the selected color image for electronics, otherwise use the default product image
-          const displayImage =
-            item.product.kind === "electronics" && item.selectedColor
-              ? item.product.colorImages[item.selectedColor]
-              : item.product.imageUrl;
+            <p className="mt-1 text-sm text-gray-500">
+              Review your items before proceeding to checkout.
+            </p>
+          </div>
 
-          // Calculate the total price for this cart item based on its quantity.
-          const lineTotal = item.unitPrice * item.quantity;
+          <button
+            type="button"
+            onClick={() => setPendingAction({ type: "clear" })}
+            className="inline-flex w-fit items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-red-600"
+          >
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
+            Clear cart
+          </button>
+        </div>
 
-          // Check whether the item has a higher original price than its current price
-          const hasDiscount =
-            typeof item.originalUnitPrice === "number" &&
-            item.originalUnitPrice > item.unitPrice;
+        <div className="mt-7 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_340px]">
+          {/* Cart items */}
+          <section aria-label="Cart items">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+              <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+                <h2 className="font-semibold text-gray-900">
+                  Shopping items
+                </h2>
 
-          // // Calculate the original line total only when the item is discounted
-          const originalLineTotal = hasDiscount
-            ? item.originalUnitPrice! * item.quantity
-            : null;
+                <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                  {totalItems} {totalItems === 1 ? "item" : "items"}
+                </span>
+              </div>
 
-          return (
-            <li
-              key={`${item.product.id}|${item.selectedColor ?? ""}|${item.selectedStorage ?? ""}|${item.selectedSize ?? ""}`}
-              className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-gray-100 mt-4 rounded-lg"
+              <ul className="divide-y divide-gray-100">
+                {items.map((item) => {
+                  // Selected product variants
+                  const variant = {
+                    color: item.selectedColor,
+                    storage: item.selectedStorage,
+                    size: item.selectedSize,
+                  };
+
+                  // Build a readable variant label
+                  const variantLabel = [
+                    item.selectedColor,
+                    item.selectedStorage,
+                    item.selectedSize,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ");
+
+                  // Use the selected color image for electronics
+                  const displayImage =
+                    item.product.kind === "electronics" &&
+                    item.selectedColor
+                      ? item.product.colorImages[item.selectedColor]
+                      : item.product.imageUrl;
+
+                  // Calculate this item's total
+                  const lineTotal =
+                    item.unitPrice * item.quantity;
+
+                  // Check whether the item has a discount
+                  const hasDiscount =
+                    typeof item.originalUnitPrice === "number" &&
+                    item.originalUnitPrice > item.unitPrice;
+
+                  const originalLineTotal = hasDiscount
+                    ? item.originalUnitPrice! * item.quantity
+                    : null;
+
+                  return (
+                    <li
+                      key={`${item.product.id}|${item.selectedColor ?? ""}|${item.selectedStorage ?? ""}|${item.selectedSize ?? ""}`}
+                      className="p-4 sm:p-5"
+                    >
+                      <div className="flex gap-4">
+                        {/* Product image */}
+                        <Link
+                          to={`/product/${item.product.id}`}
+                          className="h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-gray-100 bg-gray-50 sm:h-28 sm:w-28"
+                        >
+                          <img
+                            src={displayImage}
+                            alt={item.product.name}
+                            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                          />
+                        </Link>
+
+                        {/* Product information */}
+                        <div className="flex min-w-0 flex-1 flex-col">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <Link
+                                to={`/product/${item.product.id}`}
+                                className="text-sm font-semibold text-gray-900 transition-colors hover:text-orange-600 sm:text-base"
+                              >
+                                {item.product.name}
+                              </Link>
+
+                              {variantLabel && (
+                                <p className="mt-1 text-xs text-gray-500">
+                                  {variantLabel}
+                                </p>
+                              )}
+                            </div>
+
+                            {/* Remove item */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPendingAction({
+                                  type: "remove",
+                                  productId: item.product.id,
+                                  productName: item.product.name,
+                                  variant,
+                                })
+                              }
+                              aria-label={`Remove ${item.product.name} from cart`}
+                              className="shrink-0 rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                            >
+                              <Trash2
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
+                            </button>
+                          </div>
+
+                          {/* Price */}
+                          <div className="mt-3">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="text-sm font-semibold text-gray-900">
+                                KES {lineTotal.toLocaleString()}
+                              </span>
+
+                              {hasDiscount && originalLineTotal !== null && (
+                                <span className="text-xs text-gray-400 line-through">
+                                  KES {originalLineTotal.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+
+                            {item.quantity > 1 && (
+                              <p className="mt-0.5 text-xs text-gray-500">
+                                KES {item.unitPrice.toLocaleString()} each
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Quantity controls */}
+                          <div className="mt-3 flex items-center justify-between gap-3">
+                            <div className="inline-flex items-center rounded-lg border border-gray-200">
+                              <button
+                                type="button"
+                                disabled={item.quantity <= 1}
+                                onClick={() =>
+                                  updateQuantity(
+                                    item.product.id,
+                                    item.quantity - 1,
+                                    variant,
+                                  )
+                                }
+                                aria-label={`Decrease quantity of ${item.product.name}`}
+                                className="rounded-l-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+                              >
+                                <Minus
+                                  className="h-3.5 w-3.5"
+                                  aria-hidden="true"
+                                />
+                              </button>
+
+                              <span
+                                className="min-w-9 text-center text-sm font-medium text-gray-900"
+                                aria-label={`Quantity: ${item.quantity}`}
+                              >
+                                {item.quantity}
+                              </span>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  updateQuantity(
+                                    item.product.id,
+                                    item.quantity + 1,
+                                    variant,
+                                  )
+                                }
+                                aria-label={`Increase quantity of ${item.product.name}`}
+                                className="rounded-r-lg p-2 text-gray-600 transition-colors hover:bg-gray-100"
+                              >
+                                <Plus
+                                  className="h-3.5 w-3.5"
+                                  aria-hidden="true"
+                                />
+                              </button>
+                            </div>
+
+                            <span className="text-xs text-gray-400 sm:hidden">
+                              Quantity: {item.quantity}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Continue shopping */}
+            <Link
+              to="/"
+              className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-orange-600"
             >
-              <div className="flex items-center gap-4 w-full">
-                <Link to={`/product/${item.product.id}`} className="shrink-0">
-                  <img
-                    src={displayImage}
-                    alt={item.product.name}
-                    className="w-16 h-16 object-cover rounded-md bg-gray-50 md:w-20 md:h-20"
-                  />
-                </Link>
-                <div className="flex-1 min-w-0">
-                  <Link
-                    to={`/product/${item.product.id}`}
-                    className="text-sm font-medium text-gray-900 hover:underline wrap-break-words"
-                  >
-                    {item.product.name}
-                  </Link>
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              Continue shopping
+            </Link>
+          </section>
 
-                  {/* Display the selected variants if any exist */}
-                  {variantLabel && (
-                    <p className="text-xs text-gray-500">{variantLabel}</p>
-                  )}
+          {/* Order summary */}
+          <aside className="lg:sticky lg:top-6">
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Order summary
+              </h2>
 
-                  <p className="flex flex-col text-sm text-gray-600 sm:flex-row sm:items-center ">
-                    <div>
-                      KES {item.quantity > 1
-                        ? lineTotal.toLocaleString()
-                        : item.unitPrice.toLocaleString()}
-                      {item.quantity > 1 && (
-                        <span className="text-gray-500 font-normal">
-                          {` · KES ${item.unitPrice.toLocaleString()} each`}
-                        </span>
-                      )}
-                    </div>
-                    {hasDiscount && (
-                      <span className="text-sm text-gray-400 line-through sm:ml-2">
-                        KES {originalLineTotal!.toLocaleString()}
-                      </span>
-                    )}
+              <div className="mt-5 space-y-4">
+                <div className="flex items-center justify-between text-sm text-gray-500">
+                  <span>
+                    Subtotal
+                    <span className="ml-1 text-xs text-gray-400">
+                      ({totalItems} {totalItems === 1 ? "item" : "items"})
+                    </span>
+                  </span>
+
+                  <span className="font-medium text-gray-700">
+                    KES {originalSubtotal.toLocaleString()}
+                  </span>
+                </div>
+
+                {totalDiscount > 0 && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="inline-flex items-center gap-1.5 text-green-700">
+                      <Tag
+                        className="h-3.5 w-3.5"
+                        aria-hidden="true"
+                      />
+                      Discount
+                    </span>
+
+                    <span className="font-medium text-green-700">
+                      - KES {totalDiscount.toLocaleString()}
+                    </span>
+                  </div>
+                )} 
+
+                <div className="border-t border-dashed border-gray-200 pt-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-gray-900">
+                      Total
+                    </span>
+
+                    <span className="text-xl font-bold text-gray-900">
+                      KES {totalPrice.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <p className="mt-1 text-right text-xs text-gray-400">
+                    Delivery fee added at checkout
                   </p>
                 </div>
               </div>
-              {/* Allow the user to change the item quantity */}
-              <div className="flex items-center w-full justify-between sm:gap-4 sm:flex-0 mt-2 sm:mt-0">
-                <input
-                  type="number"
-                  min={1}
-                  value={item.quantity}
-                  onChange={(e) =>
-                    updateQuantity(
-                      item.product.id,
-                      Number(e.target.value),
-                      variant,
-                    )
-                  } // Update the quantity of the product in the cart when the input value changes
-                  className="w-16 border border-gray-300 hover:border-gray-400 rounded-lg px-2 py-1 text-sm"
+
+              <Link
+                to="/checkout"
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-orange-600 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+              >
+                Proceed to checkout
+                <ArrowRight
+                  className="h-4 w-4"
+                  aria-hidden="true"
                 />
-                {/* Remove this specific product variant from the cart */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPendingAction({
-                      type: "remove",
-                      productId: item.product.id,
-                      productName: item.product.name,
-                      variant,
-                    })
-                  } // Set the pending action to remove this item, which will trigger the confirmation dialog
-                  className="text-sm underline text-gray-600 hover:text-orange-600"
-                >
-                  Remove
-                </button>
+              </Link>
+
+              <div className="mt-5 flex items-start gap-3 rounded-xl bg-gray-50 p-3">
+                <Package
+                  className="mt-0.5 h-4 w-4 shrink-0 text-gray-500"
+                  aria-hidden="true"
+                />
+
+                <p className="text-xs leading-5 text-gray-500">
+                  Your delivery method and fee will be confirmed during
+                  checkout.
+                </p>
               </div>
-            </li>
-          );
-        })}
-      </ul>
-
-      <div className="mt-6 rounded-lg bg-gray-50 p-4">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <div>
-              <span>Subtotal</span>
-              <span className="ml-2 text-gray-400 text-xs">
-                {`(${totalItems} item${totalItems > 1 ? "s" : ""})`}
-              </span>
             </div>
-            <span>KES {originalSubtotal.toLocaleString()}</span>
-          </div>
-          {totalDiscount > 0 && (
-            <div className="flex items-center justify-between text-sm text-orange-600">
-              <span>Discount</span>
-              <span className="text-xs">- KES {totalDiscount.toLocaleString()}</span>
-            </div>
-          )}
-          <div className="flex items-center justify-between border-t border-gray-200 pt-3 text-lg font-semibold text-gray-900">
-            <span>Total</span>
-            <span>KES {totalPrice.toLocaleString()}</span>
-          </div>
-        </div>
-
-        <div className="mt-4 flex justify-center sm:justify-end">
-          <Link
-            to="/checkout"
-            className="w-full rounded-full bg-orange-600 px-6 py-3 text-center text-white transition-colors hover:bg-orange-700 sm:w-auto"
-          >
-            Checkout
-          </Link>
+          </aside>
         </div>
       </div>
 
+      {/* Confirmation dialog */}
       <ConfirmDialog
         isOpen={dialogCopy !== null}
         title={dialogCopy?.title ?? ""}

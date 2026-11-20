@@ -9,9 +9,13 @@ export default function NewsletterSignup() {
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        setError(null)
+        if (status === 'sending') return
 
-        if (email.trim() === '') return
+        if (email.trim() === '') {
+            setError('Please enter your email address.')
+            return
+        }
+        setError(null)
 
         // Bots fill in hidden fields. Pretend it worked and save nothing.
         if (trap !== '') {
@@ -21,22 +25,28 @@ export default function NewsletterSignup() {
 
         setStatus('sending')
 
-        const { error: rpcError } = await supabase.rpc('subscribe_newsletter', {
-            p_email: email.trim(),
-        })
-
-        if (rpcError) {
-            setStatus('idle')
-            setError(
-                rpcError.message.includes('valid email')
-                    ? 'Please enter a valid email address.'
-                    : 'Something went wrong. Please try again.',
+        try {
+            const { error: rpcError } = await supabase.rpc(
+                'subscribe_newsletter',
+                { p_email: email.trim() },
             )
-            return
-        }
 
-        setEmail('')
-        setStatus('done')
+            if (rpcError) {
+                setStatus('idle')
+                setError(
+                    rpcError.message.includes('valid email')
+                        ? 'Please enter a valid email address.'
+                        : 'Something went wrong. Please try again.',
+                )
+                return
+            }
+
+            setEmail('')
+            setStatus('done')
+        } catch {
+            setStatus('idle')
+            setError('Something went wrong. Please try again.')
+        }
     }
 
     return (

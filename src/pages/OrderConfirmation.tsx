@@ -1,8 +1,28 @@
+
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowRight,
+  CheckCircle2,
+  CircleAlert,
+  Clock3,
+  CreditCard,
+  MapPin,
+  Package,
+  RefreshCw,
+  ShieldCheck,
+  ShoppingBag,
+  Truck,
+  UserRound,
+  Mail,
+  Phone,
+  RotateCcw,
+} from "lucide-react";
+
 import { supabase } from "../lib/supabaseClient";
 import { useCart } from "../context/CartContext";
 import type { CartItem } from "../types";
+import CheckoutProgress from "../components/CheckoutProgress";
 
 // Type for one item in the order
 type OrderConfirmationItem = {
@@ -29,6 +49,13 @@ type OrderConfirmation = {
   payment_method: string;
   payment_resolution_status?: string | null;
   mpesa_initiation_status: string | null;
+
+  // Delivery information
+  delivery_method: string | null;
+  delivery_label: string | null;
+  delivery_fee: number | null;
+  delivery_notes: string | null;
+
   currency: string;
   subtotal: number;
   discount_total: number;
@@ -38,12 +65,12 @@ type OrderConfirmation = {
   items: OrderConfirmationItem[];
 };
 
-// Polling settings.
-const FAST_POLL_MS = 4000; // awaiting an M-Pesa payment, first 3 minutes
-const SLOW_POLL_MS = 15000; // awaiting an M-Pesa payment, after that
+// Polling settings
+const FAST_POLL_MS = 4000;
+const SLOW_POLL_MS = 15000;
 const FAST_WINDOW_MS = 3 * 60 * 1000;
 const STOP_AWAITING_AFTER_MS = 30 * 60 * 1000;
-const STATUS_POLL_MS = 20000; // watching shipping and delivery updates
+const STATUS_POLL_MS = 20000;
 const STOP_STATUS_AFTER_MS = 2 * 60 * 60 * 1000;
 
 type PaymentView =
@@ -55,14 +82,13 @@ type PaymentView =
   | "cod"
   | "refunded";
 
-// Work out which payment state to show from the order's database values.
+// Determine the payment state from the database values
 function getPaymentView(order: OrderConfirmation): PaymentView {
   if (order.payment_status === "refunded") return "refunded";
 
   if (order.payment_status === "paid") {
     if (order.status !== "cancelled") return "paid";
 
-    // Paid but cancelled: either we are refunding it, or it needs review.
     return order.payment_resolution_status === "refund_pending"
       ? "refundPending"
       : "review";
@@ -74,7 +100,7 @@ function getPaymentView(order: OrderConfirmation): PaymentView {
   return "cod";
 }
 
-// How long to wait before checking again, or null to stop checking.
+// Determine how long to wait before polling again
 function nextPollDelay(
   order: OrderConfirmation,
   sincePageLoad: number,
@@ -91,10 +117,11 @@ function nextPollDelay(
 
     if (noPrompt) return SLOW_POLL_MS;
 
-    return sincePageLoad < FAST_WINDOW_MS ? FAST_POLL_MS : SLOW_POLL_MS;
+    return sincePageLoad < FAST_WINDOW_MS
+      ? FAST_POLL_MS
+      : SLOW_POLL_MS;
   }
 
-  // Payment is settled. Keep watching until the order reaches an end state.
   const finished =
     order.status === "delivered" ||
     order.payment_status === "refunded" ||
@@ -127,24 +154,28 @@ function paymentMessage(
       if (method === "cash_on_delivery") {
         return "This order has been cancelled. If you were not expecting this, please contact support.";
       }
+
       if (initiation === "failed" || initiation === "not_started") {
         return "We could not send the M-Pesa payment prompt to your phone, so the order was cancelled. Please start a new order and try again, or contact support.";
       }
+
       return "The payment was not completed and the order has been cancelled. If you received an M-Pesa confirmation message, please contact support.";
 
     case "review":
       return "We received your payment, but your order needs a quick review by our team before it can be processed. Please keep your M-Pesa confirmation message.";
 
     case "refundPending":
-      return "Your order has been cancelled and your refund is being processed. If you have any questions, please contact support.";  
+      return "Your order has been cancelled and your refund is being processed. If you have any questions, please contact support.";
 
     case "awaiting":
       if (initiation === "failed" || initiation === "not_started") {
         return "We could not send the M-Pesa payment prompt to your phone. Please start a new order and try again, or contact support.";
       }
+
       if (initiation === "unknown" || initiation === "initiating") {
         return "We could not confirm that the M-Pesa prompt was sent. If a prompt appears and you pay, please contact support with your order ID so we can confirm it. Otherwise this order will be cancelled automatically.";
       }
+
       return waitedLong
         ? "We have not received confirmation yet. If you entered your M-Pesa PIN, keep this page open and it will update when the payment is confirmed. If no prompt appeared on your phone, check that the number is a Safaricom line registered for M-Pesa. If no payment is confirmed, the order is cancelled automatically."
         : "Check your phone and enter your M-Pesa PIN to complete the payment. This page will update automatically.";
@@ -167,17 +198,23 @@ function headingFor(
       return promptNotSent
         ? "Payment could not be started"
         : "Waiting for your payment";
+
     case "failed":
       if (method === "cash_on_delivery") return "Order cancelled";
+
       return promptNotSent
         ? "Payment could not be started"
         : "Payment not completed";
+
     case "review":
       return "We received your payment";
+
     case "refundPending":
-      return "Your refund is on its way";  
+      return "Your refund is on its way";
+
     case "refunded":
       return "Order refunded";
+
     default:
       return "Thank you for your order";
   }
@@ -193,22 +230,86 @@ function orderStatusClassName(status: string) {
   switch (status.toLowerCase()) {
     case "pending":
       return "bg-orange-100 text-orange-800";
+
     case "shipped":
       return "bg-blue-100 text-blue-800";
+
     case "delivered":
       return "bg-green-100 text-green-800";
+
     case "cancelled":
       return "bg-red-100 text-red-800";
+
     default:
       return "bg-gray-100 text-gray-700";
   }
 }
 
+// Visual styles for each payment state
+function paymentViewStyles(view: PaymentView) {
+  switch (view) {
+    case "paid":
+      return {
+        icon: CheckCircle2,
+        container: "border-green-200 bg-green-50",
+        iconColor: "text-green-600",
+        titleColor: "text-green-900",
+      };
+
+    case "awaiting":
+      return {
+        icon: Clock3,
+        container: "border-orange-200 bg-orange-50",
+        iconColor: "text-orange-600",
+        titleColor: "text-orange-900",
+      };
+
+    case "failed":
+      return {
+        icon: CircleAlert,
+        container: "border-red-200 bg-red-50",
+        iconColor: "text-red-600",
+        titleColor: "text-red-900",
+      };
+
+    case "review":
+      return {
+        icon: CircleAlert,
+        container: "border-amber-200 bg-amber-50",
+        iconColor: "text-amber-600",
+        titleColor: "text-amber-900",
+      };
+
+    case "refundPending":
+      return {
+        icon: RotateCcw,
+        container: "border-blue-200 bg-blue-50",
+        iconColor: "text-blue-600",
+        titleColor: "text-blue-900",
+      };
+
+    case "refunded":
+      return {
+        icon: CheckCircle2,
+        container: "border-purple-200 bg-purple-50",
+        iconColor: "text-purple-600",
+        titleColor: "text-purple-900",
+      };
+
+    default:
+      return {
+        icon: CreditCard,
+        container: "border-gray-200 bg-gray-50",
+        iconColor: "text-gray-600",
+        titleColor: "text-gray-900",
+      };
+  }
+}
+
 export default function OrderConfirmation() {
-  // Get the order ID from the URL.
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate()
-  const { restoreCart } = useCart()
+  const navigate = useNavigate();
+  const { restoreCart } = useCart();
 
   const [order, setOrder] = useState<OrderConfirmation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -226,16 +327,18 @@ export default function OrderConfirmation() {
     let inFlight = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let lastOrder: OrderConfirmation | null = null;
+
     const startedAt = Date.now();
     let resumedAt = startedAt;
 
     async function load() {
       if (inFlight) return;
 
-      // Get the access token saved when the order was created.
-      const accessToken = sessionStorage.getItem(`order_access_token_${id}`);
+      // Get the access token saved when the order was created
+      const accessToken = sessionStorage.getItem(
+        `order_access_token_${id}`,
+      );
 
-      // Don't fetch the order if the access token is missing.
       if (!accessToken) {
         setError("Unable to verify your order. Please return to checkout.");
         setLoading(false);
@@ -258,8 +361,6 @@ export default function OrderConfirmation() {
         if (orderError) {
           console.error("Error fetching order:", orderError);
 
-          // Only show an error if the order has never loaded.
-          // A failed background check keeps the last known order on screen.
           if (!lastOrder) {
             setError(
               orderError.message.toLowerCase().includes("order not found")
@@ -268,7 +369,9 @@ export default function OrderConfirmation() {
             );
           }
         } else if (!data) {
-          if (!lastOrder) setError("We could not find this order.");
+          if (!lastOrder) {
+            setError("We could not find this order.");
+          }
         } else {
           lastOrder = data as OrderConfirmation;
           setError(null);
@@ -316,12 +419,13 @@ export default function OrderConfirmation() {
       timer = setTimeout(load, delay);
     }
 
-    // Check straight away when the customer comes back to this tab.
     function handleVisible() {
       if (document.visibilityState !== "visible" || cancelled) return;
 
       resumedAt = Date.now();
+
       if (timer) clearTimeout(timer);
+
       load();
     }
 
@@ -331,35 +435,59 @@ export default function OrderConfirmation() {
 
     return () => {
       cancelled = true;
+
       if (timer) clearTimeout(timer);
+
       document.removeEventListener("visibilitychange", handleVisible);
     };
   }, [id]);
 
-  // Show loading spinner while fetching the order.
+  // Loading state
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-16 flex justify-center">
-        <div className="w-8 h-8 border-4 border-gray-300 border-t-orange-600 rounded-full animate-spin"></div>
+      <div className="min-h-[60vh] px-4 py-16">
+        <div className="mx-auto flex max-w-3xl flex-col items-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-orange-50">
+            <RefreshCw className="h-6 w-6 animate-spin text-orange-600" />
+          </div>
+
+          <p className="mt-4 text-sm font-medium text-gray-700">
+            Loading your order...
+          </p>
+
+          <p className="mt-1 text-xs text-gray-400">
+            Please wait while we retrieve your order details.
+          </p>
+        </div>
       </div>
     );
   }
 
-  // Show an error if the order could not be loaded.
+  // Error state
   if (error || !order) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-xl font-semibold text-gray-900 mb-2">
-          Order not found
-        </h1>
+      <div className="min-h-[60vh] px-4 py-12">
+        <div className="mx-auto flex max-w-2xl flex-col items-center rounded-2xl border border-gray-200 bg-white px-6 py-12 text-center shadow-sm">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+            <CircleAlert className="h-8 w-8 text-red-600" />
+          </div>
 
-        <p className="text-gray-500 mb-6">
-          {error ?? "We could not find this order."}
-        </p>
+          <h1 className="mt-5 text-xl font-semibold text-gray-900">
+            Unable to load your order
+          </h1>
 
-        <Link to="/" className="text-orange-600 hover:underline">
-          Continue shopping
-        </Link>
+          <p className="mt-2 text-sm leading-6 text-gray-500">
+            {error ?? "We could not find this order."}
+          </p>
+
+          <Link
+            to="/"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-orange-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-orange-700"
+          >
+            Continue shopping
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
     );
   }
@@ -367,8 +495,8 @@ export default function OrderConfirmation() {
   const view = getPaymentView(order);
   const initiation = order.mpesa_initiation_status;
 
-  // The prompt never reached the customer's phone.
-   const promptNotSent =
+  // The prompt never reached the customer's phone
+  const promptNotSent =
     order.payment_method === "mpesa" &&
     (view === "awaiting" || view === "failed") &&
     (initiation === "failed" || initiation === "not_started");
@@ -380,34 +508,50 @@ export default function OrderConfirmation() {
     initiation,
   );
 
-  // Once the order has left the warehouse, say so.
+  // Determine the shipping status message
   const statusMessage =
     order.status === "shipped" && view === "paid"
-     ? order.payment_method === "cash_on_delivery"
-      ? "Your order is on its way."
-      : "M-Pesa payment received. Your order is on its way."
+      ? order.payment_method === "cash_on_delivery"
+        ? "Your order is on its way."
+        : "M-Pesa payment received. Your order is on its way."
       : order.status === "shipped" && view === "cod"
         ? "Your order is on its way. Pay when you receive it."
         : order.status === "delivered" && view === "paid"
           ? order.payment_method === "cash_on_delivery"
-            ? "Your order has been delivered and paid for. Thank you for shopping with us"
+            ? "Your order has been delivered and paid for. Thank you for shopping with us."
             : "M-Pesa payment received. Your order has been delivered. Thank you for shopping with us."
           : null;
 
-  // A saved copy of the cart lets the customer retry with the same items.
+  // Saved cart snapshot allows the customer to retry an M-Pesa payment
   const snapshotKey = `cart_snapshot_${id}`;
+
   const canRetry =
     order.payment_method === "mpesa" &&
     sessionStorage.getItem(snapshotKey) !== null;
 
   function handleRetry() {
     const saved = sessionStorage.getItem(snapshotKey);
+
     if (!saved || !order) return;
 
     try {
-      const restored = JSON.parse(saved) as CartItem[];
+      const snapshot = JSON.parse(saved) as
+        | CartItem[]
+        | {
+            items?: CartItem[];
+            delivery?: {
+              deliveryMethod?: string;
+              areaId?: string;
+              townId?: string;
+              routeId?: string;
+              deliveryNotes?: string;
+            };
+          };
+      const restored = Array.isArray(snapshot) ? snapshot : snapshot.items;
 
       if (!Array.isArray(restored) || restored.length === 0) return;
+
+      const delivery = Array.isArray(snapshot) ? undefined : snapshot.delivery;
 
       restoreCart(restored);
       sessionStorage.removeItem(snapshotKey);
@@ -419,15 +563,22 @@ export default function OrderConfirmation() {
             email: order.email,
             phone: order.phone,
             address: order.address,
+            deliveryMethod:
+              delivery?.deliveryMethod ?? order.delivery_method ?? undefined,
+            areaId: delivery?.areaId,
+            townId: delivery?.townId,
+            routeId: delivery?.routeId,
+            deliveryNotes:
+              delivery?.deliveryNotes ?? order.delivery_notes ?? undefined,
           },
         },
       });
     } catch (restoreError) {
       console.error("Could not restore the cart:", restoreError);
     }
-  }  
+  }
 
-  // A paid-but-cancelled order is under review, not simply cancelled.
+  // Determine the order status badge
   const badgeLabel =
     view === "review"
       ? "Payment under review"
@@ -436,6 +587,7 @@ export default function OrderConfirmation() {
         : view === "refunded"
           ? "Refunded"
           : orderStatusLabel(order.status);
+
   const badgeClassName =
     view === "review"
       ? "bg-amber-100 text-amber-800"
@@ -445,230 +597,397 @@ export default function OrderConfirmation() {
           ? "bg-purple-100 text-purple-800"
           : orderStatusClassName(order.status);
 
-  // Calculate the total number of products in the order.
   const itemCount = order.items.reduce(
     (total, item) => total + Number(item.quantity),
     0,
   );
 
-  // Convert the discount to a number.
   const discountTotal = Number(order.discount_total) || 0;
-
-  // Convert the database timestamp into a JavaScript Date.
   const createdAt = new Date(order.created_at);
 
+  const paymentStyles = paymentViewStyles(view);
+  const PaymentIcon = paymentStyles.icon;
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
-      <div className="mb-8">
-        <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
-          {headingFor(view, promptNotSent, order.payment_method)}
-        </h1>
+    <div className="px-4 py-8 sm:py-10">
+      <div className="mx-auto max-w-5xl">
+        {/* Checkout progress */}
+        <CheckoutProgress currentStep="confirmation" />
 
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-          <p className="text-gray-700">
-            Order ID:{" "}
-            <span className="font-mono text-gray-900">{order.order_id}</span>
-          </p>
-          <span
-            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${badgeClassName}`}
-          >
-            {badgeLabel}
-          </span>
-        </div>
+        {/* Order heading */}
+        <div className="mt-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+                {headingFor(view, promptNotSent, order.payment_method)}
+              </h1>
 
-        <p className="mt-2 text-sm text-gray-500">
-          {createdAt.toLocaleDateString()}{" "}
-          {createdAt.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
-          {/* Delivery details */}
-          <section className="rounded-lg bg-gray-50 p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-5">
-              Delivery details
-            </h2>
-
-            <dl className="space-y-3 text-sm">
-              <div>
-                <dt className="text-gray-500">Name</dt>
-                <dd className="mt-0.5 text-gray-900">{order.customer_name}</dd>
-              </div>
-
-              <div>
-                <dt className="text-gray-500">Email</dt>
-                <dd className="mt-0.5 text-gray-900">{order.email}</dd>
-              </div>
-
-              <div>
-                <dt className="text-gray-500">Phone</dt>
-                <dd className="mt-0.5 text-gray-900">{order.phone}</dd>
-              </div>
-
-              <div>
-                <dt className="text-gray-500">Address</dt>
-                <dd className="mt-0.5 text-gray-900 whitespace-pre-line">
-                  {order.address}
-                </dd>
-              </div>
-            </dl>
-          </section>
-
-          {/* Payment */}
-          <section className="rounded-lg bg-gray-50 p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-5">
-              Payment
-            </h2>
-
-            <p className="text-sm text-gray-900">
-              {paymentMethodLabel(order.payment_method)}
-            </p>
-
-            <div
-              className="mt-1 flex items-start gap-2 text-sm text-gray-500"
-              aria-live="polite"
-            >
-              {view === "awaiting" && !promptNotSent && (
-                <div
-                  className="mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 border-gray-300 border-t-orange-600 animate-spin"
-                  aria-hidden="true"
-                ></div>
-              )}
-              <p>{statusMessage ?? displayMessage}</p>
+              <p className="mt-2 text-sm text-gray-500">
+                {createdAt.toLocaleDateString()}{" "}
+                {createdAt.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
             </div>
 
-            {(view === "failed" || promptNotSent) && (
-              <div className="mt-4">
-                {canRetry ? (
-                  <button
-                    type="button"
-                    onClick={handleRetry}
-                    className="w-full rounded-full bg-orange-600 px-5 py-3 text-base font-medium text-white transition-colors hover:bg-orange-700 sm:w-auto"
-                  >
-                    Try again
-                  </button>
-                ) : (
-                  <Link
-                    to="/"
-                    className="text-sm text-orange-600 hover:underline"
-                  >
-                    Start a new order
-                  </Link>
-                )}
-              </div>
-            )}
-          </section>
+            <span
+              className={`inline-flex w-fit items-center rounded-full px-3 py-1.5 text-xs font-semibold ${badgeClassName}`}
+            >
+              {badgeLabel}
+            </span>
+          </div>
+
+          <div className="mt-5 flex flex-col gap-1 rounded-xl border border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+            <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+              Order reference
+            </span>
+
+            <span className="break-all font-mono text-sm font-medium text-gray-900">
+              {order.order_id}
+            </span>
+          </div>
         </div>
 
-        {/* Order summary */}
-        <aside className="lg:col-span-1">
-          <div className="rounded-lg bg-gray-50 p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-5">
-              Order summary
-            </h2>
+        {/* Payment status */}
+        <section
+          className={`mt-6 rounded-2xl border p-5 sm:p-6 ${paymentStyles.container}`}
+          aria-live="polite"
+        >
+          <div className="flex items-start gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/80">
+              <PaymentIcon
+                className={`h-6 w-6 ${paymentStyles.iconColor}`}
+                aria-hidden="true"
+              />
+            </div>
 
-            <ul className="space-y-4">
-              {order.items.map((item, index) => {
-                const variantLabel = [
-                  item.selected_color,
-                  item.selected_storage,
-                  item.selected_size,
-                ]
-                  .filter(Boolean)
-                  .join(" \u00b7 ");
+            <div className="min-w-0 flex-1">
+              <h2 className={`font-semibold ${paymentStyles.titleColor}`}>
+                {view === "awaiting" && !promptNotSent
+                  ? "Payment awaiting confirmation"
+                  : view === "paid"
+                    ? "Payment successful"
+                    : view === "failed"
+                      ? "Payment unsuccessful"
+                      : view === "review"
+                        ? "Payment needs review"
+                        : view === "refundPending"
+                          ? "Refund being processed"
+                          : view === "refunded"
+                            ? "Payment refunded"
+                            : "Cash on delivery"}
+              </h2>
 
-                const lineTotal =
-                  Number(item.unit_price) * Number(item.quantity);
+              <p className="mt-1 text-sm leading-6 text-gray-700">
+                {statusMessage ?? displayMessage}
+              </p>
 
-                return (
-                  <li
-                    key={`${item.product_id}-${index}`}
-                    className="flex gap-3"
-                  >
-                    {item.image_url ? (
-                      <img
-                        src={item.image_url}
-                        alt={item.product_name}
-                        className="h-16 w-16 shrink-0 rounded-md object-cover bg-white"
-                      />
-                    ) : (
-                      <div
-                        className="h-16 w-16 shrink-0 rounded-md bg-gray-100"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900">
-                        {item.product_name}
-                      </p>
+              {view === "awaiting" && !promptNotSent && (
+                <div className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-orange-800">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-orange-500" />
+                  Checking payment status automatically
+                </div>
+              )}
 
-                      {variantLabel && (
-                        <p className="mt-0.5 text-xs text-gray-500">
-                          {variantLabel}
-                        </p>
+              {(view === "failed" || promptNotSent) && (
+                <div className="mt-4">
+                  {canRetry ? (
+                    <button
+                      type="button"
+                      onClick={handleRetry}
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange-700"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      Try again
+                    </button>
+                  ) : (
+                    <Link
+                      to="/"
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-orange-700 hover:underline"
+                    >
+                      Start a new order
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <div className="mt-7 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_360px]">
+          {/* Order information */}
+          <div className="space-y-6">
+            {/* Delivery details */}
+            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50">
+                  <Truck className="h-5 w-5 text-orange-600" />
+                </div>
+
+                <div>
+                  <h2 className="font-semibold text-gray-900">
+                    Delivery details
+                  </h2>
+
+                  <p className="text-xs text-gray-500">
+                    Information provided for this order
+                  </p>
+                </div>
+              </div>
+
+              <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div>
+                  <dt className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                    <UserRound className="h-3.5 w-3.5" />
+                    Customer name
+                  </dt>
+
+                  <dd className="mt-1.5 text-sm font-medium text-gray-900">
+                    {order.customer_name}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                    <Mail className="h-3.5 w-3.5" />
+                    Email address
+                  </dt>
+
+                  <dd className="mt-1.5 break-all text-sm text-gray-900">
+                    {order.email}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                    <Phone className="h-3.5 w-3.5" />
+                    Phone number
+                  </dt>
+
+                  <dd className="mt-1.5 text-sm text-gray-900">
+                    {order.phone}
+                  </dd>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <dt className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                    <MapPin className="h-3.5 w-3.5" />
+                    Delivery address
+                  </dt>
+
+                  <dd className="mt-1.5 whitespace-pre-line text-sm leading-6 text-gray-900">
+                    {order.address}
+                  </dd>
+                </div>
+
+                {/* Selected delivery method and destination */}
+                {order.delivery_label && (
+                  <div className="sm:col-span-2">
+                    <dt className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                      <Truck className="h-3.5 w-3.5" />
+                      Delivery
+                    </dt>
+
+                    <dd className="mt-1.5 text-sm font-medium text-gray-900">
+                      {order.delivery_method === "matatu"
+                        ? "Matatu SACCO"
+                        : "Courier delivery"}
+                      : {order.delivery_label}
+                    </dd>
+                  </div>
+                )}
+
+                {/* Additional delivery instructions */}
+                {order.delivery_notes && (
+                  <div className="sm:col-span-2">
+                    <dt className="text-xs font-medium text-gray-500">
+                      Delivery notes
+                    </dt>
+
+                    <dd className="mt-1.5 whitespace-pre-line text-sm leading-6 text-gray-900">
+                      {order.delivery_notes}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </section>
+
+            {/* Payment method */}
+            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100">
+                  <CreditCard className="h-5 w-5 text-gray-600" />
+                </div>
+
+                <div>
+                  <h2 className="font-semibold text-gray-900">
+                    Payment method
+                  </h2>
+
+                  <p className="text-xs text-gray-500">
+                    How this order is being paid
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 p-4">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {paymentMethodLabel(order.payment_method)}
+                  </p>
+
+                  <p className="mt-1 text-xs text-gray-500">
+                    {view === "cod"
+                      ? "Payment is due when you receive your order."
+                      : "Payment status is updated automatically."}
+                  </p>
+                </div>
+
+                <ShieldCheck className="h-5 w-5 shrink-0 text-gray-400" />
+              </div>
+            </section>
+          </div>
+
+          {/* Order summary */}
+          <aside className="lg:sticky lg:top-6">
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50">
+                  <ShoppingBag className="h-5 w-5 text-orange-600" />
+                </div>
+
+                <div>
+                  <h2 className="font-semibold text-gray-900">
+                    Order summary
+                  </h2>
+
+                  <p className="text-xs text-gray-500">
+                    {itemCount} {itemCount === 1 ? "item" : "items"}
+                  </p>
+                </div>
+              </div>
+
+              <ul className="mt-5 divide-y divide-gray-100">
+                {order.items.map((item, index) => {
+                  const variantLabel = [
+                    item.selected_color,
+                    item.selected_storage,
+                    item.selected_size,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ");
+
+                  const lineTotal =
+                    Number(item.unit_price) * Number(item.quantity);
+
+                  return (
+                    <li
+                      key={`${item.product_id}-${index}`}
+                      className="flex gap-3 py-4 first:pt-0 last:pb-0"
+                    >
+                      {item.image_url ? (
+                        <img
+                          src={item.image_url}
+                          alt={item.product_name}
+                          className="h-16 w-16 shrink-0 rounded-xl border border-gray-100 bg-gray-50 object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-gray-100">
+                          <Package className="h-6 w-6 text-gray-400" />
+                        </div>
                       )}
 
-                      <p className="mt-1 text-xs text-gray-500">
-                        Qty: {item.quantity}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          {item.product_name}
+                        </p>
+
+                        {variantLabel && (
+                          <p className="mt-1 text-xs text-gray-500">
+                            {variantLabel}
+                          </p>
+                        )}
+
+                        <p className="mt-1 text-xs text-gray-500">
+                          Qty: {item.quantity}
+                        </p>
+                      </div>
+
+                      <p className="whitespace-nowrap text-sm font-semibold text-gray-900">
+                        {order.currency} {lineTotal.toLocaleString()}
                       </p>
-                    </div>
+                    </li>
+                  );
+                })}
+              </ul>
 
-                    <p className="text-sm font-medium text-gray-900 whitespace-nowrap">
-                      {order.currency} {lineTotal.toLocaleString()}
-                    </p>
-                  </li>
-                );
-              })}
-            </ul>
-
-            {/* Order totals */}
-            <div className="mt-6 space-y-2 border-t border-gray-200 pt-4">
-              <div className="flex items-center justify-between text-sm text-gray-500">
-                <div>
+              {/* Order totals */}
+              <div className="mt-5 space-y-3 border-t border-gray-200 pt-5">
+                <div className="flex items-center justify-between text-sm text-gray-500">
                   <span>Subtotal</span>
 
-                  <span className="text-gray-400 text-xs">
-                    {" "}
-                    ({itemCount} {itemCount === 1 ? "item" : "items"})
-                  </span>
-                </div>
-
-                <span>
-                  {order.currency} {Number(order.subtotal).toLocaleString()}
-                </span>
-              </div>
-
-              {discountTotal > 0 && (
-                <div className="flex items-center justify-between text-sm text-orange-600">
-                  <span>Discount</span>
-
                   <span>
-                    - {order.currency} {discountTotal.toLocaleString()}
+                    {order.currency}{" "}
+                    {Number(order.subtotal).toLocaleString()}
                   </span>
                 </div>
-              )}
 
-              <div className="flex items-center justify-between border-t border-gray-200 pt-3 text-lg font-semibold text-gray-900">
-                <span>Total</span>
+                {discountTotal > 0 && (
+                  <div className="flex items-center justify-between text-sm text-green-700">
+                    <span>Discount</span>
 
-                <span>
-                  {order.currency} {Number(order.total).toLocaleString()}
-                </span>
+                    <span className="font-medium">
+                      - {order.currency} {discountTotal.toLocaleString()}
+                    </span>
+                  </div>
+                )}
+
+                {/* Delivery fee */}
+                {order.delivery_label && (
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span>Delivery</span>
+
+                    <span>
+                      {Number(order.delivery_fee) > 0
+                        ? `${order.currency} ${Number(order.delivery_fee).toLocaleString()}`
+                        : "Free"}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                  <span className="font-semibold text-gray-900">
+                    Total
+                  </span>
+
+                  <span className="text-xl font-bold text-gray-900">
+                    {order.currency}{" "}
+                    {Number(order.total).toLocaleString()}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <Link
-              to="/"
-              className="mt-6 block w-full rounded-full bg-orange-600 px-6 py-3 text-center text-white transition-colors hover:bg-orange-700"
-            >
-              Continue shopping
-            </Link>
-          </div>
-        </aside>
+              <Link
+                to="/"
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-orange-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-700"
+              >
+                Continue shopping
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </aside>
+        </div>
+
+        {/* Bottom reassurance */}
+        <div className="mt-8 flex flex-col items-center justify-center gap-2 text-center sm:flex-row">
+          <ShieldCheck className="h-4 w-4 text-gray-400" />
+
+          <p className="text-xs text-gray-500">
+            Your order information is securely retrieved using your order access credentials.
+          </p>
+        </div>
       </div>
     </div>
   );
