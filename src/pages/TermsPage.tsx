@@ -2,12 +2,13 @@
 import { Link } from "react-router-dom";
 import PolicyPage, { PolicySection } from "../components/PolicyPage";
 
-const UPDATED = "13 November 2026";
+const UPDATED = "23 November 2026";
 
 const sections = [
   { id: "ordering", title: "Ordering and prices" },
   { id: "payment", title: "Payment" },
   { id: "delivery", title: "Delivery" },
+  { id: "lost-parcels", title: "Delayed or lost parcels" },
   { id: "returns", title: "Returns" },
   { id: "refunds", title: "Refunds" },
   { id: "cancelling", title: "Cancelling an order" },
@@ -57,9 +58,9 @@ export default function TermsPage() {
           <li>All prices are in Kenyan shillings (KES).</li>
 
           <li>
-            The total you see at checkout is what you pay. It includes the
-            items and the delivery fee for your region, which is shown before
-            you place the order.
+            The total you see at checkout is what you pay. It includes your
+            items and the delivery fee for the delivery option you choose.
+            Both are shown before you place your order.
           </li>
 
           <li>
@@ -70,7 +71,7 @@ export default function TermsPage() {
           </li>
 
           <li>
-            Please check your name, phone number and delivery address before
+            Please check your name, phone number and delivery details before
             you place your order.
           </li>
         </ul>
@@ -83,8 +84,8 @@ export default function TermsPage() {
           <ul className={list}>
             <li>
               After you place your order, you get an M-Pesa prompt on the phone
-              number you entered. Enter your PIN on your phone to pay. We never
-              see your PIN.
+              number you entered, for the full total including delivery. Enter
+              your PIN on your phone to pay. We never see your PIN.
             </li>
 
             <li>
@@ -110,7 +111,8 @@ export default function TermsPage() {
 
           <ul className={list}>
             <li>
-              You pay the full amount, including delivery, in cash when you
+              Cash on Delivery is available with courier delivery only. You pay
+              the full amount, including the delivery fee, in cash when you
               receive your order.
             </li>
 
@@ -120,50 +122,117 @@ export default function TermsPage() {
             </li>
           </ul>
         </div>
+
+        <div className="space-y-3">
+          <p className="font-semibold text-gray-900">
+            Matatu SACCO delivery
+          </p>
+
+          <ul className={list}>
+            <li>
+              Orders sent by matatu SACCO must be paid for with M-Pesa before
+              we send the parcel. Cash on Delivery is not available with this
+              option.
+            </li>
+          </ul>
+        </div>
       </PolicySection>
 
       <PolicySection id="delivery" title="Delivery">
-        <ul className={list}>
-          <li>
-            We deliver across Kenya through third-party delivery providers.
-            Availability and delivery times depend on your location.
-          </li>
+        <p>
+          We offer two ways to deliver your order. The areas, towns and SACCOs
+          we serve, and the fee for each, are shown at checkout.
+        </p>
 
-          <li>
-            The delivery fee depends on your region. It is shown at checkout
-            before you place your order, and it is included in your M-Pesa
-            payment or in the cash you pay on delivery.
-          </li>
+        <div className="space-y-3">
+          <p className="font-semibold text-gray-900">Courier delivery</p>
 
-          <li>
-            We will tell you the expected delivery time when your order is
-            confirmed, or through customer support.
-          </li>
+          <ul className={list}>
+            <li>
+              You choose your delivery area at checkout and the fee for that
+              area is shown. A courier delivers your order to the address you
+              give.
+            </li>
+          </ul>
+        </div>
 
-          <li>
-            You are responsible for giving accurate contact and delivery
-            details. Incorrect or incomplete details can delay your order.
-          </li>
+        <div className="space-y-3">
+          <p className="font-semibold text-gray-900">
+            Matatu SACCO delivery
+          </p>
 
-          <li>
-            To deliver your order, we share your name, phone number and
-            delivery address with our delivery provider.
-          </li>
-        </ul>
+          <ul className={list}>
+            <li>
+              You choose a destination town and a SACCO that serves it. We
+              hand your parcel to that SACCO, which carries it to your town.
+              The fee depends on the town and the SACCO you choose.
+            </li>
+
+            <li>
+              You tell us where in the town the parcel should be delivered or
+              collected, for example the SACCO's parcel office or a landmark.
+              Please make this clear and accurate.
+            </li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <p className="font-semibold text-gray-900">
+            For all deliveries
+          </p>
+
+          <ul className={list}>
+            <li>
+              Delivery times depend on your location and on the courier or
+              SACCO. We will tell you the expected time when your order is
+              confirmed, or through customer support.
+            </li>
+
+            <li>
+              When your order is sent, we may add dispatch details to your
+              order page, such as a rider's contact or a parcel receipt number.
+            </li>
+
+            <li>
+              You are responsible for giving accurate contact and delivery
+              details. Incorrect or incomplete details can delay your order.
+            </li>
+
+            <li>
+              To deliver your order, we share your name, phone number and
+              delivery details with the courier or SACCO.
+            </li>
+          </ul>
+        </div>
+      </PolicySection>
+
+      <PolicySection
+        id="lost-parcels"
+        title="Delayed or lost parcels"
+      >
+        <p>
+          If a parcel sent by matatu SACCO is delayed or does not arrive,
+          please contact us. We will work with the SACCO to trace it. If the
+          parcel is lost, we will refund the price of the items.
+        </p>
       </PolicySection>
 
       <PolicySection id="returns" title="Returns">
         <p>
           You can ask to return an item within{" "}
-          <strong className="text-gray-900">7 days of receiving it</strong>.
-          To qualify, the item should:
+          <strong className="text-gray-900">
+            7 days of receiving it
+          </strong>
+          . To qualify, the item should:
         </p>
 
         <ul className={list}>
           <li>be unused and in its original condition</li>
+
           <li>
             come with its original packaging and accessories, where they apply
           </li>
+
           <li>show no damage caused by misuse or improper handling</li>
         </ul>
 
@@ -202,10 +271,16 @@ export default function TermsPage() {
 
           <li>
             <strong className="text-gray-900">Delivery fees:</strong> Delivery
-            fees are refunded when a return is due to a faulty or damaged
-            product, or an incorrect item delivered by Wanmart. For other
-            returns, including change-of-mind returns or incorrect customer
-            selections, the original delivery fee is non-refundable.
+            fees are refunded if the item was faulty, damaged or not what you
+            ordered. For other returns, the delivery fee is not refunded.
+          </li>
+
+          <li>
+            <strong className="text-gray-900">
+              Lost matatu parcels:
+            </strong>{" "}
+            If a parcel is lost, we refund the price of the items, as explained
+            above.
           </li>
 
           <li>
