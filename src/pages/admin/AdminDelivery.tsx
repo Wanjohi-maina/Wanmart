@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import type { Json } from "../../types/supabase";
@@ -32,12 +33,13 @@ type Tab = "courier" | "matatu" | "methods";
 type OnSaved = (message: string) => void;
 
 const inputClass =
-  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 disabled:bg-gray-100 sm:text-sm";
+  "w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 disabled:bg-gray-100";
 
 const saveButton =
-  "w-full rounded-full bg-orange-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto";
+  "w-full rounded-full bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto";
 
-const rowClass = "space-y-3 rounded-lg border border-gray-200 bg-white p-3 sm:p-4";
+const rowClass =
+  "space-y-4 rounded-xl border border-gray-200 bg-white p-4 sm:p-5";
 
 const WHOLE = /^\d+$/;
 
@@ -50,7 +52,7 @@ function Labelled({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-gray-600">
+      <span className="mb-1.5 block text-xs font-semibold text-gray-600">
         {label}
       </span>
       {children}
@@ -68,12 +70,12 @@ function ActiveToggle({
   label?: string;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+    <label className="flex cursor-pointer items-center gap-2.5 text-sm text-gray-700">
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-5 w-5 rounded border-gray-300"
+        className="h-4 w-4 rounded border-gray-300 accent-orange-600"
       />
       {label}
     </label>
@@ -84,7 +86,10 @@ function ErrorText({ message }: { message: string | null }) {
   if (!message) return null;
 
   return (
-    <p className="text-sm text-red-600" role="alert">
+    <p
+      className="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-700"
+      role="alert"
+    >
       {message}
     </p>
   );
@@ -149,7 +154,7 @@ function AreaForm({ area, onSaved }: { area?: Area; onSaved: OnSaved }) {
 
   return (
     <div className={rowClass}>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_9rem]">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_9rem]">
         <Labelled label="Area">
           <input
             type="text"
@@ -171,7 +176,7 @@ function AreaForm({ area, onSaved }: { area?: Area; onSaved: OnSaved }) {
         </Labelled>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <ActiveToggle checked={active} onChange={setActive} />
         <button
           type="button"
@@ -179,7 +184,7 @@ function AreaForm({ area, onSaved }: { area?: Area; onSaved: OnSaved }) {
           disabled={busy || !dirty}
           className={saveButton}
         >
-          {busy ? "Saving..." : area ? "Save" : "Add area"}
+          {busy ? "Saving..." : area ? "Save changes" : "Add area"}
         </button>
       </div>
 
@@ -190,24 +195,38 @@ function AreaForm({ area, onSaved }: { area?: Area; onSaved: OnSaved }) {
 
 function CourierTab({ config, onSaved }: { config: Config; onSaved: OnSaved }) {
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-gray-600">
-        Customers choose their area at checkout and the fee is added to their
-        total. A fee change applies to new orders only. Hide an area to stop
-        offering it.
-      </p>
-
+    <div className="space-y-6">
       <div>
-        <h2 className="mb-2 text-base font-semibold text-gray-900">
-          Add an area
+        <h2 className="text-base font-semibold text-gray-900">
+          Courier delivery areas
         </h2>
-        <AreaForm onSaved={onSaved} />
+        <p className="mt-1.5 text-sm leading-6 text-gray-500">
+          Customers choose their area at checkout and the fee is added to their
+          total. A fee change applies to new orders only. Hide an area to stop
+          offering it.
+        </p>
       </div>
 
-      <div>
-        <h2 className="mb-2 text-base font-semibold text-gray-900">
-          Areas ({config.areas.length})
-        </h2>
+      <section className="space-y-3">
+        <div>
+          <h3 className="text-sm font-semibold text-gray-900">Add an area</h3>
+          <p className="mt-1 text-xs text-gray-500">
+            Set the delivery area and its fee in Kenyan shillings.
+          </p>
+        </div>
+        <AreaForm onSaved={onSaved} />
+      </section>
+
+      <section className="space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold text-gray-900">
+            Existing areas
+          </h3>
+          <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+            {config.areas.length} areas
+          </span>
+        </div>
+
         <div className="space-y-3">
           {config.areas.map((area) => (
             <AreaForm
@@ -217,10 +236,17 @@ function CourierTab({ config, onSaved }: { config: Config; onSaved: OnSaved }) {
             />
           ))}
           {config.areas.length === 0 && (
-            <p className="text-sm text-gray-500">No areas yet.</p>
+            <div className="rounded-xl border border-dashed border-gray-300 bg-white px-4 py-8 text-center">
+              <p className="text-sm font-medium text-gray-700">
+                No delivery areas yet
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                Add your first courier delivery area above.
+              </p>
+            </div>
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
@@ -230,10 +256,12 @@ function CourierTab({ config, onSaved }: { config: Config; onSaved: OnSaved }) {
 function NameForm({
   kind,
   item,
+  info,
   onSaved,
 }: {
   kind: "town" | "sacco";
   item?: { id: number; name: string; is_active: boolean };
+  info?: string;
   onSaved: OnSaved;
 }) {
   const [name, setName] = useState(item?.name ?? "");
@@ -281,7 +309,13 @@ function NameForm({
       setActive(true);
     }
 
-    onSaved(item ? `${saved} was saved.` : `${saved} was added.`);
+    onSaved(
+      item
+        ? `${saved} was saved.`
+        : kind === "sacco"
+          ? `${saved} was added. Now add it to the towns it serves, in the town sections above.`
+          : `${saved} was added. Now add the SACCOs that serve it.`,
+    );
   }
 
   return (
@@ -296,7 +330,9 @@ function NameForm({
         />
       </Labelled>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {info && <p className="text-xs text-gray-500">{info}</p>}
+
+      <div className="flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <ActiveToggle checked={active} onChange={setActive} />
         <button
           type="button"
@@ -304,7 +340,7 @@ function NameForm({
           disabled={busy || !dirty}
           className={saveButton}
         >
-          {busy ? "Saving..." : item ? "Save" : `Add ${noun}`}
+          {busy ? "Saving..." : item ? "Save changes" : `Add ${noun}`}
         </button>
       </div>
 
@@ -366,14 +402,17 @@ function RouteForm({
 
   return (
     <div className={rowClass}>
-      <div className="flex items-center justify-between gap-3">
-        <p className="font-medium text-gray-900">{saccoName}</p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <p className="text-sm font-semibold text-gray-900">{saccoName}</p>
+          <p className="mt-0.5 text-xs text-gray-500">SACCO route</p>
+        </div>
         {!saccoActive && (
           <Badge className="bg-amber-100 text-amber-800">SACCO hidden</Badge>
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[9rem_1fr]">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[9rem_1fr]">
         <Labelled label="Fee (KES)">
           <input
             type="text"
@@ -395,7 +434,7 @@ function RouteForm({
         </Labelled>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <ActiveToggle checked={active} onChange={setActive} />
         <button
           type="button"
@@ -403,7 +442,7 @@ function RouteForm({
           disabled={busy || !dirty}
           className={saveButton}
         >
-          {busy ? "Saving..." : "Save"}
+          {busy ? "Saving..." : "Save changes"}
         </button>
       </div>
 
@@ -416,10 +455,12 @@ function AddRouteForm({
   townId,
   saccos,
   onSaved,
+  onManageSaccos,
 }: {
   townId: number;
   saccos: Sacco[];
   onSaved: OnSaved;
+  onManageSaccos: () => void;
 }) {
   const [saccoId, setSaccoId] = useState("");
   const [fee, setFee] = useState("");
@@ -464,20 +505,37 @@ function AddRouteForm({
     onSaved(added ? `${added} was added to this town.` : "Route added.");
   }
 
+  const manageLink = (
+    <button
+      type="button"
+      onClick={onManageSaccos}
+      className="text-orange-600 underline"
+    >
+      Add it under SACCOs
+    </button>
+  );
+
   if (saccos.length === 0) {
     return (
       <p className="text-sm text-gray-500">
-        Every active SACCO already serves this town. To offer another, add it
-        under SACCOs below first.
+        Every active SACCO already serves this town. To offer another,{" "}
+        {manageLink} first, then come back here.
       </p>
     );
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-dashed border-gray-300 p-3 sm:p-4">
-      <p className="text-sm font-medium text-gray-900">Add a SACCO to this town</p>
+    <div className="space-y-4 rounded-xl border border-dashed border-gray-300 bg-gray-50/70 p-4 sm:p-5">
+      <div>
+        <h3 className="text-sm font-semibold text-gray-900">
+          Add a SACCO to this town
+        </h3>
+        <p className="mt-1 text-xs text-gray-500">
+          Select an active SACCO and set its delivery fee.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_9rem]">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_9rem]">
         <Labelled label="SACCO">
           <select
             value={saccoId}
@@ -502,6 +560,10 @@ function AddRouteForm({
           />
         </Labelled>
       </div>
+
+      <p className="text-xs text-gray-500">
+        SACCO not in the list? {manageLink} first, then come back here.
+      </p>
 
       <Labelled label="Note shown to customers (optional)">
         <input
@@ -528,16 +590,46 @@ function AddRouteForm({
 }
 
 function MatatuTab({ config, onSaved }: { config: Config; onSaved: OnSaved }) {
+  const [saccosOpen, setSaccosOpen] = useState(false);
+
   const towns = [...config.towns].sort((a, b) => a.name.localeCompare(b.name));
   const saccos = [...config.saccos].sort((a, b) => a.name.localeCompare(b.name));
   const saccoById = new Map(config.saccos.map((s) => [s.id, s]));
+
+  function openSaccos() {
+    setSaccosOpen(true);
+
+    setTimeout(() => {
+      document
+        .getElementById("saccos-section")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  }
+
+  function saccoInfo(saccoId: number) {
+    const count = config.routes.filter((r) => r.sacco_id === saccoId).length;
+
+    if (count === 0) return "Not set up in any town yet.";
+
+    return `Serves ${count} ${count === 1 ? "town" : "towns"}.`;
+  }
+
+  function townInfo(townId: number) {
+    const count = config.routes.filter((r) => r.town_id === townId).length;
+
+    if (count === 0) return "No SACCO serves this town yet.";
+
+    return `${count} ${count === 1 ? "SACCO" : "SACCOs"} set up.`;
+  }
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-gray-600">
         A customer picks a destination town and then one of the SACCOs set up
         for it. Each SACCO has its own fee in each town. A town with no active
-        SACCO shows customers a message asking them to choose another.
+        SACCO shows customers a message asking them to choose another. To use
+        a new SACCO, add it under SACCOs first, then add it to each town it
+        serves.
       </p>
 
       {towns.map((town) => {
@@ -554,24 +646,34 @@ function MatatuTab({ config, onSaved }: { config: Config; onSaved: OnSaved }) {
         return (
           <section
             key={town.id}
-            className="rounded-lg bg-gray-50 p-3 sm:p-5"
+            className={`overflow-hidden rounded-xl border ${
+              town.is_active
+                ? "border-gray-200 bg-white"
+                : "border-amber-200 bg-amber-50/30"
+            }`}
           >
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-base font-semibold text-gray-900">
-                {town.name}
-              </h2>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-5">
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">
+                  {town.name}
+                </h3>
+                <p className="mt-1 text-xs text-gray-500">
+                  {routes.length}{" "}
+                  {routes.length === 1 ? "SACCO route" : "SACCO routes"}
+                </p>
+              </div>
               {!town.is_active && (
                 <Badge className="bg-amber-100 text-amber-800">Town hidden</Badge>
               )}
             </div>
 
-            {routes.length === 0 && (
-              <p className="mt-2 text-sm text-gray-500">
-                No SACCO serves this town yet.
-              </p>
-            )}
+            <div className="space-y-3 p-3 sm:p-4">
+              {routes.length === 0 && (
+                <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
+                  No SACCO serves this town yet.
+                </p>
+              )}
 
-            <div className="mt-3 space-y-3">
               {routes.map((route) => (
                 <RouteForm
                   key={`${route.id}:${route.fee}:${route.note ?? ""}:${route.is_active}`}
@@ -583,10 +685,11 @@ function MatatuTab({ config, onSaved }: { config: Config; onSaved: OnSaved }) {
               ))}
 
               <AddRouteForm
-                key={`${town.id}:${routes.length}`}
+                key={`${town.id}:${routes.length}:${available.length}`}
                 townId={town.id}
                 saccos={available}
                 onSaved={onSaved}
+                onManageSaccos={openSaccos}
               />
             </div>
           </section>
@@ -594,43 +697,68 @@ function MatatuTab({ config, onSaved }: { config: Config; onSaved: OnSaved }) {
       })}
 
       {towns.length === 0 && (
-        <p className="text-sm text-gray-500">
+        <p className="rounded-xl border border-dashed border-gray-300 bg-white px-4 py-8 text-center text-sm text-gray-500">
           There are no towns yet. Add one below.
         </p>
       )}
 
-      <details className="rounded-lg bg-gray-50 p-3 sm:p-5">
-        <summary className="cursor-pointer text-base font-semibold text-gray-900">
-          Towns ({towns.length})
+      <details className="group overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-4 text-sm font-semibold text-gray-900 sm:px-5">
+          <span>Towns ({towns.length})</span>
+          <span className="text-xs font-medium text-gray-500 transition-transform group-open:rotate-180">
+            ▼
+          </span>
         </summary>
-        <div className="mt-4 space-y-3">
+        <div className="space-y-3 border-t border-gray-100 bg-gray-50/50 p-3 sm:p-5">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900">Add a town</h3>
+            <p className="mt-1 text-xs text-gray-500">
+              Create a destination town for matatu delivery.
+            </p>
+          </div>
           <NameForm kind="town" onSaved={onSaved} />
           {towns.map((town) => (
             <NameForm
               key={`${town.id}:${town.name}:${town.is_active}`}
               kind="town"
               item={town}
+              info={townInfo(town.id)}
               onSaved={onSaved}
             />
           ))}
         </div>
       </details>
 
-      <details className="rounded-lg bg-gray-50 p-3 sm:p-5">
-        <summary className="cursor-pointer text-base font-semibold text-gray-900">
-          SACCOs ({saccos.length})
+      <details
+        id="saccos-section"
+        open={saccosOpen}
+        onToggle={(e) => setSaccosOpen(e.currentTarget.open)}
+        className="group scroll-mt-20 overflow-hidden rounded-xl border border-gray-200 bg-white"
+      >
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-4 text-sm font-semibold text-gray-900 sm:px-5">
+          <span>SACCOs ({saccos.length})</span>
+          <span className="text-xs font-medium text-gray-500 transition-transform group-open:rotate-180">
+            ▼
+          </span>
         </summary>
-        <p className="mt-2 text-sm text-gray-500">
-          Renaming a SACCO changes it everywhere. Hiding one stops customers
-          choosing it in every town.
-        </p>
-        <div className="mt-4 space-y-3">
+        <div className="space-y-3 border-t border-gray-100 bg-gray-50/50 p-3 sm:p-5">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Manage SACCOs
+            </h3>
+            <p className="mt-1 text-xs leading-5 text-gray-500">
+              Add a new SACCO here first, then add it to the towns it serves.
+              Renaming a SACCO changes it everywhere. Hiding one stops customers
+              choosing it in every town.
+            </p>
+          </div>
           <NameForm kind="sacco" onSaved={onSaved} />
           {saccos.map((sacco) => (
             <NameForm
               key={`${sacco.id}:${sacco.name}:${sacco.is_active}`}
               kind="sacco"
               item={sacco}
+              info={saccoInfo(sacco.id)}
               onSaved={onSaved}
             />
           ))}
@@ -687,19 +815,26 @@ function MethodForm({ method, onSaved }: { method: Method; onSaved: OnSaved }) {
         />
       </Labelled>
 
-      <p className="text-xs text-gray-500">
-        Handled by: {method.provider === "manual" ? "you, manually" : method.provider}
-      </p>
+      <div className="rounded-lg bg-gray-50 px-3 py-2.5">
+        <p className="text-xs text-gray-500">Handled by</p>
+        <p className="mt-0.5 text-sm font-medium text-gray-800">
+          {method.provider === "manual" ? "You, manually" : method.provider}
+        </p>
+      </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <ActiveToggle checked={active} onChange={setActive} label="Offered at checkout" />
+      <div className="flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <ActiveToggle
+          checked={active}
+          onChange={setActive}
+          label="Offered at checkout"
+        />
         <button
           type="button"
           onClick={handleSave}
           disabled={busy || !dirty}
           className={saveButton}
         >
-          {busy ? "Saving..." : "Save"}
+          {busy ? "Saving..." : "Save changes"}
         </button>
       </div>
 
@@ -712,15 +847,20 @@ function MethodsTab({ config, onSaved }: { config: Config; onSaved: OnSaved }) {
   const noneActive = config.methods.every((m) => !m.is_active);
 
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-gray-600">
-        Turn a delivery method off to stop offering it at checkout, or rename
-        it.
-      </p>
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-base font-semibold text-gray-900">
+          Checkout delivery methods
+        </h2>
+        <p className="mt-1.5 text-sm leading-6 text-gray-500">
+          Turn a delivery method off to stop offering it at checkout, or rename
+          it.
+        </p>
+      </div>
 
       {noneActive && (
         <div
-          className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+          className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
           role="alert"
         >
           Both methods are off, so customers cannot check out.
@@ -781,24 +921,29 @@ export default function AdminDelivery() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
-        Delivery
-      </h1>
-      <p className="mt-1 text-sm text-gray-500">
-        Manage delivery areas, matatu routes and fees.
-      </p>
+    <div className="mx-auto max-w-4xl">
+      <div className="border-b border-gray-200 pb-5">
+        <p className="text-xs font-semibold uppercase tracking-wider text-orange-600">
+          Store configuration
+        </p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-gray-900">
+          Delivery
+        </h1>
+        <p className="mt-1.5 max-w-2xl text-sm leading-6 text-gray-500">
+          Manage delivery areas, matatu routes and fees.
+        </p>
+      </div>
 
-      <div className="mt-4 flex gap-2">
+      <div className="mt-5 flex gap-1 overflow-x-auto rounded-xl border border-gray-200 bg-gray-50 p-1">
         {TABS.map((item) => (
           <button
             key={item.value}
             type="button"
             onClick={() => setTab(item.value)}
-            className={`rounded-full px-4 py-2 text-sm ${
+            className={`shrink-0 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
               tab === item.value
-                ? "bg-orange-600 text-white"
-                : "border border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                ? "bg-white text-orange-600 shadow-sm ring-1 ring-gray-200"
+                : "text-gray-600 hover:bg-white/70 hover:text-gray-900"
             }`}
           >
             {item.label}
@@ -808,7 +953,7 @@ export default function AdminDelivery() {
 
       {notice && (
         <div
-          className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+          className="mt-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
           role="status"
         >
           {notice}
@@ -817,7 +962,7 @@ export default function AdminDelivery() {
 
       {loadError && (
         <div
-          className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+          className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
           role="alert"
         >
           {loadError}
@@ -826,7 +971,7 @@ export default function AdminDelivery() {
 
       {!config && !loadError && (
         <div className="flex justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-orange-600"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-orange-600"></div>
         </div>
       )}
 

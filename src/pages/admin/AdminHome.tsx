@@ -1,35 +1,52 @@
+
 import { Link } from "react-router-dom";
+import {
+  ClipboardList,
+  Package,
+  Truck,
+  CreditCard,
+  ArrowUpRight,
+} from "lucide-react";
 import { useReviewCount } from "./reviewCountContext";
 
 const cards = [
   {
     key: "review",
     title: "Payments to review",
-    description: "Customers who paid for orders that were already cancelled.",
+    description:
+      "Review late payments, make decisions and record refunds.",
     to: "/admin/review",
+    icon: CreditCard,
   },
   {
     key: "orders",
     title: "Orders",
-    description: "Search orders, update shipping and handle cancellations.",
+    description:
+      "Search orders, update shipping and handle cancellations.",
     to: "/admin/orders",
+    icon: ClipboardList,
   },
   {
     key: "products",
     title: "Products",
-    description: "Add, edit and hide products.",
+    description:
+      "Add, edit and manage your product catalogue.",
     to: "/admin/products",
+    icon: Package,
   },
-    {
+  {
     key: "delivery",
     title: "Delivery",
-    description: "Delivery areas, matatu routes and fees.",
+    description:
+      "Manage delivery areas, matatu routes and fees.",
     to: "/admin/delivery",
+    icon: Truck,
   },
 ];
 
 export default function AdminHome() {
   const { counts } = useReviewCount();
+
   const waiting = counts !== null && counts.total > 0;
 
   const summary = counts
@@ -49,47 +66,84 @@ export default function AdminHome() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
-        Dashboard
-      </h1>
-      <p className="mt-1 text-sm text-gray-500">
-        You are signed in as an admin.
-      </p>
+      {/* Dashboard heading */}
+      <div>
+        <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl">
+          Dashboard
+        </h1>
 
-      <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <p className="mt-1 text-sm text-gray-500">
+          Manage your store, orders and delivery operations.
+        </p>
+      </div>
+
+      {/* Navigation cards */}
+      <ul className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((card) => {
           const highlight = card.key === "review" && waiting;
+          const Icon = card.icon;
 
           return (
-            <li
-              key={card.key}
-              className={`flex flex-col rounded-lg bg-white p-5 shadow-sm ${
-                highlight ? "ring-2 ring-amber-300" : ""
-              }`}
-            >
-              <h2 className="text-base font-semibold text-gray-900">
-                {card.title}
-              </h2>
-              <div className="flex flex-col grow justify-between">
-              <p className="mt-2 text-sm text-gray-500">{card.description}</p>
-
-              {card.key === "review" && counts && (
-                <p
-                  className={`mt-3 text-sm ${
-                    waiting ? "font-medium text-amber-700" : "text-gray-500"
-                  }`}
-                >
-                  {waiting ? summary : "Nothing waiting."}
-                </p>
-              )}
-
+            <li key={card.key} className="min-w-0">
               <Link
                 to={card.to}
-                className=" mt-3 inline-block text-sm text-orange-600 hover:underline"
+                className={`group flex h-full min-h-52 flex-col rounded-xl border bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 ${
+                  highlight
+                    ? "border-amber-200"
+                    : "border-gray-200"
+                }`}
               >
-                Open
+                {/* Icon and status */}
+                <div className="flex items-start justify-between">
+                  <span
+                    className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${
+                      highlight
+                        ? "bg-amber-50 text-amber-700"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+
+                  {highlight && (
+                    <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+                      Action needed
+                    </span>
+                  )}
+                </div>
+
+                {/* Card content */}
+                <div className="mt-5 flex-1">
+                  <h2 className="text-base font-semibold text-gray-900">
+                    {card.title}
+                  </h2>
+
+                  <p className="mt-2 text-sm leading-6 text-gray-500">
+                    {card.description}
+                  </p>
+
+                  {card.key === "review" && counts !== null && (
+                    <p
+                      className={`mt-3 text-xs leading-5 ${
+                        waiting
+                          ? "font-medium text-amber-700"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {waiting ? summary : "Nothing waiting for review."}
+                    </p>
+                  )}
+                </div>
+
+                {/* Card link indicator */}
+                <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
+                  <span className="text-sm font-medium text-orange-600">
+                    Open
+                  </span>
+
+                  <ArrowUpRight className="h-4 w-4 text-gray-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-orange-600" />
+                </div>
               </Link>
-              </div>
             </li>
           );
         })}
