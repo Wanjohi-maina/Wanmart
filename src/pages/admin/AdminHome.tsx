@@ -20,6 +20,12 @@ const cards = [
     description: "Add, edit and hide products.",
     to: "/admin/products",
   },
+    {
+    key: "delivery",
+    title: "Delivery",
+    description: "Delivery areas, matatu routes and fees.",
+    to: "/admin/delivery",
+  },
 ];
 
 export default function AdminHome() {

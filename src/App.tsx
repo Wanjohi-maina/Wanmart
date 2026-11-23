@@ -23,6 +23,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminProductForm from "./pages/admin/AdminProductForm";
+import AdminDelivery from "./pages/admin/AdminDelivery";
 import NotFound from "./pages/NotFound";
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
               <Route path="products" element={<AdminProducts />} />
               <Route path="products/new" element={<AdminProductForm />} />
               <Route path="products/:id" element={<AdminProductForm />} />
+              <Route path="delivery" element={<AdminDelivery />} />
             </Route>
           </Route>
         </Routes>

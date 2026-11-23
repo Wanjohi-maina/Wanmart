@@ -396,6 +396,44 @@ export type Database = {
           },
         ]
       }
+      order_shipments: {
+        Row: {
+          dispatched_at: string
+          dispatched_by: string | null
+          note: string | null
+          order_id: string
+          provider: string
+          reference: string | null
+          updated_at: string
+        }
+        Insert: {
+          dispatched_at?: string
+          dispatched_by?: string | null
+          note?: string | null
+          order_id: string
+          provider?: string
+          reference?: string | null
+          updated_at?: string
+        }
+        Update: {
+          dispatched_at?: string
+          dispatched_by?: string | null
+          note?: string | null
+          order_id?: string
+          provider?: string
+          reference?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_shipments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           address: string
@@ -647,6 +685,7 @@ export type Database = {
         Args: { p_note?: string; p_order_id: string }
         Returns: undefined
       }
+      admin_get_delivery_config: { Args: never; Returns: Json }
       admin_get_order: { Args: { p_order_id: string }; Returns: Json }
       admin_get_product: { Args: { p_id: string }; Returns: Json }
       admin_get_review_queue: { Args: never; Returns: Json }
@@ -685,13 +724,28 @@ export type Database = {
         Returns: undefined
       }
       admin_review_count: { Args: never; Returns: Json }
+      admin_save_delivery_area: { Args: { p: Json }; Returns: number }
+      admin_save_delivery_method: {
+        Args: { p_active: boolean; p_code: string; p_name: string }
+        Returns: undefined
+      }
+      admin_save_matatu_route: { Args: { p: Json }; Returns: number }
+      admin_save_matatu_sacco: { Args: { p: Json }; Returns: number }
+      admin_save_matatu_town: { Args: { p: Json }; Returns: number }
       admin_set_payment_reference: {
         Args: { p_order_id: string; p_reference: string }
         Returns: undefined
       }
-      admin_ship_order: { Args: { p_order_id: string }; Returns: undefined }
+      admin_ship_order: {
+        Args: { p_note?: string; p_order_id: string; p_reference?: string }
+        Returns: undefined
+      }
       admin_start_refund: {
         Args: { p_note?: string; p_order_id: string }
+        Returns: undefined
+      }
+      admin_update_dispatch: {
+        Args: { p_note?: string; p_order_id: string; p_reference?: string }
         Returns: undefined
       }
       admin_update_product: { Args: { p: Json }; Returns: undefined }

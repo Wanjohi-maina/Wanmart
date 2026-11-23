@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import {
@@ -49,13 +48,11 @@ type OrderConfirmation = {
   payment_method: string;
   payment_resolution_status?: string | null;
   mpesa_initiation_status: string | null;
-
-  // Delivery information
   delivery_method: string | null;
   delivery_label: string | null;
   delivery_fee: number | null;
   delivery_notes: string | null;
-
+  dispatch: { reference: string | null; note: string | null } | null;
   currency: string;
   subtotal: number;
   discount_total: number;
@@ -117,9 +114,7 @@ function nextPollDelay(
 
     if (noPrompt) return SLOW_POLL_MS;
 
-    return sincePageLoad < FAST_WINDOW_MS
-      ? FAST_POLL_MS
-      : SLOW_POLL_MS;
+    return sincePageLoad < FAST_WINDOW_MS ? FAST_POLL_MS : SLOW_POLL_MS;
   }
 
   const finished =
@@ -188,11 +183,7 @@ function paymentMessage(
   }
 }
 
-function headingFor(
-  view: PaymentView,
-  promptNotSent: boolean,
-  method: string,
-) {
+function headingFor(view: PaymentView, promptNotSent: boolean, method: string) {
   switch (view) {
     case "awaiting":
       return promptNotSent
@@ -335,9 +326,7 @@ export default function OrderConfirmation() {
       if (inFlight) return;
 
       // Get the access token saved when the order was created
-      const accessToken = sessionStorage.getItem(
-        `order_access_token_${id}`,
-      );
+      const accessToken = sessionStorage.getItem(`order_access_token_${id}`);
 
       if (!accessToken) {
         setError("Unable to verify your order. Please return to checkout.");
@@ -811,6 +800,18 @@ export default function OrderConfirmation() {
                     </dd>
                   </div>
                 )}
+                
+                {order.dispatch &&
+                  (order.dispatch.reference || order.dispatch.note) && (
+                    <div>
+                      <dt className="text-gray-500 text-xs">Dispatch details</dt>
+                      <dd className="text-sm mt-0.5 text-gray-900 whitespace-pre-line">
+                        {[order.dispatch.reference, order.dispatch.note]
+                          .filter(Boolean)
+                          .join("\n")}
+                      </dd>
+                    </div>
+                  )}
               </dl>
             </section>
 
@@ -859,9 +860,7 @@ export default function OrderConfirmation() {
                 </div>
 
                 <div>
-                  <h2 className="font-semibold text-gray-900">
-                    Order summary
-                  </h2>
+                  <h2 className="font-semibold text-gray-900">Order summary</h2>
 
                   <p className="text-xs text-gray-500">
                     {itemCount} {itemCount === 1 ? "item" : "items"}
@@ -929,8 +928,7 @@ export default function OrderConfirmation() {
                   <span>Subtotal</span>
 
                   <span>
-                    {order.currency}{" "}
-                    {Number(order.subtotal).toLocaleString()}
+                    {order.currency} {Number(order.subtotal).toLocaleString()}
                   </span>
                 </div>
 
@@ -958,13 +956,10 @@ export default function OrderConfirmation() {
                 )}
 
                 <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-                  <span className="font-semibold text-gray-900">
-                    Total
-                  </span>
+                  <span className="font-semibold text-gray-900">Total</span>
 
                   <span className="text-xl font-bold text-gray-900">
-                    {order.currency}{" "}
-                    {Number(order.total).toLocaleString()}
+                    {order.currency} {Number(order.total).toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -985,7 +980,8 @@ export default function OrderConfirmation() {
           <ShieldCheck className="h-4 w-4 text-gray-400" />
 
           <p className="text-xs text-gray-500">
-            Your order information is securely retrieved using your order access credentials.
+            Your order information is securely retrieved using your order access
+            credentials.
           </p>
         </div>
       </div>

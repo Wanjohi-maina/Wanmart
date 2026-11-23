@@ -97,6 +97,8 @@ export default function Checkout() {
   const [areaPickerOpen, setAreaPickerOpen] = useState(false);
 
   const [townId, setTownId] = useState(prefill?.townId ?? "");
+  const [townSearch, setTownSearch] = useState("");
+  const [townPickerOpen, setTownPickerOpen] = useState(false);
   const [routeId, setRouteId] = useState(prefill?.routeId ?? "");
   const [routeSearch, setRouteSearch] = useState("");
   const [routePickerOpen, setRoutePickerOpen] = useState(false);
@@ -110,6 +112,9 @@ export default function Checkout() {
 
   const areaPickerRef = useRef<HTMLDivElement>(null);
   const areaSearchInputRef = useRef<HTMLInputElement>(null);
+
+  const townPickerRef = useRef<HTMLDivElement>(null);
+  const townSearchInputRef = useRef<HTMLInputElement>(null);
 
   const routePickerRef = useRef<HTMLDivElement>(null);
   const routeSearchInputRef = useRef<HTMLInputElement>(null);
@@ -138,9 +143,10 @@ export default function Checkout() {
 
   // Handle closing the searchable dropdowns.
   useEffect(() => {
-    if (!areaPickerOpen && !routePickerOpen) return;
+    if (!areaPickerOpen && !townPickerOpen && !routePickerOpen) return;
 
     if (areaPickerOpen) areaSearchInputRef.current?.focus();
+    if (townPickerOpen) townSearchInputRef.current?.focus();
     if (routePickerOpen) routeSearchInputRef.current?.focus();
 
     function handlePointerDown(event: PointerEvent) {
@@ -149,6 +155,13 @@ export default function Checkout() {
         !areaPickerRef.current?.contains(event.target as Node)
       ) {
         setAreaPickerOpen(false);
+      }
+
+      if (
+        townPickerOpen &&
+        !townPickerRef.current?.contains(event.target as Node)
+      ) {
+        setTownPickerOpen(false);
       }
 
       if (
@@ -162,6 +175,7 @@ export default function Checkout() {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setAreaPickerOpen(false);
+        setTownPickerOpen(false);
         setRoutePickerOpen(false);
       }
     }
@@ -173,7 +187,7 @@ export default function Checkout() {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [areaPickerOpen, routePickerOpen]);
+  }, [areaPickerOpen, townPickerOpen, routePickerOpen]);
 
   // Find the currently selected delivery options.
   const selectedArea = options?.courier.find(
@@ -186,6 +200,10 @@ export default function Checkout() {
 
   const selectedTown = options?.matatu.find(
     (town) => String(town.id) === townId,
+  );
+
+  const filteredMatatuTowns = (options?.matatu ?? []).filter((town) =>
+    town.name.toLowerCase().includes(townSearch.trim().toLowerCase()),
   );
 
   const selectedRoute = selectedTown?.routes.find(
@@ -259,6 +277,8 @@ export default function Checkout() {
     setAreaPickerOpen(false);
 
     setTownId("");
+    setTownSearch("");
+    setTownPickerOpen(false);
     setRouteId("");
     setRouteSearch("");
     setRoutePickerOpen(false);
@@ -274,6 +294,8 @@ export default function Checkout() {
   // Changing the town clears the previously selected SACCO.
   function handleTownChange(value: string) {
     setTownId(value);
+    setTownSearch("");
+    setTownPickerOpen(false);
     setRouteId("");
     setRouteSearch("");
     setRoutePickerOpen(false);
@@ -776,25 +798,100 @@ export default function Checkout() {
                   {isMatatu && (
                     <div className="space-y-4">
                       <div>
-                        <label htmlFor="matatu-town" className={labelClass}>
+                        <label
+                          htmlFor="matatu-town-search"
+                          className={labelClass}
+                        >
                           Destination Town
                         </label>
 
-                        <select
-                          id="matatu-town"
-                          value={townId}
-                          onChange={(e) => handleTownChange(e.target.value)}
-                          disabled={submitting}
-                          className={inputClass}
-                        >
-                          <option value="">Select a town</option>
+                        <div className="relative" ref={townPickerRef}>
+                          <div className="flex min-h-10 items-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2.5 shadow-sm transition focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-100">
+                            <Search
+                              size={16}
+                              className="shrink-0 text-gray-500"
+                              aria-hidden="true"
+                            />
 
-                          {options.matatu.map((town) => (
-                            <option key={town.id} value={String(town.id)}>
-                              {town.name}
-                            </option>
-                          ))}
-                        </select>
+                            <input
+                              ref={townSearchInputRef}
+                              id="matatu-town-search"
+                              type="search"
+                              role="combobox"
+                              aria-autocomplete="list"
+                              aria-haspopup="dialog"
+                              aria-expanded={townPickerOpen}
+                              aria-controls="matatu-town-options"
+                              value={
+                                townPickerOpen
+                                  ? townSearch
+                                  : selectedTown?.name ?? ""
+                              }
+                              onFocus={() => {
+                                if (!townPickerOpen) {
+                                  setTownSearch("");
+                                  setTownPickerOpen(true);
+                                }
+                              }}
+                              onChange={(event) =>
+                                setTownSearch(event.target.value)
+                              }
+                              placeholder="Search destination towns"
+                              disabled={
+                                submitting || options.matatu.length === 0
+                              }
+                              className="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-gray-800 outline-none placeholder:text-gray-400"
+                            />
+
+                            <ChevronDown
+                              size={16}
+                              className={`shrink-0 text-gray-500 transition-transform ${
+                                townPickerOpen ? "rotate-180" : ""
+                              }`}
+                              aria-hidden="true"
+                            />
+                          </div>
+
+                          {townPickerOpen && (
+                            <div
+                              id="matatu-town-options"
+                              role="dialog"
+                              aria-label="Choose a destination town"
+                              className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+                            >
+                              <div className="max-h-56 overflow-y-auto p-1.5">
+                                {filteredMatatuTowns.length > 0 ? (
+                                  filteredMatatuTowns.map((town) => (
+                                    <button
+                                      key={town.id}
+                                      type="button"
+                                      aria-pressed={String(town.id) === townId}
+                                      onMouseDown={(event) =>
+                                        event.preventDefault()
+                                      }
+                                      onClick={() =>
+                                        handleTownChange(String(town.id))
+                                      }
+                                      className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-gray-50 focus:bg-orange-50 focus:outline-none ${
+                                        String(town.id) === townId
+                                          ? "bg-orange-50 text-orange-800"
+                                          : "text-gray-700"
+                                      }`}
+                                    >
+                                      <span className="truncate">
+                                        {town.name}
+                                      </span>
+                                    </button>
+                                  ))
+                                ) : (
+                                  <p className="px-3 py-4 text-center text-sm text-gray-500">
+                                    No towns match "{townSearch}".
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
 
                         {options.matatu.length === 0 && (
                           <p className="mt-2 text-sm text-gray-500">

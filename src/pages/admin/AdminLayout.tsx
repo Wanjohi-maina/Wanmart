@@ -11,6 +11,7 @@ const navItems = [
   { to: "/admin", label: "Dashboard", end: true, showCount: false },
   { to: "/admin/orders", label: "Orders", end: false, showCount: false },
   { to: "/admin/products", label: "Products", end: false, showCount: false },
+  { to: "/admin/delivery", label: "Delivery", end: false, showCount: false },
   { to: "/admin/review", label: "Review", end: false, showCount: true },
 ];
 

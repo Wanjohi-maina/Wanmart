@@ -29,6 +29,13 @@ type OrderItem = {
   image_url: string | null;
 };
 
+type Dispatch = {
+  reference: string | null;
+  note: string | null;
+  dispatched_at: string;
+  provider: string;
+};
+
 type OrderDetail = {
   order_id: string;
   customer_name: string;
@@ -52,6 +59,11 @@ type OrderDetail = {
   resolved_at: string | null;
   resolution_note: string | null;
   refund_reference: string | null;
+  delivery_method: string | null;
+  delivery_label: string | null;
+  delivery_fee: number;
+  delivery_notes: string | null;
+  dispatch: Dispatch | null;
   actions: ActionKey[];
   items: OrderItem[];
   callbacks: {
@@ -73,7 +85,7 @@ type ActionConfig = {
   description: string;
   success: string;
   danger?: boolean;
-  field?: "note" | "reference";
+  field?: "note" | "reference" | "dispatch";
 };
 
 const ACTIONS: Record<ActionKey, ActionConfig> = {
@@ -81,8 +93,9 @@ const ACTIONS: Record<ActionKey, ActionConfig> = {
     label: "Mark as shipped",
     confirmLabel: "Confirm shipped",
     description:
-      "Marks the order as shipped. For Cash on Delivery orders, the payment is recorded when the order is delivered.",
+      "Marks the order as shipped. Add the delivery details below so the customer can see them. For Cash on Delivery orders, the payment is recorded when the order is delivered.",
     success: "Order marked as shipped.",
+    field: "dispatch",
   },
   deliver: {
     label: "Mark as delivered",
@@ -143,12 +156,17 @@ function callAction(
   action: ActionKey,
   orderId: string,
   value: string,
+  value2: string,
 ): PromiseLike<{ error: { message: string } | null }> {
   const optional = value || undefined;
 
   switch (action) {
     case "ship":
-      return supabase.rpc("admin_ship_order", { p_order_id: orderId });
+      return supabase.rpc("admin_ship_order", {
+        p_order_id: orderId,
+        p_reference: value || undefined,
+        p_note: value2 || undefined,
+      });
     case "deliver":
       return supabase.rpc("admin_mark_delivered", { p_order_id: orderId });
     case "cod_delivered":
@@ -194,13 +212,151 @@ function Field({
   return (
     <div className="min-w-0">
       <dt className="text-gray-500">{label}</dt>
-      <dd className="mt-0.5 wrap-break-word text-gray-900">{children}</dd>
+      <dd className="mt-0.5 break-words text-gray-900">{children}</dd>
     </div>
+  );
+}
+
+function DispatchCard({
+  order,
+  onSaved,
+}: {
+  order: OrderDetail;
+  onSaved: () => Promise<void>;
+}) {
+  const dispatch = order.dispatch;
+
+  const [editing, setEditing] = useState(false);
+  const [reference, setReference] = useState(dispatch?.reference ?? "");
+  const [note, setNote] = useState(dispatch?.note ?? "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (!dispatch) return null;
+
+  async function handleSave() {
+    setBusy(true);
+    setError(null);
+
+    const { error: rpcError } = await supabase.rpc("admin_update_dispatch", {
+      p_order_id: order.order_id,
+      p_reference: reference.trim() || undefined,
+      p_note: note.trim() || undefined,
+    });
+
+    setBusy(false);
+
+    if (rpcError) {
+      setError(rpcError.message);
+      return;
+    }
+
+    setEditing(false);
+    await onSaved();
+  }
+
+  return (
+    <Card title="Dispatch details">
+      {!editing ? (
+        <div className="space-y-3">
+          <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+            <Field label="Reference">
+              {dispatch.reference ?? "None"}
+            </Field>
+            <Field label="Note">{dispatch.note ?? "None"}</Field>
+            <Field label="Dispatched">
+              {new Date(dispatch.dispatched_at).toLocaleString()}
+            </Field>
+          </dl>
+          <p className="text-xs text-gray-500">
+            The customer can see the reference and note on their order page.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setReference(dispatch.reference ?? "");
+              setNote(dispatch.note ?? "");
+              setEditing(true);
+            }}
+            className="text-sm text-orange-600 hover:underline"
+          >
+            Edit dispatch details
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <div>
+            <label
+              htmlFor="dispatch-reference"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Reference
+            </label>
+            <input
+              id="dispatch-reference"
+              type="text"
+              value={reference}
+              onChange={(e) => setReference(e.target.value)}
+              maxLength={200}
+              disabled={busy}
+              className={inputClassName}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="dispatch-note"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
+              Note
+            </label>
+            <textarea
+              id="dispatch-note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              rows={2}
+              maxLength={500}
+              disabled={busy}
+              className={`${inputClassName} resize-none`}
+            />
+          </div>
+          <p className="text-xs text-gray-500">
+            Both are shown to the customer on their order page.
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={handleSave}
+              className="w-full rounded-full bg-orange-600 px-5 py-3 text-base font-medium text-white transition-colors hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+            >
+              {busy ? "Saving..." : "Save details"}
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => setEditing(false)}
+              className="w-full rounded-full border border-gray-300 bg-white px-5 py-3 text-base font-medium text-gray-700 transition-colors hover:border-gray-400 sm:w-auto"
+            >
+              Cancel
+            </button>
+          </div>
+          {error && (
+            <div
+              className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+              role="alert"
+            >
+              {error}
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
   );
 }
 
 export default function AdminOrderDetail() {
   const { id } = useParams<{ id: string }>();
+  const { refresh } = useReviewCount();
 
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -208,11 +364,10 @@ export default function AdminOrderDetail() {
 
   const [panel, setPanel] = useState<ActionKey | null>(null);
   const [text, setText] = useState("");
+  const [text2, setText2] = useState("");
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  const { refresh } = useReviewCount();
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -239,6 +394,7 @@ export default function AdminOrderDetail() {
   function open(next: ActionKey | null) {
     setPanel(next);
     setText("");
+    setText2("");
     setActionError(null);
     setSuccess(null);
   }
@@ -250,7 +406,7 @@ export default function AdminOrderDetail() {
     setActionError(null);
     setSuccess(null);
 
-    const { error } = await callAction(action, id, text.trim());
+    const { error } = await callAction(action, id, text.trim(), text2.trim());
 
     setBusy(false);
 
@@ -261,6 +417,7 @@ export default function AdminOrderDetail() {
 
     setPanel(null);
     setText("");
+    setText2("");
     setSuccess(ACTIONS[action].success);
     await load();
     refresh();
@@ -304,6 +461,8 @@ export default function AdminOrderDetail() {
     order.payment_status === "unpaid" &&
     order.mpesa_initiation_status !== "not_started" &&
     order.mpesa_initiation_status !== "failed";
+
+  const isMatatu = order.delivery_method === "matatu";
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
@@ -425,6 +584,54 @@ export default function AdminOrderDetail() {
               />
             )}
 
+            {ACTIONS[panel].field === "dispatch" && (
+              <>
+                <div>
+                  <label
+                    htmlFor="ship-reference"
+                    className="mb-1 block text-sm font-medium text-gray-700"
+                  >
+                    Reference (optional)
+                  </label>
+                  <input
+                    id="ship-reference"
+                    type="text"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    maxLength={200}
+                    placeholder={
+                      isMatatu
+                        ? "SACCO parcel receipt number and vehicle plate"
+                        : "Rider's name and phone number"
+                    }
+                    className={inputClassName}
+                    disabled={busy}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="ship-note"
+                    className="mb-1 block text-sm font-medium text-gray-700"
+                  >
+                    Note (optional)
+                  </label>
+                  <textarea
+                    id="ship-note"
+                    value={text2}
+                    onChange={(e) => setText2(e.target.value)}
+                    rows={2}
+                    maxLength={500}
+                    placeholder="Anything the customer should know"
+                    className={`${inputClassName} resize-none`}
+                    disabled={busy}
+                  />
+                </div>
+                <p className="text-xs text-gray-500">
+                  Both are shown to the customer on their order page.
+                </p>
+              </>
+            )}
+
             <div className="flex flex-col gap-2 sm:flex-row">
               <button
                 type="button"
@@ -523,6 +730,16 @@ export default function AdminOrderDetail() {
               </span>
             </div>
           )}
+          {order.delivery_label && (
+            <div className="flex justify-between text-gray-500">
+              <span>Delivery</span>
+              <span>
+                {Number(order.delivery_fee) > 0
+                  ? `${order.currency} ${Number(order.delivery_fee).toLocaleString()}`
+                  : "Free"}
+              </span>
+            </div>
+          )}
           <div className="flex justify-between font-semibold text-gray-900">
             <span>Total</span>
             <span>
@@ -531,6 +748,47 @@ export default function AdminOrderDetail() {
           </div>
         </div>
       </Card>
+
+      {/* Delivery */}
+      {order.delivery_label && (
+        <Card title="Delivery">
+          <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+            <Field label="Method">
+              {isMatatu ? "Matatu SACCO" : "Courier delivery"}
+            </Field>
+            <Field label={isMatatu ? "Town and SACCO" : "Area"}>
+              {order.delivery_label}
+            </Field>
+            <Field label="Delivery fee">
+              {Number(order.delivery_fee) > 0
+                ? `${order.currency} ${Number(order.delivery_fee).toLocaleString()}`
+                : "Free"}
+            </Field>
+            <Field label={isMatatu ? "Deliver to" : "Address"}>
+              <span className="whitespace-pre-line">{order.address}</span>
+            </Field>
+            {order.delivery_notes && (
+              <div className="sm:col-span-2">
+                <Field label="Customer's delivery notes">
+                  <span className="whitespace-pre-line">
+                    {order.delivery_notes}
+                  </span>
+                </Field>
+              </div>
+            )}
+          </dl>
+        </Card>
+      )}
+
+      {/* Dispatch */}
+      <DispatchCard
+        key={`${order.dispatch?.reference ?? ""}:${order.dispatch?.note ?? ""}`}
+        order={order}
+        onSaved={async () => {
+          await load();
+          setSuccess("Dispatch details saved.");
+        }}
+      />
 
       {/* Customer */}
       <Card title="Customer">
@@ -541,11 +799,13 @@ export default function AdminOrderDetail() {
             </a>
           </Field>
           <Field label="Email">{order.email}</Field>
-          <div className="sm:col-span-2">
-            <Field label="Address">
-              <span className="whitespace-pre-line">{order.address}</span>
-            </Field>
-          </div>
+          {!order.delivery_label && (
+            <div className="sm:col-span-2">
+              <Field label="Address">
+                <span className="whitespace-pre-line">{order.address}</span>
+              </Field>
+            </div>
+          )}
         </dl>
       </Card>
 
@@ -624,9 +884,7 @@ export default function AdminOrderDetail() {
         </summary>
 
         {order.history.length === 0 ? (
-          <p className="mt-3 text-sm text-gray-500">
-            No admin actions yet.
-          </p>
+          <p className="mt-3 text-sm text-gray-500">No admin actions yet.</p>
         ) : (
           <ul className="mt-3 space-y-2 text-sm">
             {order.history.map((entry, index) => (
@@ -634,7 +892,9 @@ export default function AdminOrderDetail() {
                 <p className="text-gray-900">{titleCase(entry.action)}</p>
                 {(entry.details?.note || entry.details?.reference) && (
                   <p className="text-gray-600">
-                    {entry.details.note ?? entry.details.reference}
+                    {[entry.details.reference, entry.details.note]
+                      .filter(Boolean)
+                      .join(" · ")}
                   </p>
                 )}
                 <p className="text-xs text-gray-500">
