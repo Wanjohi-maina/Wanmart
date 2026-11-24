@@ -42,7 +42,7 @@ On an order, admins can add dispatch references and notes for customers, mark or
 
 ### Administration
 
-- Product management includes categories, pricing and discounts, stock, product images, variants/details, featured status, and storefront visibility.
+- **Product CRUD:** admins can create products, browse and open the product list, edit existing products, and delete products when allowed. Product forms manage categories, descriptions, pricing and discounts, stock, images, product-specific variants/details, featured status, and storefront visibility.
 - Admin routes require an authenticated Supabase user who is a member of the `admins` table and has completed authenticator-app MFA (TOTP).
 - MFA enrollment is prompted on an admin's first visit; later visits require an authenticator code. Inactive admin sessions are signed out.
 
