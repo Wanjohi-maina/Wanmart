@@ -43,24 +43,29 @@ export default function KindDetailsCard({
               type="text"
               value={form.sizes}
               onChange={(e) => setField("sizes", e.target.value)}
+              placeholder="S, M, L"
               className={inputClass}
             />
           </Field>
+
           <Field label="Material" htmlFor="material">
             <input
               id="material"
               type="text"
               value={form.material}
               onChange={(e) => setField("material", e.target.value)}
+              placeholder="For example Cotton"
               className={inputClass}
             />
           </Field>
+
           <Field label="Color" htmlFor="color">
             <input
               id="color"
               type="text"
               value={form.color}
               onChange={(e) => setField("color", e.target.value)}
+              placeholder="For example Black"
               className={inputClass}
             />
           </Field>
@@ -75,9 +80,11 @@ export default function KindDetailsCard({
               type="text"
               value={form.brand}
               onChange={(e) => setField("brand", e.target.value)}
+              placeholder="For example Nike"
               className={inputClass}
             />
           </Field>
+
           <Field
             label="Sizes"
             htmlFor="sizes"
@@ -88,15 +95,18 @@ export default function KindDetailsCard({
               type="text"
               value={form.sizes}
               onChange={(e) => setField("sizes", e.target.value)}
+              placeholder="40, 41, 42"
               className={inputClass}
             />
           </Field>
+
           <Field label="Color" htmlFor="color">
             <input
               id="color"
               type="text"
               value={form.color}
               onChange={(e) => setField("color", e.target.value)}
+              placeholder="For example White"
               className={inputClass}
             />
           </Field>
@@ -111,9 +121,11 @@ export default function KindDetailsCard({
               type="text"
               value={form.brand}
               onChange={(e) => setField("brand", e.target.value)}
+              placeholder="For example Casio"
               className={inputClass}
             />
           </Field>
+
           <Field label="Movement" htmlFor="movement">
             <select
               id="movement"
@@ -128,8 +140,10 @@ export default function KindDetailsCard({
               <option value="digital">Digital</option>
             </select>
           </Field>
+
           <CheckField
             label="Water resistant"
+            hint="Enable this if the watch has water-resistance features."
             checked={form.waterResistant}
             onChange={(value) => setField("waterResistant", value)}
           />
@@ -144,15 +158,18 @@ export default function KindDetailsCard({
               type="text"
               value={form.material}
               onChange={(e) => setField("material", e.target.value)}
+              placeholder="For example Leather"
               className={inputClass}
             />
           </Field>
+
           <Field label="Color" htmlFor="color">
             <input
               id="color"
               type="text"
               value={form.color}
               onChange={(e) => setField("color", e.target.value)}
+              placeholder="For example Brown"
               className={inputClass}
             />
           </Field>
@@ -167,9 +184,11 @@ export default function KindDetailsCard({
               type="text"
               value={form.brand}
               onChange={(e) => setField("brand", e.target.value)}
+              placeholder="For example Dior"
               className={inputClass}
             />
           </Field>
+
           <Field label="Volume (ml)" htmlFor="volume">
             <input
               id="volume"
@@ -177,10 +196,12 @@ export default function KindDetailsCard({
               inputMode="decimal"
               value={form.volumeMl}
               onChange={(e) => setField("volumeMl", e.target.value)}
+              placeholder="For example 100"
               className={inputClass}
             />
           </Field>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Field label="Concentration" htmlFor="concentration">
               <select
                 id="concentration"
@@ -198,6 +219,7 @@ export default function KindDetailsCard({
                 <option value="Parfum">Parfum</option>
               </select>
             </Field>
+
             <Field label="Gender" htmlFor="gender">
               <select
                 id="gender"

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { LoaderCircle } from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
 import type { Json } from "../../types/supabase";
 import {
@@ -210,23 +211,27 @@ export default function AdminProductForm() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-16">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-orange-600"></div>
+      <div className="flex min-h-64 items-center justify-center">
+        <LoaderCircle
+          className="h-8 w-8 animate-spin text-orange-600"
+          aria-label="Loading product"
+        />
       </div>
     );
   }
 
   if (loadError) {
     return (
-      <div>
+      <div className="mx-auto max-w-3xl">
         <Link
           to="/admin/products"
-          className="text-sm text-gray-500 hover:text-orange-600"
+          className="text-sm font-medium text-gray-500 transition-colors hover:text-orange-600"
         >
           ← Products
         </Link>
+
         <div
-          className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+          className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm leading-6 text-red-700"
           role="alert"
         >
           {loadError}
@@ -263,38 +268,55 @@ export default function AdminProductForm() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link
-        to="/admin/products"
-        className="inline-block text-sm text-gray-500 hover:text-orange-600"
-      >
-        ← Products
-      </Link>
+      {/* Page heading */}
+      <div className="mb-6">
+        <Link
+          to="/admin/products"
+          className="inline-flex text-sm font-medium text-gray-500 transition-colors hover:text-orange-600"
+        >
+          ← Products
+        </Link>
 
-      <h1 className="mt-2 text-xl font-semibold text-gray-900 sm:text-2xl">
-        {isNew ? "Add product" : record?.name}
-      </h1>
-      {!isNew && (
-        <p className="mt-1 text-xs text-gray-500">
-          {KIND_LABELS[form.kind]} · {record?.order_count ?? 0}{" "}
-          {record?.order_count === 1 ? "order" : "orders"}
-        </p>
-      )}
+        <div className="mt-3">
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+            {isNew ? "Add product" : record?.name}
+          </h1>
 
+          {!isNew && (
+            <p className="mt-2 text-sm text-gray-500">
+              {KIND_LABELS[form.kind]} <span className="mx-1.5">·</span>
+              {record?.order_count ?? 0}{" "}
+              {record?.order_count === 1 ? "order" : "orders"}
+            </p>
+          )}
+
+          {isNew && (
+            <p className="mt-1.5 text-sm text-gray-500">
+              Add the product information, pricing, images and visibility
+              settings.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Success message */}
       {success && (
         <div
-          className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+          className="mb-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3.5 text-sm leading-6 text-green-700"
           role="status"
         >
           {success}
         </div>
       )}
 
+      {/* Validation and submission errors */}
       {errors.length > 0 && (
         <div
-          className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+          className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700"
           role="alert"
         >
-          <ul className="list-disc space-y-1 pl-5">
+          <p className="mb-2 font-semibold">Please check the following:</p>
+          <ul className="list-disc space-y-1.5 pl-5">
             {errors.map((message, index) => (
               <li key={index}>{message}</li>
             ))}
@@ -302,7 +324,7 @@ export default function AdminProductForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-4 space-y-4" noValidate>
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         <BasicsCard
           form={form}
           isNew={isNew}
@@ -310,6 +332,7 @@ export default function AdminProductForm() {
           setField={setField}
           onNameChange={handleNameChange}
         />
+
         <PriceStockCard
           form={form}
           isNew={isNew}
@@ -319,18 +342,21 @@ export default function AdminProductForm() {
           available={available}
           setField={setField}
         />
+
         <ImagesCard
           form={form}
           setField={setField}
           setForm={setForm}
           trackUpload={trackUpload}
         />
+
         <KindDetailsCard
           form={form}
           setField={setField}
           setForm={setForm}
           trackUpload={trackUpload}
         />
+
         <HighlightsCard form={form} setField={setField} />
         <VisibilityCard form={form} setField={setField} />
 
@@ -345,18 +371,20 @@ export default function AdminProductForm() {
           />
         )}
 
-        <div className="sticky bottom-0 -mx-4 border-t border-gray-200 bg-white/95 px-4 py-3 backdrop-blur">
-          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+        {/* Sticky form actions */}
+        <div className="sticky bottom-0 -mx-4 border-t border-gray-200 bg-white/95 px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.04)] backdrop-blur sm:-mx-6 sm:px-6">
+          <div className="mx-auto flex max-w-3xl flex-col gap-2 sm:flex-row sm:justify-end">
             <Link
               to="/admin/products"
-              className="w-full rounded-full border border-gray-300 bg-white px-5 py-3 text-center text-base font-medium text-gray-700 hover:border-gray-400 sm:w-auto"
+              className="w-full rounded-full border border-gray-300 bg-white px-5 py-3 text-center text-sm font-medium text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50 sm:w-auto"
             >
               Cancel
             </Link>
+
             <button
               type="submit"
               disabled={saving || activeUploads > 0}
-              className="w-full rounded-full bg-orange-600 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+              className="w-full rounded-full bg-orange-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               {saving
                 ? "Saving..."

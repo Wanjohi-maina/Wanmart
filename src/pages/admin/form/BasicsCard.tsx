@@ -53,7 +53,7 @@ export default function BasicsCard({
         />
       </Field>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <Field
           label="Type"
           htmlFor="kind"
@@ -97,7 +97,7 @@ export default function BasicsCard({
           value={form.description}
           onChange={(e) => setField("description", e.target.value)}
           rows={4}
-          className={`${inputClass} resize-y`}
+          className={`${inputClass} min-h-28 resize-y leading-6`}
         />
       </Field>
     </Card>
