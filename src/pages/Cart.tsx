@@ -140,7 +140,7 @@ export default function Cart() {
           <button
             type="button"
             onClick={() => setPendingAction({ type: "clear" })}
-            className="inline-flex w-fit items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-red-600"
+            className="inline-flex w-fit items-center gap-2 text-sm font-medium text-red-500 transition-colors hover:text-red-600"
           >
             <Trash2 className="h-4 w-4" aria-hidden="true" />
             Clear cart
@@ -247,7 +247,7 @@ export default function Cart() {
                                 })
                               }
                               aria-label={`Remove ${item.product.name} from cart`}
-                              className="shrink-0 rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                              className="shrink-0 rounded-lg p-2  text-red-500 transition-colors hover:bg-red-50 hover:text-red-600"
                             >
                               <Trash2
                                 className="h-4 w-4"
