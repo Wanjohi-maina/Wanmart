@@ -24,6 +24,8 @@ import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminProductForm from "./pages/admin/AdminProductForm";
 import AdminDelivery from "./pages/admin/AdminDelivery";
+import AdminForgotPassword from "./pages/admin/AdminForgotPassword";
+import AdminResetPassword from "./pages/admin/AdminResetPassword";
 import NotFound from "./pages/NotFound";
 function App() {
   return (
@@ -48,6 +50,8 @@ function App() {
           </Route>
 
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
+          <Route path="/admin/reset-password" element={<AdminResetPassword />} />
           <Route path="/admin" element={<RequireAdmin />}>
             <Route element={<AdminLayout />}>
               <Route index element={<AdminHome />} />

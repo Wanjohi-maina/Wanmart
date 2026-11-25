@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
+import { EyeOff, Eye } from "lucide-react";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
   const location = useLocation();
-  const from =
-    (location.state as { from?: string } | null)?.from ?? "/admin";
+  const from = (location.state as { from?: string } | null)?.from ?? "/admin";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,8 +18,13 @@ export default function AdminLogin() {
     () => sessionStorage.getItem("admin_idle_signout") === "1",
   );
 
+  const [resetNotice] = useState(
+    () => sessionStorage.getItem("admin_password_reset") === "1",
+  );
+
   useEffect(() => {
     sessionStorage.removeItem("admin_idle_signout");
+    sessionStorage.removeItem("admin_password_reset");
   }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -101,21 +106,36 @@ export default function AdminLogin() {
                   type="button"
                   onClick={() => setShowPassword((shown) => !shown)}
                   className="absolute inset-y-0 right-0 px-4 text-sm text-gray-500 hover:text-orange-600"
-                  aria-label={
-                    showPassword ? "Hide password" : "Show password"
-                  }
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword ? <EyeOff aria-hidden="true"/> : <Eye aria-hidden="true" />}
                 </button>
               </div>
+              <div className="text-right">
+                <Link
+                  to="/admin/forgot-password"
+                  className="text-sm text-orange-600 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
             </div>
-            
+
             {idleNotice && (
               <div
                 className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
                 role="status"
               >
                 You were signed out because of inactivity.
+              </div>
+            )}
+
+            {resetNotice && (
+              <div
+                className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+                role="status"
+              >
+                Your password was changed. Sign in with the new one.
               </div>
             )}
 
