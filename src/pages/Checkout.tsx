@@ -1,60 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import {
-  ShoppingCart,
-  UserRound,
-  Truck,
-  CreditCard,
-  Check,
-  Search,
-  ChevronDown,
-  CircleAlert,
-  ArrowLeft,
-  LockKeyhole,
-  LoaderCircle,
-} from "lucide-react";
-
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { CircleAlert, ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { supabase } from "../lib/supabaseClient";
 import CheckoutProgress from "../components/CheckoutProgress";
-
-type PaymentMethod = "mpesa" | "cash_on_delivery";
-type DeliveryMethod = "courier" | "matatu";
-
-type CourierArea = {
-  id: number;
-  name: string;
-  fee: number;
-};
-
-type MatatuRoute = {
-  id: number;
-  sacco: string;
-  fee: number;
-  note: string | null;
-};
-
-type MatatuTown = {
-  id: number;
-  name: string;
-  routes: MatatuRoute[];
-};
-
-type DeliveryOptions = {
-  methods: { code: DeliveryMethod; name: string }[];
-  courier: CourierArea[];
-  matatu: MatatuTown[];
-};
-
-const inputClass =
-  "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-3 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-gray-100 sm:text-sm";
-
-const labelClass = "mb-1.5 block text-sm font-medium text-gray-700";
-
-const sectionClass =
-  "rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6";
-
-const kes = (amount: number) => `KES ${amount.toLocaleString()}`;
+import type {
+  DeliveryMethod,
+  DeliveryOptions,
+  PaymentMethod,
+} from "./checkout/types";
+import CustomerInformation from "./checkout/CustomerInformation";
+import DeliverySection from "./checkout/DeliverySection";
+import OrderSummary from "./checkout/OrderSummary";
+import PaymentSection from "./checkout/PaymentSection";
 
 export default function Checkout() {
   const { items, totalPrice, totalItems, clearCart } = useCart();
@@ -478,711 +436,66 @@ export default function Checkout() {
         >
           {/* Main checkout form */}
           <div className="space-y-6 lg:col-span-2">
-            {/* Customer information */}
-            <section className={sectionClass}>
-              <div className="mb-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
-                    <UserRound
-                      size={20}
-                      strokeWidth={1.7}
-                      aria-hidden="true"
-                    />
-                  </span>
+            <CustomerInformation
+              name={name}
+              setName={setName}
+              email={email}
+              setEmail={setEmail}
+              phone={phone}
+              setPhone={setPhone}
+              submitting={submitting}
+            />
 
-                  <div>
-                    <h2 className="text-base font-semibold text-gray-900 sm:text-lg">
-                      Customer Information
-                    </h2>
+            <DeliverySection
+              options={options}
+              optionsError={optionsError}
+              deliveryMethod={deliveryMethod}
+              submitting={submitting}
+              handleMethodChange={handleMethodChange}
+              isMatatu={isMatatu}
+              areaPickerRef={areaPickerRef}
+              areaSearchInputRef={areaSearchInputRef}
+              areaPickerOpen={areaPickerOpen}
+              setAreaPickerOpen={setAreaPickerOpen}
+              selectedArea={selectedArea}
+              areaSearch={areaSearch}
+              setAreaSearch={setAreaSearch}
+              filteredCourierAreas={filteredCourierAreas}
+              areaId={areaId}
+              setAreaId={setAreaId}
+              setError={setError}
+              townPickerRef={townPickerRef}
+              townSearchInputRef={townSearchInputRef}
+              townPickerOpen={townPickerOpen}
+              setTownPickerOpen={setTownPickerOpen}
+              townSearch={townSearch}
+              setTownSearch={setTownSearch}
+              selectedTown={selectedTown}
+              filteredMatatuTowns={filteredMatatuTowns}
+              handleTownChange={handleTownChange}
+              townId={townId}
+              routePickerRef={routePickerRef}
+              routeSearchInputRef={routeSearchInputRef}
+              routePickerOpen={routePickerOpen}
+              setRoutePickerOpen={setRoutePickerOpen}
+              routeSearch={routeSearch}
+              setRouteSearch={setRouteSearch}
+              selectedRoute={selectedRoute}
+              filteredMatatuRoutes={filteredMatatuRoutes}
+              routeId={routeId}
+              setRouteId={setRouteId}
+              address={address}
+              setAddress={setAddress}
+              deliveryNotes={deliveryNotes}
+              setDeliveryNotes={setDeliveryNotes}
+            />
 
-                    <p className="mt-0.5 text-xs text-gray-500">
-                      Enter your contact details.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="name" className={labelClass}>
-                    Full Name
-                  </label>
-
-                  <input
-                    id="name"
-                    type="text"
-                    autoComplete="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="John Doe"
-                    className={inputClass}
-                    disabled={submitting}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="email" className={labelClass}>
-                    Email Address
-                  </label>
-
-                  <input
-                    id="email"
-                    type="email"
-                    autoComplete="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="john.doe@example.com"
-                    className={inputClass}
-                    disabled={submitting}
-                    required
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label htmlFor="phone" className={labelClass}>
-                    Phone Number
-                  </label>
-
-                  <input
-                    id="phone"
-                    type="tel"
-                    autoComplete="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="0700 456 789"
-                    className={inputClass}
-                    disabled={submitting}
-                    required
-                  />
-
-                  <p className="mt-1.5 text-xs text-gray-500">
-                    Use a Safaricom number if you intend to pay with M-Pesa.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* Delivery section */}
-            <section className={sectionClass}>
-              <div className="mb-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
-                    <Truck
-                      size={20}
-                      strokeWidth={1.7}
-                      aria-hidden="true"
-                    />
-                  </span>
-
-                  <div>
-                    <h2 className="text-base font-semibold text-gray-900 sm:text-lg">
-                      Delivery
-                    </h2>
-
-                    <p className="mt-0.5 text-xs text-gray-500">
-                      Choose how you would like to receive your order.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {optionsError && (
-                <div
-                  className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
-                  role="alert"
-                >
-                  {optionsError}
-                </div>
-              )}
-
-              {!options && !optionsError && (
-                <div
-                  className="flex items-center gap-3 rounded-lg bg-gray-50 p-4 text-sm text-gray-500"
-                  role="status"
-                >
-                  <LoaderCircle
-                    size={20}
-                    className="animate-spin text-orange-600"
-                    aria-hidden="true"
-                  />
-
-                  Loading delivery options...
-                </div>
-              )}
-
-              {options && options.methods.length === 0 && (
-                <p className="rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
-                  Delivery is not available right now. Please try again later.
-                </p>
-              )}
-
-              {options && options.methods.length > 0 && (
-                <div className="space-y-5">
-                  {/* Delivery method cards */}
-                  <div>
-                    <label className={labelClass}>Delivery method</label>
-
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {options.methods.map((method) => {
-                        const selected = deliveryMethod === method.code;
-
-                        const description =
-                          method.code === "courier"
-                            ? "Doorstep delivery to your selected area."
-                            : "Send your parcel through a selected SACCO.";
-
-                        return (
-                          <label
-                            key={method.code}
-                            className={`relative flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition ${
-                              selected
-                                ? "border-orange-500 bg-orange-50 ring-1 ring-orange-500"
-                                : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
-                            } ${submitting ? "cursor-not-allowed opacity-60" : ""}`}
-                          >
-                            <input
-                              type="radio"
-                              name="deliveryMethod"
-                              value={method.code}
-                              checked={selected}
-                              onChange={() => handleMethodChange(method.code)}
-                              disabled={submitting}
-                              className="mt-1 h-4 w-4 accent-orange-600"
-                            />
-
-                            <span className="min-w-0 flex-1">
-                              <span className="block text-sm font-semibold text-gray-900">
-                                {method.name}
-                              </span>
-
-                              <span className="mt-1 block text-xs leading-relaxed text-gray-500">
-                                {description}
-                              </span>
-                            </span>
-
-                            {selected && (
-                              <span className="text-orange-600">
-                                <Check
-                                  size={20}
-                                  strokeWidth={2}
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            )}
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Courier area */}
-                  {deliveryMethod === "courier" && (
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="delivery-area-search"
-                        className={labelClass}
-                      >
-                        Delivery Area
-                      </label>
-
-                      <div className="relative" ref={areaPickerRef}>
-                        <div className="flex min-h-10 items-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2.5 shadow-sm transition focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-100">
-                          <Search
-                            size={16}
-                            className="shrink-0 text-gray-500"
-                            aria-hidden="true"
-                          />
-
-                          <input
-                            ref={areaSearchInputRef}
-                            id="delivery-area-search"
-                            type="search"
-                            role="combobox"
-                            aria-autocomplete="list"
-                            aria-haspopup="dialog"
-                            aria-expanded={areaPickerOpen}
-                            aria-controls="delivery-area-options"
-                            value={
-                              areaPickerOpen
-                                ? areaSearch
-                                : selectedArea?.name ?? ""
-                            }
-                            onFocus={() => {
-                              if (!areaPickerOpen) {
-                                setAreaSearch("");
-                                setAreaPickerOpen(true);
-                              }
-                            }}
-                            onChange={(event) =>
-                              setAreaSearch(event.target.value)
-                            }
-                            placeholder="Search delivery areas"
-                            disabled={
-                              submitting || options.courier.length === 0
-                            }
-                            className="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-gray-800 outline-none placeholder:text-gray-400"
-                          />
-
-                          {selectedArea && (
-                            <span className="shrink-0 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                              {selectedArea.fee === 0
-                                ? "Free"
-                                : kes(selectedArea.fee)}
-                            </span>
-                          )}
-
-                          <ChevronDown
-                            size={16}
-                            className={`shrink-0 text-gray-500 transition-transform ${
-                              areaPickerOpen ? "rotate-180" : ""
-                            }`}
-                            aria-hidden="true"
-                          />
-                        </div>
-
-                        {areaPickerOpen && (
-                          <div
-                            id="delivery-area-options"
-                            role="dialog"
-                            aria-label="Choose a delivery area"
-                            className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
-                          >
-                            <div className="max-h-56 overflow-y-auto p-1.5">
-                              {filteredCourierAreas.length > 0 ? (
-                                filteredCourierAreas.map((area) => (
-                                  <button
-                                    key={area.id}
-                                    type="button"
-                                    aria-pressed={String(area.id) === areaId}
-                                    onMouseDown={(event) =>
-                                      event.preventDefault()
-                                    }
-                                    onClick={() => {
-                                      setAreaId(String(area.id));
-                                      setAreaSearch("");
-                                      setAreaPickerOpen(false);
-                                      setError(null);
-                                    }}
-                                    className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-gray-50 focus:bg-orange-50 focus:outline-none ${
-                                      String(area.id) === areaId
-                                        ? "bg-orange-50 text-orange-800"
-                                        : "text-gray-700"
-                                    }`}
-                                  >
-                                    <span className="truncate">
-                                      {area.name}
-                                    </span>
-                                  </button>
-                                ))
-                              ) : (
-                                <p className="px-3 py-4 text-center text-sm text-gray-500">
-                                  No areas match "{areaSearch}".
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {options.courier.length === 0 && (
-                        <p className="text-sm text-gray-500">
-                          No delivery areas are available right now. Please try
-                          another delivery method.
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Matatu town and SACCO */}
-                  {isMatatu && (
-                    <div className="space-y-4">
-                      <div>
-                        <label
-                          htmlFor="matatu-town-search"
-                          className={labelClass}
-                        >
-                          Destination Town
-                        </label>
-
-                        <div className="relative" ref={townPickerRef}>
-                          <div className="flex min-h-10 items-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2.5 shadow-sm transition focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-100">
-                            <Search
-                              size={16}
-                              className="shrink-0 text-gray-500"
-                              aria-hidden="true"
-                            />
-
-                            <input
-                              ref={townSearchInputRef}
-                              id="matatu-town-search"
-                              type="search"
-                              role="combobox"
-                              aria-autocomplete="list"
-                              aria-haspopup="dialog"
-                              aria-expanded={townPickerOpen}
-                              aria-controls="matatu-town-options"
-                              value={
-                                townPickerOpen
-                                  ? townSearch
-                                  : selectedTown?.name ?? ""
-                              }
-                              onFocus={() => {
-                                if (!townPickerOpen) {
-                                  setTownSearch("");
-                                  setTownPickerOpen(true);
-                                }
-                              }}
-                              onChange={(event) =>
-                                setTownSearch(event.target.value)
-                              }
-                              placeholder="Search destination towns"
-                              disabled={
-                                submitting || options.matatu.length === 0
-                              }
-                              className="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-gray-800 outline-none placeholder:text-gray-400"
-                            />
-
-                            <ChevronDown
-                              size={16}
-                              className={`shrink-0 text-gray-500 transition-transform ${
-                                townPickerOpen ? "rotate-180" : ""
-                              }`}
-                              aria-hidden="true"
-                            />
-                          </div>
-
-                          {townPickerOpen && (
-                            <div
-                              id="matatu-town-options"
-                              role="dialog"
-                              aria-label="Choose a destination town"
-                              className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
-                            >
-                              <div className="max-h-56 overflow-y-auto p-1.5">
-                                {filteredMatatuTowns.length > 0 ? (
-                                  filteredMatatuTowns.map((town) => (
-                                    <button
-                                      key={town.id}
-                                      type="button"
-                                      aria-pressed={String(town.id) === townId}
-                                      onMouseDown={(event) =>
-                                        event.preventDefault()
-                                      }
-                                      onClick={() =>
-                                        handleTownChange(String(town.id))
-                                      }
-                                      className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-gray-50 focus:bg-orange-50 focus:outline-none ${
-                                        String(town.id) === townId
-                                          ? "bg-orange-50 text-orange-800"
-                                          : "text-gray-700"
-                                      }`}
-                                    >
-                                      <span className="truncate">
-                                        {town.name}
-                                      </span>
-                                    </button>
-                                  ))
-                                ) : (
-                                  <p className="px-3 py-4 text-center text-sm text-gray-500">
-                                    No towns match "{townSearch}".
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {options.matatu.length === 0 && (
-                          <p className="mt-2 text-sm text-gray-500">
-                            No destination towns are available right now. Please
-                            try another delivery method.
-                          </p>
-                        )}
-                      </div>
-
-                      {selectedTown && selectedTown.routes.length === 0 && (
-                        <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
-                          No SACCO serves {selectedTown.name} yet. Please
-                          choose another town or delivery method.
-                        </div>
-                      )}
-
-                      {selectedTown && selectedTown.routes.length > 0 && (
-                        <div>
-                          <label
-                            htmlFor="matatu-sacco-search"
-                            className={labelClass}
-                          >
-                            Select SACCO
-                          </label>
-
-                          <div className="relative" ref={routePickerRef}>
-                            <div className="flex min-h-10 items-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2.5 shadow-sm transition focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-100">
-                              <Search
-                                size={16}
-                                className="shrink-0 text-gray-500"
-                                aria-hidden="true"
-                              />
-
-                              <input
-                                ref={routeSearchInputRef}
-                                id="matatu-sacco-search"
-                                type="search"
-                                role="combobox"
-                                aria-autocomplete="list"
-                                aria-haspopup="dialog"
-                                aria-expanded={routePickerOpen}
-                                aria-controls="matatu-sacco-options"
-                                value={
-                                  routePickerOpen
-                                    ? routeSearch
-                                    : selectedRoute?.sacco ?? ""
-                                }
-                                onFocus={() => {
-                                  if (!routePickerOpen) {
-                                    setRouteSearch("");
-                                    setRoutePickerOpen(true);
-                                  }
-                                }}
-                                onChange={(event) =>
-                                  setRouteSearch(event.target.value)
-                                }
-                                placeholder="Search SACCOs"
-                                disabled={submitting}
-                                className="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-gray-800 outline-none placeholder:text-gray-400"
-                              />
-
-                              {selectedRoute && (
-                                <span className="shrink-0 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                                  {selectedRoute.fee === 0
-                                    ? "Free"
-                                    : kes(selectedRoute.fee)}
-                                </span>
-                              )}
-
-                              <ChevronDown
-                                size={16}
-                                className={`shrink-0 text-gray-500 transition-transform ${
-                                  routePickerOpen ? "rotate-180" : ""
-                                }`}
-                                aria-hidden="true"
-                              />
-                            </div>
-
-                            {routePickerOpen && (
-                              <div
-                                id="matatu-sacco-options"
-                                role="dialog"
-                                aria-label="Choose a SACCO"
-                                className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
-                              >
-                                <div className="max-h-56 overflow-y-auto p-1.5">
-                                  {filteredMatatuRoutes.length > 0 ? (
-                                    filteredMatatuRoutes.map((route) => (
-                                      <button
-                                        key={route.id}
-                                        type="button"
-                                        aria-pressed={
-                                          String(route.id) === routeId
-                                        }
-                                        onMouseDown={(event) =>
-                                          event.preventDefault()
-                                        }
-                                        onClick={() => {
-                                          setRouteId(String(route.id));
-                                          setRouteSearch("");
-                                          setRoutePickerOpen(false);
-                                          setError(null);
-                                        }}
-                                        className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-gray-50 focus:bg-orange-50 focus:outline-none ${
-                                          String(route.id) === routeId
-                                            ? "bg-orange-50 text-orange-800"
-                                            : "text-gray-700"
-                                        }`}
-                                      >
-                                        <span className="truncate">
-                                          {route.sacco}
-                                        </span>
-                                      </button>
-                                    ))
-                                  ) : (
-                                    <p className="px-3 py-4 text-center text-sm text-gray-500">
-                                      No SACCOs match "{routeSearch}".
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-
-                          {selectedRoute?.note && (
-                            <p className="mt-2 text-xs leading-relaxed text-gray-500">
-                              {selectedRoute.note}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Delivery address and notes */}
-                  {deliveryMethod !== "" && (
-                    <div className="space-y-4 border-t border-gray-100 pt-5">
-                      <div>
-                        <label htmlFor="address" className={labelClass}>
-                          {isMatatu
-                            ? `Where in ${selectedTown?.name ?? "the town"} should the parcel be delivered?`
-                            : "Delivery Address"}
-                        </label>
-
-                        <textarea
-                          id="address"
-                          value={address}
-                          onChange={(e) => setAddress(e.target.value)}
-                          rows={3}
-                          placeholder={
-                            isMatatu
-                              ? "SACCO parcel office, stage or landmark"
-                              : "Building, street, estate and landmark"
-                          }
-                          className={`${inputClass} resize-none`}
-                          required
-                          disabled={submitting}
-                        />
-
-                        <p className="mt-1.5 text-xs text-gray-500">
-                          {isMatatu
-                            ? "Provide the parcel collection point or a nearby landmark."
-                            : "Include your estate, building and a nearby landmark."}
-                        </p>
-                      </div>
-
-                      <div>
-                        <label htmlFor="delivery-notes" className={labelClass}>
-                          Delivery Notes{" "}
-                          <span className="font-normal text-gray-400">
-                            (Optional)
-                          </span>
-                        </label>
-
-                        <textarea
-                          id="delivery-notes"
-                          value={deliveryNotes}
-                          onChange={(e) => setDeliveryNotes(e.target.value)}
-                          rows={2}
-                          maxLength={500}
-                          placeholder="Add any special delivery instructions"
-                          className={`${inputClass} resize-none`}
-                          disabled={submitting}
-                        />
-
-                        <p className="mt-1 text-right text-xs text-gray-400">
-                          {deliveryNotes.length}/500
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </section>
-
-            {/* Payment method */}
-            <section className={sectionClass}>
-              <div className="mb-6">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
-                    <CreditCard
-                      size={20}
-                      strokeWidth={1.7}
-                      aria-hidden="true"
-                    />
-                  </span>
-
-                  <div>
-                    <h2 className="text-base font-semibold text-gray-900 sm:text-lg">
-                      Payment Method
-                    </h2>
-
-                    <p className="mt-0.5 text-xs text-gray-500">
-                      Select how you would like to pay.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {/* M-Pesa */}
-                <label
-                  className={`flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition ${
-                    paymentMethod === "mpesa"
-                      ? "border-orange-500 bg-orange-50 ring-1 ring-orange-500"
-                      : "border-gray-200 bg-white hover:border-gray-300"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="mpesa"
-                    onChange={() => setPaymentMethod("mpesa")}
-                    checked={paymentMethod === "mpesa"}
-                    disabled={submitting}
-                    className="mt-1 h-4 w-4 accent-orange-600"
-                  />
-
-                  <span className="flex-1">
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-semibold text-gray-900">
-                        M-Pesa
-                      </span>
-
-                      <span className="rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
-                        Recommended
-                      </span>
-                    </span>
-
-                    <span className="mt-1 block text-xs leading-relaxed text-gray-500">
-                      Pay securely using an STK Push sent to your Safaricom
-                      number.
-                    </span>
-                  </span>
-                </label>
-
-                {/* Cash on Delivery */}
-                <label
-                  className={`flex items-start gap-3 rounded-xl border p-4 transition ${
-                    isMatatu
-                      ? "cursor-not-allowed border-gray-200 bg-gray-100"
-                      : paymentMethod === "cash_on_delivery"
-                        ? "cursor-pointer border-orange-500 bg-orange-50 ring-1 ring-orange-500"
-                        : "cursor-pointer border-gray-200 bg-white hover:border-gray-300"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="cash_on_delivery"
-                    onChange={() => setPaymentMethod("cash_on_delivery")}
-                    checked={paymentMethod === "cash_on_delivery"}
-                    disabled={submitting || isMatatu}
-                    className="mt-1 h-4 w-4 accent-orange-600"
-                  />
-
-                  <span className="flex-1">
-                    <span className="text-sm font-semibold text-gray-900">
-                      Cash on Delivery
-                    </span>
-
-                    <span className="mt-1 block text-xs leading-relaxed text-gray-500">
-                      {isMatatu
-                        ? "Not available with Matatu delivery. Please pay using M-Pesa."
-                        : "Pay when you receive your order."}
-                    </span>
-                  </span>
-                </label>
-              </div>
-            </section>
-
+            <PaymentSection
+              paymentMethod={paymentMethod}
+              setPaymentMethod={setPaymentMethod}
+              isMatatu={isMatatu}
+              submitting={submitting}
+            />
             {/* Error message */}
             {error && (
               <div
@@ -1201,174 +514,16 @@ export default function Checkout() {
             )}
           </div>
 
-          {/* Order summary */}
-          <aside className="lg:col-span-1">
-            <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6 lg:sticky lg:top-8">
-              <div className="mb-5 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Order Summary
-                </h2>
-
-                <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-                  {totalItems} {totalItems === 1 ? "item" : "items"}
-                </span>
-              </div>
-
-              {/* Cart items */}
-              <ul className="space-y-4">
-                {items.map((item) => {
-                  // Build a readable variant label.
-                  const variantLabel = [
-                    item.selectedColor,
-                    item.selectedStorage,
-                    item.selectedSize,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ");
-
-                  // Use the selected color image for electronics.
-                  const displayImage =
-                    item.product.kind === "electronics" && item.selectedColor
-                      ? item.product.colorImages[item.selectedColor]
-                      : item.product.imageUrl;
-
-                  const lineTotal = item.unitPrice * item.quantity;
-
-                  return (
-                    <li
-                      key={`${item.product.id}|${item.selectedColor ?? ""}|${item.selectedStorage ?? ""}|${item.selectedSize ?? ""}`}
-                      className="flex gap-3"
-                    >
-                      <img
-                        src={displayImage}
-                        alt={item.product.name}
-                        className="h-17 w-17 shrink-0 rounded-lg border border-gray-100 bg-gray-50 object-cover"
-                      />
-
-                      <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2 text-sm font-medium leading-snug text-gray-900">
-                          {item.product.name}
-                        </p>
-
-                        {variantLabel && (
-                          <p className="mt-1 text-xs text-gray-500">
-                            {variantLabel}
-                          </p>
-                        )}
-
-                        <p className="mt-1 text-xs text-gray-500">
-                          Qty: {item.quantity}
-                        </p>
-                      </div>
-
-                      <p className="whitespace-nowrap text-sm font-semibold text-gray-900">
-                        {kes(lineTotal)}
-                      </p>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              {/* Price summary */}
-              <div className="mt-6 space-y-3 border-t border-gray-200 pt-5">
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>Subtotal</span>
-
-                  <span className="text-gray-700">
-                    {kes(originalSubtotal)}
-                  </span>
-                </div>
-
-                {totalDiscount > 0 && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-green-700">Discount</span>
-
-                    <span className="font-medium text-green-700">
-                      - {kes(totalDiscount)}
-                    </span>
-                  </div>
-                )}
-
-                {deliveryFee !== undefined && (
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>Delivery Fee</span>
-
-                    <span className="text-right text-gray-700">
-                      {deliveryFee === 0 ? "Free" : kes(deliveryFee)}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Grand total */}
-              <div className="mt-5 flex items-center justify-between border-t border-gray-200 pt-5">
-                <span className="text-base font-semibold text-gray-900">
-                  Total
-                </span>
-
-                <span className="text-xl font-bold text-gray-900">
-                  {kes(grandTotal)}
-                </span>
-              </div>
-
-              {/* Place order */}
-              <button
-                type="submit"
-                disabled={submitting || !options}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-orange-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {submitting ? (
-                  <>
-                    <LoaderCircle
-                      size={17}
-                      className="animate-spin"
-                      aria-hidden="true"
-                    />
-
-                    Placing Order...
-                  </>
-                ) : (
-                  "Place Order"
-                )}
-              </button>
-
-              <p className="mt-4 text-center text-xs leading-relaxed text-gray-500">
-                By placing your order you agree to our{" "}
-                <Link
-                  to="/terms"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-orange-600 underline underline-offset-2 hover:text-orange-700"
-                >
-                  Terms &amp; Conditions
-                </Link>
-                .
-              </p>
-
-              <Link
-                to="/cart"
-                className="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-gray-500 transition hover:text-orange-600"
-              >
-                <ArrowLeft
-                  size={16}
-                  strokeWidth={1.8}
-                  aria-hidden="true"
-                />
-
-                Return to Cart
-              </Link>
-
-              <div className="mt-5 flex items-center justify-center gap-2 border-t border-gray-100 pt-4 text-xs text-gray-400">
-                <LockKeyhole
-                  size={16}
-                  strokeWidth={1.7}
-                  aria-hidden="true"
-                />
-
-                Secure checkout
-              </div>
-            </div>
-          </aside>
+          <OrderSummary
+            items={items}
+            totalItems={totalItems}
+            originalSubtotal={originalSubtotal}
+            totalDiscount={totalDiscount}
+            deliveryFee={deliveryFee}
+            grandTotal={grandTotal}
+            submitting={submitting}
+            optionsLoaded={options !== null}
+          />
         </form>
       </div>
     </div>
