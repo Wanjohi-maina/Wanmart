@@ -267,6 +267,21 @@ export default function OrderConfirmation() {
       return;
     }
 
+    // A link from an email carries a view token after the # in the address.
+    // Keep it for this tab, then remove it from the address bar.
+    const hashToken = new URLSearchParams(
+      window.location.hash.replace(/^#/, ""),
+    ).get("t");
+
+    if (hashToken) {
+      sessionStorage.setItem(`order_access_token_${id}`, hashToken);
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search,
+      );
+    }
+
     let cancelled = false;
     let inFlight = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -282,7 +297,7 @@ export default function OrderConfirmation() {
       const accessToken = sessionStorage.getItem(`order_access_token_${id}`);
 
       if (!accessToken) {
-        setError("Unable to verify your order. Please return to checkout.");
+        setError("Unable to verify your order. If you followed a link from an email, it may have expired. Please contact support.");
         setLoading(false);
         return;
       }
